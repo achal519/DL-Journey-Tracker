@@ -1,0 +1,85 @@
+==========================================
+DL JOURNEY TRACKER — TEST CASES
+==========================================
+
+TEST CASE 1 — Waiting Period
+------------------------------
+Input:
+  - LL Issue Date: 10 days ago
+  - Vehicle Type: 2W
+
+Expected Output:
+  - Stage: 2 (Waiting Period)
+  - Alert: WAITING
+  - Message: Cannot apply yet, wait 20 more days
+
+==========================================
+
+TEST CASE 2 — Can Apply (GREEN)
+---------------------------------
+Input:
+  - LL Issue Date: 40 days ago
+  - Vehicle Type: 4W
+
+Expected Output:
+  - Stage: 3 (Apply for DL Test)
+  - Alert: GREEN
+  - Days Remaining: 140 days
+  - Message: Safe zone, apply at convenience
+
+==========================================
+
+TEST CASE 3 — Warning Zone (YELLOW)
+--------------------------------------
+Input:
+  - LL Issue Date: 155 days ago
+  - Vehicle Type: 2W
+
+Expected Output:
+  - Stage: 3 (Apply for DL Test)
+  - Alert: YELLOW
+  - Days Remaining: 25 days
+  - Message: Apply soon, less than 30 days left
+
+==========================================
+
+TEST CASE 4 — Critical Zone (RED)
+------------------------------------
+Input:
+  - LL Issue Date: 172 days ago
+  - Vehicle Type: Both
+
+Expected Output:
+  - Stage: 3 (Apply for DL Test)
+  - Alert: RED
+  - Days Remaining: 8 days
+  - Message: Apply IMMEDIATELY
+
+==========================================
+
+TEST CASE 5 — Expired LL
+--------------------------
+Input:
+  - LL Issue Date: 200 days ago
+  - Vehicle Type: Commercial
+
+Expected Output:
+  - Stage: 1 (Restart)
+  - Alert: EXPIRED
+  - Message: LL expired, reapply for LL
+
+==========================================
+
+TEST CASE 6 — DL Received
+---------------------------
+Input:
+  - LL Issue Date: 60 days ago
+  - Mark DL as received: YES
+  - DL Number: MH12345
+
+Expected Output:
+  - Stage: 5 (DL Issued)
+  - Message: Congratulations!
+  - DL Details stored successfully
+
+==========================================

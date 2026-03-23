@@ -1,0 +1,174 @@
+==========================================
+DL JOURNEY TRACKER — UML CLASS DESCRIPTION
+==========================================
+
+1. LICENSE (Base Class)
+-----------------------
+Attributes:
+  - licenseNumber : string
+  - issueDate     : string
+  - vehicleType   : string
+  - holderName    : string
+
+Methods:
+  + setBasicDetails()
+  + displayBasicDetails()
+  + displayDetails() [virtual]
+  + getLicenseNumber()
+  + getIssueDate()
+  + getVehicleType()
+  + getHolderName()
+
+==========================================
+
+2. LEARNER LICENSE (Inherits License)
+--------------------------------------
+Additional Attributes:
+  - validityDays : int
+  - isActive     : bool
+
+Additional Methods:
+  + setLLDetails()
+  + displayDetails() [override]
+  + setActive()
+  + getDay()
+  + getMonth()
+  + getYear()
+
+==========================================
+
+3. PERMANENT LICENSE (Inherits License)
+----------------------------------------
+Additional Attributes:
+  - expiryDate    : string
+  - validityYears : int
+  - isRenewed     : bool
+
+Additional Methods:
+  + setDLDetails()
+  + displayDetails() [override]
+  + renewLicense()
+  + getExpiryDate()
+  + getIsRenewed()
+
+==========================================
+
+4. CITIZEN
+----------
+Attributes:
+  - name        : string
+  - age         : int
+  - city        : string
+  - vehicleType : string
+
+Methods:
+  + setDetails()
+  + displayProfile()
+  + getName()
+  + getAge()
+  + getCity()
+  + getVehicleType()
+
+==========================================
+
+5. DEADLINE CALCULATOR
+----------------------
+Attributes:
+  - daysPassed    : int
+  - daysRemaining : int
+  - waitRemaining : int
+
+Methods:
+  + calculate()
+  + isInWaitPeriod()
+  + canApply()
+  + isExpired()
+  + getDaysPassed()
+  + getDaysRemaining()
+  + getWaitRemaining()
+  + displayStatus()
+
+==========================================
+
+6. STAGE TRACKER
+----------------
+Attributes:
+  - currentStage : int
+  - llObtained   : bool
+  - dlObtained   : bool
+
+Methods:
+  + calculateStage()
+  + displayStages()
+  + getStageMessage()
+  + getCurrentStage()
+
+==========================================
+
+7. ALERT SYSTEM
+---------------
+Attributes:
+  - alertLevel   : string
+  - alertMessage : string
+
+Methods:
+  + generateAlert()
+  + displayAlert()
+  + getAlertLevel()
+  + getAlertMessage()
+
+==========================================
+
+8. DOCUMENT CHECKLIST
+---------------------
+Attributes:
+  - vehicleType : string
+  - checklist   : vector<string>
+
+Methods:
+  + generateChecklist()
+  + displayChecklist()
+  + getChecklist()
+
+==========================================
+
+9. TEST GUIDE
+-------------
+Attributes:
+  - vehicleType       : string
+  - tips              : vector<string>
+  - commonFailReasons : vector<string>
+  - trafficSigns      : vector<string>
+
+Methods:
+  + loadTips()
+  + displayTips()
+  + displaySigns()
+
+==========================================
+
+INHERITANCE RELATIONSHIP:
+  License
+    ├── LearnerLicense
+    └── PermanentLicense
+
+OBJECT RELATIONSHIPS:
+  main.cpp creates objects of:
+    → Citizen
+    → LearnerLicense
+    → PermanentLicense
+    → DeadlineCalculator
+    → StageTracker
+    → AlertSystem
+    → DocumentChecklist
+    → TestGuide
+
+OOP CONCEPTS USED:
+  ✅ Classes and Objects
+  ✅ Encapsulation (private attributes)
+  ✅ Inheritance (License → LL, PL)
+  ✅ Polymorphism (displayDetails override)
+  ✅ Abstraction (hidden internal logic)
+  ✅ Constructors
+  ✅ Virtual Functions
+==========================================
