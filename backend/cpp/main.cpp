@@ -6,6 +6,7 @@
 #include "AlertSystem.cpp"
 #include "DocumentChecklist.cpp"
 #include "TestGuide.cpp"
+#include "PermanentLicense.cpp"
 using namespace std;
 
 int main() {
@@ -17,6 +18,7 @@ int main() {
     AlertSystem alert;
     DocumentChecklist checklist;
     TestGuide guide;
+    PermanentLicense dl;
 
     bool dlReceived = false;
 
@@ -52,7 +54,7 @@ int main() {
 
     // ── MAIN MENU LOOP
     int choice = 0;
-    while (choice != 7) {
+    while (choice != 9) {
         cout << "\n==========================================\n";
         cout << "              MAIN MENU                   \n";
         cout << "==========================================\n";
@@ -64,14 +66,15 @@ int main() {
         cout << "6. View Document Checklist\n";
         cout << "7. View RTO Test Guide\n";
         cout << "8. Mark DL as Received\n";
-        cout << "9. Exit\n";
+        cout << "9. View Permanent DL Details\n";
+        cout << "10. Exit\n";
         cout << "Enter choice: ";
         cin >> choice;
 
         if (choice == 1) {
             citizen.displayProfile();
         } else if (choice == 2) {
-            ll.displayLLDetails();
+            ll.displayDetails();
         } else if (choice == 3) {
             tracker.displayStages();
             cout << "\nCurrent Status: " << tracker.getStageMessage() << "\n";
@@ -85,16 +88,27 @@ int main() {
             guide.displayTips();
             guide.displaySigns();
         } else if (choice == 8) {
-            dlReceived = true;
-            tracker.calculateStage(deadline.getDaysPassed(), dlReceived);
-            cout << "\nCongratulations! DL marked as received!\n";
-            cout << tracker.getStageMessage() << "\n";
+            if (!dlReceived) {
+                dlReceived = true;
+                dl.setDLDetails();
+                tracker.calculateStage(deadline.getDaysPassed(), dlReceived);
+                cout << "\nCongratulations! DL marked as received!\n";
+                cout << tracker.getStageMessage() << "\n";
+            } else {
+                cout << "\nDL already marked as received!\n";
+            }
         } else if (choice == 9) {
+            if (dlReceived) {
+                dl.displayDetails();
+            } else {
+                cout << "\nDL not received yet! Complete your RTO test first.\n";
+            }
+        } else if (choice == 10) {
             cout << "\nThank you for using DL Journey Tracker!\n";
             cout << "Good luck with your Permanent License!\n";
             break;
         } else {
-            cout << "Invalid choice. Please enter 1-9.\n";
+            cout << "Invalid choice. Please enter 1-10.\n";
         }
     }
 

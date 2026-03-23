@@ -1,26 +1,29 @@
 #include <iostream>
 #include <string>
+#include "License.cpp"
 using namespace std;
 
-class LearnerLicense {
+// CHILD CLASS — Inherits from License
+class LearnerLicense : public License {
 private:
-    string llNumber;
-    string issueDate;
-    string vehicleType;
+    int validityDays;
+    bool isActive;
 
 public:
     // Constructor
     LearnerLicense() {
-        llNumber = "";
-        issueDate = "";
-        vehicleType = "";
+        validityDays = 180;
+        isActive     = true;
     }
 
     // Take LL input from user
     void setLLDetails() {
         cout << "\n===== LEARNER LICENSE DETAILS =====\n";
         cout << "Enter LL Number: ";
-        cin >> llNumber;
+        cin >> licenseNumber;
+        cout << "Enter Holder Name: ";
+        cin.ignore();
+        getline(cin, holderName);
         cout << "Enter LL Issue Date (DD MM YYYY): ";
         int day, month, year;
         cin >> day >> month >> year;
@@ -29,25 +32,23 @@ public:
         cin >> vehicleType;
     }
 
-    // Display LL details
-    void displayLLDetails() {
-        cout << "\n===== YOUR LL DETAILS =====\n";
-        cout << "LL Number   : " << llNumber << endl;
-        cout << "Issue Date  : " << issueDate << endl;
-        cout << "Vehicle Type: " << vehicleType << endl;
+    // Override parent displayDetails
+    void displayDetails() override {
+        cout << "\n===== LEARNER LICENSE DETAILS =====\n";
+        displayBasicDetails();
+        cout << "Validity      : " << validityDays << " days\n";
+        cout << "Status        : " << (isActive ? "ACTIVE" : "EXPIRED") << "\n";
     }
 
-    // Getters
-    string getLLNumber()    { return llNumber; }
-    string getIssueDate()   { return issueDate; }
-    string getVehicleType() { return vehicleType; }
+    // Set active status
+    void setActive(bool status) { isActive = status; }
 
-    // Get day, month, year separately
+    // Get day month year separately for DeadlineCalculator
     int getDay() {
         return stoi(issueDate.substr(0, issueDate.find("/")));
     }
     int getMonth() {
-        int first = issueDate.find("/");
+        int first  = issueDate.find("/");
         int second = issueDate.find("/", first + 1);
         return stoi(issueDate.substr(first + 1, second - first - 1));
     }
@@ -55,4 +56,8 @@ public:
         int second = issueDate.find("/", issueDate.find("/") + 1);
         return stoi(issueDate.substr(second + 1));
     }
+
+    // Getters
+    bool getIsActive()    { return isActive; }
+    int getValidityDays() { return validityDays; }
 };
