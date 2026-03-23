@@ -1,0 +1,13 @@
+# Compiled output
+backend/cpp/output.exe
+backend/cpp/output
+*.exe
+*.o
+*.out
+
+# VS Code settings
+.vscode/
+
+# System files
+.DS_Store
+Thumbs.db

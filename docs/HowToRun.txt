@@ -1,0 +1,66 @@
+==========================================
+DL JOURNEY TRACKER — HOW TO RUN
+==========================================
+
+REQUIREMENTS:
+  - g++ compiler installed
+  - Windows / Linux / Mac
+
+==========================================
+
+STEP 1 — Clone the Repository
+-------------------------------
+git clone https://github.com/achal519/DL-Journey-Tracker
+cd DL-Journey-Tracker
+
+==========================================
+
+STEP 2 — Switch to Backend Branch
+------------------------------------
+git checkout cpp-backend
+
+==========================================
+
+STEP 3 — Compile the Program
+------------------------------
+g++ backend/cpp/main.cpp -o backend/cpp/output
+
+==========================================
+
+STEP 4 — Run the Program
+--------------------------
+Windows:
+  ./backend/cpp/output
+
+Linux/Mac:
+  ./backend/cpp/output
+
+==========================================
+
+STEP 5 — Use the System
+-------------------------
+1. Enter your details when asked
+2. Enter your LL Number and Issue Date
+3. Select your Vehicle Type
+4. Use the Main Menu to navigate:
+   - Option 1: View Profile
+   - Option 2: View LL Details
+   - Option 3: View Stage Tracker
+   - Option 4: View Deadline Status
+   - Option 5: View Alert
+   - Option 6: View Document Checklist
+   - Option 7: View RTO Test Guide
+   - Option 8: Mark DL as Received
+   - Option 9: View Permanent DL Details
+   - Option 10: Exit
+
+==========================================
+
+TEST CASES TO TRY:
+  - Enter LL date 10 days ago  → See WAITING alert
+  - Enter LL date 40 days ago  → See GREEN alert
+  - Enter LL date 155 days ago → See YELLOW alert
+  - Enter LL date 172 days ago → See RED alert
+  - Enter LL date 200 days ago → See EXPIRED alert
+
+==========================================
