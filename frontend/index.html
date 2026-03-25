@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DL Journey Tracker — Register</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- Top Bar -->
+  <div class="top-bar">
+    Government of India &nbsp;|&nbsp; Ministry of Road Transport &amp; Highways &nbsp;|&nbsp; Citizen Services
+  </div>
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <a class="navbar-brand" href="index.html">
+      <div class="brand-icon">🚗</div>
+      <div class="brand-text">
+        <span class="brand-title">DL Journey Tracker</span>
+        <span class="brand-sub">LL to Permanent License</span>
+      </div>
+    </a>
+  </nav>
+
+  <!-- Page Content -->
+  <div class="page-wrapper">
+
+    <div class="page-header text-center" style="margin-bottom:32px;">
+      <h1>Citizen Registration</h1>
+      <p>Enter your details to begin tracking your Driving License journey</p>
+    </div>
+
+    <!-- Registration Card -->
+    <div class="card" style="max-width:620px; margin:0 auto;">
+      <div class="card-title">
+        📋 Personal &amp; License Details
+      </div>
+
+      <!-- Name + Age -->
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label" for="name">Full Name <span>*</span></label>
+          <input class="form-control" type="text" id="name" placeholder="e.g. Rahul Sharma" autocomplete="off" />
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="age">Age <span>*</span></label>
+          <input class="form-control" type="number" id="age" placeholder="e.g. 22" min="16" max="100" />
+        </div>
+      </div>
+
+      <!-- City -->
+      <div class="form-group">
+        <label class="form-label" for="city">City / District <span>*</span></label>
+        <input class="form-control" type="text" id="city" placeholder="e.g. Nashik, Maharashtra" autocomplete="off" />
+      </div>
+
+      <!-- Vehicle Type -->
+      <div class="form-group">
+        <label class="form-label" for="vehicleType">Vehicle Type <span>*</span></label>
+        <select class="form-control" id="vehicleType">
+          <option value="" disabled selected>— Select vehicle category —</option>
+          <option value="2W">2 Wheeler (Motorcycle / Scooter)</option>
+          <option value="4W">4 Wheeler (Car / Jeep)</option>
+          <option value="Both">Both (2W + 4W)</option>
+          <option value="Commercial">Commercial Vehicle</option>
+        </select>
+      </div>
+
+      <hr class="divider" />
+
+      <!-- LL Number -->
+      <div class="form-group">
+        <label class="form-label" for="llNumber">Learner License Number <span>*</span></label>
+        <input class="form-control" type="text" id="llNumber" placeholder="e.g. MH1520240012345" autocomplete="off" />
+        <p class="form-hint">Enter exactly as printed on your LL card</p>
+      </div>
+
+      <!-- LL Issue Date -->
+      <div class="form-group">
+        <label class="form-label" for="llDate">LL Issue Date <span>*</span></label>
+        <input class="form-control" type="date" id="llDate" />
+        <p class="form-hint">The date printed on your Learner License (not the test date)</p>
+      </div>
+
+      <!-- Error message -->
+      <div id="errorMsg" style="display:none; color:var(--red); font-size:13px; margin-bottom:12px; padding:10px 14px; background:var(--red-bg); border-radius:var(--radius);">
+        ⚠️ Please fill all required fields correctly.
+      </div>
+
+      <!-- Submit -->
+      <button class="btn btn-primary btn-full" id="submitBtn" onclick="handleSubmit()">
+        Start Tracking My DL Journey →
+      </button>
+
+      <p class="text-center text-grey mt-8" style="font-size:12px;">
+        Your data is saved locally on your device only.
+      </p>
+
+    </div>
+
+    <!-- Info Strip -->
+    <div style="max-width:620px; margin:20px auto 0; display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px;">
+      <div class="info-tile text-center">
+        <div class="info-tile-label">Waiting Period</div>
+        <div class="info-tile-value orange">30</div>
+        <div class="info-tile-sub">days minimum</div>
+      </div>
+      <div class="info-tile text-center">
+        <div class="info-tile-label">Apply Window</div>
+        <div class="info-tile-value orange">180</div>
+        <div class="info-tile-sub">days total</div>
+      </div>
+      <div class="info-tile text-center">
+        <div class="info-tile-label">DL Valid For</div>
+        <div class="info-tile-value orange">20</div>
+        <div class="info-tile-sub">years</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    DL Journey Tracker &nbsp;|&nbsp; OOP Mini Project &nbsp;|&nbsp; Built with <span>♥</span> in C++ &amp; Web
+  </footer>
+
+  <script src="script.js"></script>
+  <script>
+    // Set max date as today (can't issue LL in future)
+    document.getElementById('llDate').max = new Date().toISOString().split('T')[0];
+
+    function handleSubmit() {
+      const name        = document.getElementById('name').value.trim();
+      const age         = document.getElementById('age').value.trim();
+      const city        = document.getElementById('city').value.trim();
+      const vehicleType = document.getElementById('vehicleType').value;
+      const llNumber    = document.getElementById('llNumber').value.trim();
+      const llDate      = document.getElementById('llDate').value;
+      const errEl       = document.getElementById('errorMsg');
+
+      // Validation
+      if (!name || !age || !city || !vehicleType || !llNumber || !llDate) {
+        errEl.textContent = '⚠️ Please fill all required fields.';
+        errEl.style.display = 'block';
+        return;
+      }
+      if (parseInt(age) < 16 || parseInt(age) > 100) {
+        errEl.textContent = '⚠️ Please enter a valid age (16–100).';
+        errEl.style.display = 'block';
+        return;
+      }
+      const llDateObj = new Date(llDate);
+      if (llDateObj > new Date()) {
+        errEl.textContent = '⚠️ LL Issue Date cannot be in the future.';
+        errEl.style.display = 'block';
+        return;
+      }
+
+      errEl.style.display = 'none';
+
+      // Save to localStorage
+      saveUser({
+        [KEYS.NAME]:      name,
+        [KEYS.AGE]:       age,
+        [KEYS.CITY]:      city,
+        [KEYS.VEHICLE]:   vehicleType,
+        [KEYS.LL_NUMBER]: llNumber,
+        [KEYS.LL_DATE]:   llDate,
+        [KEYS.STAGE]:     '1',
+        [KEYS.DL_OBTAINED]: 'false',
+      });
+
+      // Button feedback
+      const btn = document.getElementById('submitBtn');
+      btn.textContent = 'Saving...';
+      btn.disabled = true;
+
+      setTimeout(() => {
+        window.location.href = 'dashboard.html';
+      }, 400);
+    }
+  </script>
+
+</body>
+</html>

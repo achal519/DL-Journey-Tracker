@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DL Journey Tracker — Deadline Alert</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <div class="top-bar">
+    Government of India &nbsp;|&nbsp; Ministry of Road Transport &amp; Highways &nbsp;|&nbsp; Citizen Services
+  </div>
+
+  <nav class="navbar">
+    <a class="navbar-brand" href="index.html">
+      <div class="brand-icon">🚗</div>
+      <div class="brand-text">
+        <span class="brand-title">DL Journey Tracker</span>
+        <span class="brand-sub">LL to Permanent License</span>
+      </div>
+    </a>
+    <div class="nav-links">
+      <a class="nav-btn nav-btn-outline" href="dashboard.html">← Dashboard</a>
+    </div>
+  </nav>
+
+  <div class="page-wrapper">
+
+    <div class="page-header">
+      <div class="breadcrumb">
+        <a href="dashboard.html">Dashboard</a> › Deadline Alert
+      </div>
+      <h1>🔔 Deadline Alert</h1>
+      <p>Real-time status of your LL validity window</p>
+    </div>
+
+    <!-- Main Alert Card -->
+    <div id="mainAlertCard"></div>
+
+    <!-- Date Info Card -->
+    <div class="card">
+      <div class="card-title">📅 Key Dates</div>
+      <div class="info-grid" style="margin-bottom:0;">
+        <div class="info-tile">
+          <div class="info-tile-label">LL Issue Date</div>
+          <div class="info-tile-value" id="llIssueDate" style="font-size:16px; margin-top:4px;">—</div>
+          <div class="info-tile-sub">Day 0</div>
+        </div>
+        <div class="info-tile">
+          <div class="info-tile-label">Earliest Apply Date</div>
+          <div class="info-tile-value" id="earliestApplyDate" style="font-size:16px; margin-top:4px; color:var(--orange);">—</div>
+          <div class="info-tile-sub">Day 30</div>
+        </div>
+        <div class="info-tile">
+          <div class="info-tile-label">Last Date to Apply</div>
+          <div class="info-tile-value" id="lastApplyDate" style="font-size:16px; margin-top:4px; color:var(--red);">—</div>
+          <div class="info-tile-sub">Day 179</div>
+        </div>
+        <div class="info-tile">
+          <div class="info-tile-label">LL Expiry Date</div>
+          <div class="info-tile-value" id="expiryDate" style="font-size:16px; margin-top:4px; color:var(--red);">—</div>
+          <div class="info-tile-sub">Day 180</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Timeline Visual -->
+    <div class="card">
+      <div class="card-title">📊 LL Validity Timeline</div>
+      <div style="position:relative; height:60px; margin:10px 0 30px;">
+        <!-- Background bar -->
+        <div style="position:absolute; top:20px; left:0; right:0; height:16px; border-radius:8px; background:var(--grey-light);"></div>
+        <!-- Zones -->
+        <div style="position:absolute; top:20px; left:0; width:16.67%; height:16px; background:#FFF0E8; border-radius:8px 0 0 8px; border:1px solid var(--orange);"></div>
+        <div style="position:absolute; top:20px; left:16.67%; width:83.33%; height:16px; background:var(--green-bg); border:1px solid var(--green);"></div>
+        <!-- Today marker -->
+        <div id="todayMarker" style="position:absolute; top:14px; width:4px; height:28px; background:var(--navy); border-radius:2px; transform:translateX(-50%); transition:left 0.5s ease;">
+          <div style="position:absolute; top:-18px; left:50%; transform:translateX(-50%); font-size:10px; font-weight:700; color:var(--navy); white-space:nowrap;">TODAY</div>
+        </div>
+        <!-- Labels -->
+        <div style="position:absolute; bottom:-20px; left:0; font-size:10px; color:var(--grey-mid);">Day 0</div>
+        <div style="position:absolute; bottom:-20px; left:16.67%; transform:translateX(-50%); font-size:10px; color:var(--orange); font-weight:600;">Day 30</div>
+        <div style="position:absolute; bottom:-20px; right:0; font-size:10px; color:var(--red); font-weight:600;">Day 180</div>
+      </div>
+      <div style="display:flex; gap:16px; flex-wrap:wrap; margin-top:8px;">
+        <div style="display:flex; align-items:center; gap:6px; font-size:12px;">
+          <div style="width:14px; height:14px; background:#FFF0E8; border:1px solid var(--orange); border-radius:2px;"></div>
+          Waiting Period (Day 0–29)
+        </div>
+        <div style="display:flex; align-items:center; gap:6px; font-size:12px;">
+          <div style="width:14px; height:14px; background:var(--green-bg); border:1px solid var(--green); border-radius:2px;"></div>
+          Apply Window (Day 30–179)
+        </div>
+        <div style="display:flex; align-items:center; gap:6px; font-size:12px;">
+          <div style="width:4px; height:14px; background:var(--navy); border-radius:2px;"></div>
+          Your position today
+        </div>
+      </div>
+    </div>
+
+    <!-- Reapply Steps (shown only if expired) -->
+    <div class="card" id="reapplyCard" style="display:none; border-left:4px solid var(--expired);">
+      <div class="card-title">🔄 How to Re-apply for LL</div>
+      <div style="font-size:14px; color:var(--grey-dark); line-height:1.8;">
+        Since your LL has expired, you must start the process again from scratch:
+      </div>
+      <ol style="padding-left:20px; margin-top:12px; font-size:14px; line-height:2.2; color:var(--black);">
+        <li>Visit your nearest <strong>RTO office</strong> or go to <strong>parivahan.gov.in</strong></li>
+        <li>Fill <strong>Form 2</strong> — Application for Learner License</li>
+        <li>Carry Age Proof, Address Proof, and 2 Passport-size Photos</li>
+        <li>Pay the LL application fee (approx. ₹200)</li>
+        <li>Clear the <strong>Written Theory Test</strong> at RTO (traffic signs &amp; rules)</li>
+        <li>Collect your new LL — the 30-day waiting period starts fresh</li>
+      </ol>
+    </div>
+
+    <!-- Back Button -->
+    <div class="text-center mt-16">
+      <a class="btn btn-navy" href="dashboard.html">← Back to Dashboard</a>
+    </div>
+
+  </div>
+
+  <footer class="footer">
+    DL Journey Tracker &nbsp;|&nbsp; OOP Mini Project &nbsp;|&nbsp; Built with <span>♥</span> in C++ &amp; Web
+  </footer>
+
+  <script src="script.js"></script>
+  <script>
+    requireRegistration();
+
+    async function loadAlertPage() {
+      const user = getUser();
+      const data = await apiCalculate(user.llDate, user.vehicleType);
+
+      const cls    = data.alertLevel.toLowerCase();
+      const icons  = { green: '✅', yellow: '⚠️', red: '🚨', expired: '❌' };
+      const titles = {
+        green:   'SAFE ZONE — You have plenty of time',
+        yellow:  'WARNING — Apply soon',
+        red:     'CRITICAL — Apply immediately',
+        expired: 'LL EXPIRED — Must re-apply',
+      };
+
+      // Main alert card
+      document.getElementById('mainAlertCard').innerHTML = `
+        <div class="alert-card ${cls}" style="text-align:center;">
+          <div class="alert-card-title" style="font-size:26px;">${icons[cls]} ${titles[cls]}</div>
+          <div class="alert-days-big" style="font-size:72px;">${data.isExpired ? '0' : data.daysRemaining}</div>
+          <div style="font-size:16px; opacity:0.8; margin-bottom:4px;">days remaining</div>
+          <hr style="opacity:0.2; margin:16px 0;" />
+          <div style="font-size:15px; max-width:500px; margin:0 auto;">${data.alertMessage}</div>
+          <div style="margin-top:14px; font-size:13px; opacity:0.7;">
+            Days passed: ${data.daysPassed} &nbsp;|&nbsp;
+            Alert Level: <strong>${data.alertLevel}</strong>
+          </div>
+        </div>`;
+
+      // Key dates
+      document.getElementById('llIssueDate').textContent      = formatDate(user.llDate);
+      document.getElementById('earliestApplyDate').textContent = formatDate(addDays(user.llDate, 30));
+      document.getElementById('lastApplyDate').textContent     = formatDate(addDays(user.llDate, 179));
+      document.getElementById('expiryDate').textContent        = formatDate(addDays(user.llDate, 180));
+
+      // Timeline today marker
+      const pct = Math.min(Math.max((data.daysPassed / 180) * 100, 0), 100);
+      document.getElementById('todayMarker').style.left = pct + '%';
+
+      // Show reapply steps if expired
+      if (data.isExpired) {
+        document.getElementById('reapplyCard').style.display = 'block';
+      }
+    }
+
+    loadAlertPage();
+  </script>
+
+</body>
+</html>

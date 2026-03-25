@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DL Journey Tracker — Document Checklist</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <div class="top-bar">
+    Government of India &nbsp;|&nbsp; Ministry of Road Transport &amp; Highways &nbsp;|&nbsp; Citizen Services
+  </div>
+
+  <nav class="navbar">
+    <a class="navbar-brand" href="index.html">
+      <div class="brand-icon">🚗</div>
+      <div class="brand-text">
+        <span class="brand-title">DL Journey Tracker</span>
+        <span class="brand-sub">LL to Permanent License</span>
+      </div>
+    </a>
+    <div class="nav-links">
+      <a class="nav-btn nav-btn-outline" href="dashboard.html">← Dashboard</a>
+    </div>
+  </nav>
+
+  <div class="page-wrapper">
+
+    <div class="page-header">
+      <div class="breadcrumb">
+        <a href="dashboard.html">Dashboard</a> › Document Checklist
+      </div>
+      <h1>📋 Document Checklist</h1>
+      <p id="checklistSubtitle">Loading your personalised checklist...</p>
+    </div>
+
+    <!-- Progress Bar -->
+    <div class="card" style="padding:18px 24px;">
+      <div class="flex-between" style="margin-bottom:8px;">
+        <span style="font-size:13px; font-weight:600; color:var(--navy);">Documents Ready</span>
+        <span id="progressLabel" style="font-size:13px; font-weight:700; color:var(--orange);">0 / 0</span>
+      </div>
+      <div style="background:var(--grey-light); border-radius:99px; height:10px; overflow:hidden;">
+        <div id="progressBar" style="height:100%; background:var(--orange); border-radius:99px; width:0%; transition:width 0.4s ease;"></div>
+      </div>
+    </div>
+
+    <!-- Checklist Card -->
+    <div class="card">
+      <div class="card-title" id="checklistTitle">📄 Required Documents</div>
+      <div id="checklistContainer">
+        <div style="text-align:center; padding:20px; color:var(--grey-mid);">
+          <div class="spinner"></div>
+          <p style="margin-top:12px; font-size:13px;">Loading checklist...</p>
+        </div>
+      </div>
+
+      <hr class="divider" />
+      <div style="display:flex; gap:10px; flex-wrap:wrap;">
+        <button class="btn btn-outline btn-sm" onclick="resetChecklist()">↺ Reset All</button>
+        <button class="btn btn-primary btn-sm" onclick="checkAll()">✓ Mark All Ready</button>
+      </div>
+    </div>
+
+    <!-- Important Note -->
+    <div class="card" style="border-left: 4px solid var(--orange);">
+      <div class="card-title">⚠️ Important Notes</div>
+      <ul style="padding-left:18px; font-size:14px; line-height:2; color:var(--grey-dark);">
+        <li>Carry both <strong>originals and photocopies</strong> of all documents.</li>
+        <li>All photographs must be recent (taken within 3 months).</li>
+        <li>Form 9 is available at your RTO office or on <strong>mParivahan portal</strong>.</li>
+        <li>Fee amounts may vary slightly by state — confirm at your local RTO.</li>
+        <li>Arrive at RTO <strong>before 10:00 AM</strong> to avoid long queues.</li>
+      </ul>
+    </div>
+
+    <!-- Back Button -->
+    <div class="text-center mt-16">
+      <a class="btn btn-navy" href="dashboard.html">← Back to Dashboard</a>
+    </div>
+
+  </div>
+
+  <footer class="footer">
+    DL Journey Tracker &nbsp;|&nbsp; OOP Mini Project &nbsp;|&nbsp; Built with <span>♥</span> in C++ &amp; Web
+  </footer>
+
+  <script src="script.js"></script>
+  <script>
+    requireRegistration();
+
+    const CHECKED_KEY = 'dl_checklist_checked';
+    let totalItems = 0;
+
+    async function loadChecklist() {
+      const user = getUser();
+      const data = await apiChecklist(user.vehicleType, user.age);
+      const items = data.items;
+      totalItems = items.length;
+
+      // Subtitle
+      const vehicleNames = { '2W':'2 Wheeler', '4W':'4 Wheeler', 'Both':'Both (2W + 4W)', 'Commercial':'Commercial Vehicle' };
+      document.getElementById('checklistSubtitle').textContent =
+        `Personalised for: ${user.name} — ${vehicleNames[user.vehicleType] || user.vehicleType}`;
+      document.getElementById('checklistTitle').textContent =
+        `📄 Documents for ${vehicleNames[user.vehicleType]} (${items.length} items)`;
+
+      // Load saved checked state
+      const savedChecked = JSON.parse(localStorage.getItem(CHECKED_KEY) || '{}');
+
+      // Render
+      const container = document.getElementById('checklistContainer');
+      container.innerHTML = items.map((item, idx) => {
+        const isChecked = savedChecked[item.id] === true;
+        return `
+          <div class="checklist-item ${isChecked ? 'checked' : ''}" id="row-${item.id}">
+            <span class="checklist-num">${idx + 1}.</span>
+            <input type="checkbox" id="chk-${item.id}" ${isChecked ? 'checked' : ''}
+              onchange="toggleItem('${item.id}', this.checked)" />
+            <label for="chk-${item.id}">${item.text}</label>
+          </div>`;
+      }).join('');
+
+      updateProgress(savedChecked, items);
+    }
+
+    function toggleItem(id, checked) {
+      const saved = JSON.parse(localStorage.getItem(CHECKED_KEY) || '{}');
+      saved[id] = checked;
+      localStorage.setItem(CHECKED_KEY, JSON.stringify(saved));
+
+      const row = document.getElementById('row-' + id);
+      if (checked) row.classList.add('checked');
+      else row.classList.remove('checked');
+
+      const user = getUser();
+      apiChecklist(user.vehicleType, user.age).then(data => updateProgress(saved, data.items));
+    }
+
+    function updateProgress(savedChecked, items) {
+      const count = items.filter(i => savedChecked[i.id] === true).length;
+      const pct = items.length ? Math.round((count / items.length) * 100) : 0;
+      document.getElementById('progressLabel').textContent = `${count} / ${items.length}`;
+      document.getElementById('progressBar').style.width = pct + '%';
+      document.getElementById('progressBar').style.background =
+        pct === 100 ? 'var(--green)' : pct > 50 ? 'var(--orange)' : 'var(--orange)';
+    }
+
+    function resetChecklist() {
+      localStorage.removeItem(CHECKED_KEY);
+      loadChecklist();
+    }
+
+    function checkAll() {
+      const user = getUser();
+      apiChecklist(user.vehicleType, user.age).then(data => {
+        const allChecked = {};
+        data.items.forEach(i => allChecked[i.id] = true);
+        localStorage.setItem(CHECKED_KEY, JSON.stringify(allChecked));
+        loadChecklist();
+      });
+    }
+
+    loadChecklist();
+  </script>
+
+</body>
+</html>

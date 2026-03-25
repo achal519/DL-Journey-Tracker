@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DL Journey Tracker — RTO Test Guide</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <div class="top-bar">
+    Government of India &nbsp;|&nbsp; Ministry of Road Transport &amp; Highways &nbsp;|&nbsp; Citizen Services
+  </div>
+
+  <nav class="navbar">
+    <a class="navbar-brand" href="index.html">
+      <div class="brand-icon">🚗</div>
+      <div class="brand-text">
+        <span class="brand-title">DL Journey Tracker</span>
+        <span class="brand-sub">LL to Permanent License</span>
+      </div>
+    </a>
+    <div class="nav-links">
+      <a class="nav-btn nav-btn-outline" href="dashboard.html">← Dashboard</a>
+    </div>
+  </nav>
+
+  <div class="page-wrapper">
+
+    <div class="page-header">
+      <div class="breadcrumb">
+        <a href="dashboard.html">Dashboard</a> › RTO Test Guide
+      </div>
+      <h1>🏛️ RTO Test Preparation Guide</h1>
+      <p id="guideSubtitle">Loading your personalised test guide...</p>
+    </div>
+
+    <!-- What to Bring Card -->
+    <div class="card" style="border-left:4px solid var(--orange);">
+      <div class="card-title">🎒 What to Bring on Test Day</div>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:10px;">
+        <div style="display:flex; align-items:center; gap:8px; font-size:14px; padding:8px; background:var(--orange-pale); border-radius:var(--radius);">
+          📄 Original LL + 2 Photocopies
+        </div>
+        <div style="display:flex; align-items:center; gap:8px; font-size:14px; padding:8px; background:var(--orange-pale); border-radius:var(--radius);">
+          🪪 Original Aadhaar Card
+        </div>
+        <div style="display:flex; align-items:center; gap:8px; font-size:14px; padding:8px; background:var(--orange-pale); border-radius:var(--radius);">
+          📸 2 Passport-size Photos
+        </div>
+        <div style="display:flex; align-items:center; gap:8px; font-size:14px; padding:8px; background:var(--orange-pale); border-radius:var(--radius);">
+          📋 Filled Form 9
+        </div>
+        <div style="display:flex; align-items:center; gap:8px; font-size:14px; padding:8px; background:var(--orange-pale); border-radius:var(--radius);">
+          💵 Test Fee (cash)
+        </div>
+        <div style="display:flex; align-items:center; gap:8px; font-size:14px; padding:8px; background:var(--orange-pale); border-radius:var(--radius);">
+          ⏰ Arrive before 10:00 AM
+        </div>
+      </div>
+    </div>
+
+    <!-- Tips Card -->
+    <div class="card">
+      <div class="card-title" id="tipsTitle">✅ Preparation Tips</div>
+      <div id="tipsContainer">
+        <div style="text-align:center; padding:20px; color:var(--grey-mid);">
+          <div class="spinner"></div>
+          <p style="margin-top:12px; font-size:13px;">Loading tips...</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Fail Reasons Card -->
+    <div class="card">
+      <div class="card-title">❌ Common Reasons People Fail</div>
+      <div id="failContainer"></div>
+    </div>
+
+    <!-- Traffic Signs Quiz -->
+    <div class="card">
+      <div class="card-title">🚦 Traffic Signs — Practice Questions</div>
+      <p style="font-size:13px; color:var(--grey-dark); margin-bottom:16px;">
+        Tap on any question to reveal the answer.
+      </p>
+      <div id="signsContainer"></div>
+    </div>
+
+    <!-- Back Button -->
+    <div class="text-center mt-16">
+      <a class="btn btn-navy" href="dashboard.html">← Back to Dashboard</a>
+    </div>
+
+  </div>
+
+  <footer class="footer">
+    DL Journey Tracker &nbsp;|&nbsp; OOP Mini Project &nbsp;|&nbsp; Built with <span>♥</span> in C++ &amp; Web
+  </footer>
+
+  <script src="script.js"></script>
+  <script>
+    requireRegistration();
+
+    async function loadTestGuide() {
+      const user = getUser();
+      const vehicleNames = { '2W':'2 Wheeler', '4W':'4 Wheeler', 'Both':'Both (2W + 4W)', 'Commercial':'Commercial Vehicle' };
+
+      document.getElementById('guideSubtitle').textContent =
+        `Personalised for: ${user.name} — ${vehicleNames[user.vehicleType] || user.vehicleType}`;
+      document.getElementById('tipsTitle').textContent =
+        `✅ Tips for ${vehicleNames[user.vehicleType]} Test`;
+
+      const data = await apiTestGuide(user.vehicleType);
+
+      // Tips
+      document.getElementById('tipsContainer').innerHTML = data.tips.map(tip => `
+        <div class="tip-item">
+          <div class="tip-icon">${tip.icon}</div>
+          <div class="tip-text">${tip.text}</div>
+        </div>`).join('');
+
+      // Fail reasons
+      document.getElementById('failContainer').innerHTML = data.failReasons.map(reason => `
+        <div class="warning-item">
+          <div class="tip-icon">⚠️</div>
+          <div class="tip-text">${reason}</div>
+        </div>`).join('');
+
+      // Traffic signs quiz
+      document.getElementById('signsContainer').innerHTML = data.signs.map((s, i) => `
+        <div style="border:1.5px solid var(--grey-light); border-radius:var(--radius); margin-bottom:10px; overflow:hidden;">
+          <div onclick="toggleAnswer(${i})"
+               style="padding:12px 16px; cursor:pointer; font-size:14px; font-weight:600;
+                      display:flex; justify-content:space-between; align-items:center;
+                      background:var(--white); user-select:none;">
+            <span>Q${i+1}. ${s.q}</span>
+            <span id="arrow-${i}" style="color:var(--orange); font-size:18px; transition:transform 0.2s;">▼</span>
+          </div>
+          <div id="ans-${i}" style="display:none; padding:12px 16px; background:var(--green-bg);
+               font-size:14px; color:var(--green); font-weight:600; border-top:1px solid var(--grey-light);">
+            ✅ ${s.a}
+          </div>
+        </div>`).join('');
+    }
+
+    function toggleAnswer(i) {
+      const ans   = document.getElementById('ans-' + i);
+      const arrow = document.getElementById('arrow-' + i);
+      const open  = ans.style.display === 'block';
+      ans.style.display   = open ? 'none' : 'block';
+      arrow.style.transform = open ? 'rotate(0deg)' : 'rotate(180deg)';
+    }
+
+    loadTestGuide();
+  </script>
+
+</body>
+</html>
