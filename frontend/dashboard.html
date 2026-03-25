@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DL Journey Tracker — Dashboard</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- Top Bar -->
+  <div class="top-bar">
+    Government of India &nbsp;|&nbsp; Ministry of Road Transport &amp; Highways &nbsp;|&nbsp; Citizen Services
+  </div>
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <a class="navbar-brand" href="index.html">
+      <div class="brand-icon">🚗</div>
+      <div class="brand-text">
+        <span class="brand-title">DL Journey Tracker</span>
+        <span class="brand-sub">LL to Permanent License</span>
+      </div>
+    </a>
+    <div class="nav-links">
+      <a class="nav-btn nav-btn-outline" href="index.html">✏️ Edit Details</a>
+    </div>
+  </nav>
+
+  <!-- Page Content -->
+  <div class="page-wrapper-wide">
+
+    <!-- Welcome Row -->
+    <div class="flex-between mb-24" style="flex-wrap:wrap; gap:12px;">
+      <div>
+        <div style="font-size:13px; color:var(--grey-mid);">Welcome back,</div>
+        <h1 id="welcomeName" style="font-family:var(--font-display); font-size:26px; font-weight:700; color:var(--navy);"></h1>
+        <div id="vehicleTag" style="margin-top:4px;"></div>
+      </div>
+      <div id="alertBadgeTop"></div>
+    </div>
+
+    <!-- Info Tiles Row -->
+    <div class="info-grid" id="infoGrid">
+      <div class="info-tile">
+        <div class="info-tile-label">Days Since LL</div>
+        <div class="info-tile-value orange" id="daysPassed">—</div>
+        <div class="info-tile-sub">days passed</div>
+      </div>
+      <div class="info-tile">
+        <div class="info-tile-label">Days Remaining</div>
+        <div class="info-tile-value" id="daysRemaining" style="color:var(--green)">—</div>
+        <div class="info-tile-sub">in apply window</div>
+      </div>
+      <div class="info-tile">
+        <div class="info-tile-label">LL Issue Date</div>
+        <div class="info-tile-value" id="llIssueDateTile" style="font-size:16px; margin-top:4px;">—</div>
+        <div class="info-tile-sub" id="llExpiryTile">Expires: —</div>
+      </div>
+      <div class="info-tile">
+        <div class="info-tile-label">LL Number</div>
+        <div class="info-tile-value" id="llNumberTile" style="font-size:15px; letter-spacing:1px; margin-top:4px;">—</div>
+        <div class="info-tile-sub" id="cityTile">—</div>
+      </div>
+    </div>
+
+    <!-- Stage Tracker Card -->
+    <div class="card">
+      <div class="card-title">🗺️ Your DL Journey — Stage Tracker</div>
+      <div id="stageTrackerContainer"></div>
+      <div id="stageMessage" style="margin-top:16px; padding:12px 16px; background:var(--orange-pale); border-radius:var(--radius); font-size:14px; color:var(--navy);"></div>
+
+      <!-- Manual Stage Buttons -->
+      <div id="manualStageActions" style="margin-top:16px; display:none;">
+        <hr class="divider" style="margin:12px 0;" />
+        <div style="font-size:13px; color:var(--grey-dark); margin-bottom:10px;">Update your progress manually:</div>
+        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+          <button class="btn btn-outline btn-sm" id="btnMarkTestCleared" onclick="markStage(4)">
+            ✅ Mark Test Cleared (Stage 4)
+          </button>
+          <button class="btn btn-success btn-sm" id="btnMarkDLReceived" onclick="markDLReceived()">
+            🎉 Mark DL Received (Stage 5)
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Alert Status Card -->
+    <div id="alertCardContainer"></div>
+
+    <!-- DL Completion Card (shown only at stage 5) -->
+    <div class="card" id="dlCompletionCard" style="display:none;">
+      <div class="card-title">🎉 Permanent DL Details</div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label" for="dlNumber">DL Number <span>*</span></label>
+          <input class="form-control" type="text" id="dlNumber" placeholder="e.g. MH1520260012345" />
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="dlDate">DL Issue Date <span>*</span></label>
+          <input class="form-control" type="date" id="dlDate" />
+        </div>
+      </div>
+      <button class="btn btn-primary" onclick="saveDLDetails()">Save DL Details</button>
+      <div id="dlSummary" style="display:none; margin-top:16px; padding:14px; background:var(--green-bg); border-radius:var(--radius);">
+        <div style="font-size:14px; color:var(--green); font-weight:600;">✅ Permanent DL Saved!</div>
+        <div id="dlSummaryText" style="font-size:13px; color:var(--grey-dark); margin-top:6px;"></div>
+      </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="card">
+      <div class="card-title">⚡ Quick Actions</div>
+      <div class="action-grid">
+        <a class="action-card" href="checklist.html">
+          <div class="action-card-icon">📋</div>
+          <div class="action-card-label">Document Checklist</div>
+        </a>
+        <a class="action-card" href="alert.html">
+          <div class="action-card-icon">🔔</div>
+          <div class="action-card-label">Deadline Alerts</div>
+        </a>
+        <a class="action-card" href="testguide.html">
+          <div class="action-card-icon">🏛️</div>
+          <div class="action-card-label">RTO Test Guide</div>
+        </a>
+        <a class="action-card" href="index.html">
+          <div class="action-card-icon">✏️</div>
+          <div class="action-card-label">Edit My Details</div>
+        </a>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    DL Journey Tracker &nbsp;|&nbsp; OOP Mini Project &nbsp;|&nbsp; Built with <span>♥</span> in C++ &amp; Web
+  </footer>
+
+  <script src="script.js"></script>
+  <script>
+    requireRegistration();
+
+    async function loadDashboard() {
+      const user = getUser();
+
+      // Welcome
+      document.getElementById('welcomeName').textContent = user.name;
+      document.getElementById('vehicleTag').innerHTML =
+        `<span class="tag">🚗 ${user.vehicleType} &nbsp;|&nbsp; ${user.city}</span>`;
+
+      // API call (local JS or Flask)
+      const data = await apiCalculate(user.llDate, user.vehicleType);
+
+      // Info tiles
+      document.getElementById('daysPassed').textContent    = data.daysPassed;
+      const remEl = document.getElementById('daysRemaining');
+      remEl.textContent = data.isExpired ? 'Expired' : data.daysRemaining;
+      remEl.style.color = data.isExpired ? 'var(--red)' :
+                          data.daysRemaining <= 10 ? 'var(--red)' :
+                          data.daysRemaining <= 30 ? 'var(--yellow)' : 'var(--green)';
+
+      document.getElementById('llIssueDateTile').textContent = formatDate(user.llDate);
+      document.getElementById('llExpiryTile').textContent    = 'Expires: ' + formatDate(addDays(user.llDate, 180));
+      document.getElementById('llNumberTile').textContent    = user.llNumber;
+      document.getElementById('cityTile').textContent        = user.city;
+
+      // Stage tracker
+      const stage = data.currentStage;
+      renderStageTracker('stageTrackerContainer', stage);
+
+      // Stage message
+      const messages = [
+        '',
+        '📄 Stage 1 — Your Learner License has been obtained. The 30-day waiting period has begun.',
+        '⏳ Stage 2 — You are in the mandatory waiting period. You cannot apply for DL yet. Days left to wait: ' + data.waitRemaining,
+        '🏛️ Stage 3 — You are in the apply window! Visit your nearest RTO to take the driving test and get your Permanent DL.',
+        '✅ Stage 4 — Driving test cleared! Submit your documents at RTO to receive your Permanent DL.',
+        '🎉 Stage 5 — Congratulations! Your Permanent DL has been issued.',
+      ];
+      document.getElementById('stageMessage').textContent = messages[stage] || '';
+
+      // Manual stage buttons — show only if in stage 3 or 4
+      const manualDiv = document.getElementById('manualStageActions');
+      if (stage >= 3 && stage < 5) {
+        manualDiv.style.display = 'block';
+        document.getElementById('btnMarkTestCleared').style.display = stage === 3 ? 'inline-flex' : 'none';
+        document.getElementById('btnMarkDLReceived').style.display  = stage >= 3 ? 'inline-flex' : 'none';
+      }
+
+      // Alert badge (top right)
+      renderAlertBadge('alertBadgeTop', data.alertLevel);
+
+      // Alert card
+      renderAlertCard(data);
+
+      // DL completion card
+      if (stage === 5) {
+        document.getElementById('dlCompletionCard').style.display = 'block';
+        const dlNum  = user.dlNumber;
+        const dlDate = user.dlDate;
+        if (dlNum && dlDate) {
+          document.getElementById('dlSummary').style.display = 'block';
+          document.getElementById('dlSummaryText').innerHTML =
+            `DL Number: <strong>${dlNum}</strong> &nbsp;|&nbsp; Issued: <strong>${formatDate(dlDate)}</strong> &nbsp;|&nbsp; Valid till: <strong>${formatDate(addDays(dlDate, 365*20))}</strong>`;
+        }
+      }
+    }
+
+    function renderAlertCard(data) {
+      const cls = data.alertLevel.toLowerCase();
+      const icons = { green: '✅', yellow: '⚠️', red: '🚨', expired: '❌' };
+      const titles = {
+        green:   'SAFE ZONE — You have time',
+        yellow:  'WARNING — Apply Soon',
+        red:     'CRITICAL — Apply Immediately',
+        expired: 'LL EXPIRED — Re-apply Required',
+      };
+      const container = document.getElementById('alertCardContainer');
+      container.innerHTML = `
+        <div class="alert-card ${cls}">
+          <div class="alert-card-title">${icons[cls]} ${titles[cls]}</div>
+          <div style="font-size:13px; opacity:0.8; margin-bottom:6px;">Days remaining in apply window</div>
+          <div class="alert-days-big">${data.isExpired ? '0' : data.daysRemaining}</div>
+          <div style="font-size:14px; margin-top:10px;">${data.alertMessage}</div>
+          <div style="margin-top:14px;">
+            <a href="alert.html" class="btn btn-sm" style="background:rgba(0,0,0,0.1); color:inherit; border:1.5px solid currentColor;">
+              View Full Alert Details →
+            </a>
+          </div>
+        </div>`;
+    }
+
+    function markStage(stageNum) {
+      localStorage.setItem(KEYS.STAGE, stageNum);
+      loadDashboard();
+    }
+
+    function markDLReceived() {
+      localStorage.setItem(KEYS.DL_OBTAINED, 'true');
+      localStorage.setItem(KEYS.STAGE, '5');
+      loadDashboard();
+    }
+
+    function saveDLDetails() {
+      const dlNumber = document.getElementById('dlNumber').value.trim();
+      const dlDate   = document.getElementById('dlDate').value;
+      if (!dlNumber || !dlDate) { alert('Please enter DL Number and Issue Date.'); return; }
+      localStorage.setItem(KEYS.DL_NUMBER, dlNumber);
+      localStorage.setItem(KEYS.DL_DATE,   dlDate);
+      loadDashboard();
+    }
+
+    // Load on page ready
+    loadDashboard();
+  </script>
+
+</body>
+</html>
