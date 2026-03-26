@@ -1,12 +1,9 @@
 /* ============================================
    DL JOURNEY TRACKER — Core JavaScript
-   Flask-ready structure: all API calls are
-   wrapped in functions. Toggle USE_FLASK to
-   switch between localStorage-only and Flask.
+   Node.js + MySQL integrated version
    ============================================ */
 
-const USE_FLASK = false;              // Set true when Flask backend is ready
-const FLASK_BASE = 'http://localhost:5000';
+const API_BASE = '';   // Same origin — server.js serves frontend too
 
 /* ─── localStorage Keys ─────────────────────── */
 const KEYS = {
@@ -47,7 +44,7 @@ function isRegistered() {
 }
 
 /* ─── Core Date / Stage Calculations ───────────
-   These mirror Member 1's C++ logic exactly:
+   These mirror the C++ logic exactly:
    DeadlineCalculator + StageTracker + AlertSystem
    ─────────────────────────────────────────────── */
 
@@ -82,8 +79,8 @@ function canApply(daysPassed)        { return daysPassed >= 30 && daysPassed < 1
 function getCurrentStage(daysPassed, dlObtained) {
   if (dlObtained)              return 5;
   const saved = parseInt(localStorage.getItem(KEYS.STAGE)) || 1;
-  if (saved === 4)             return 4;  // user already marked test cleared
-  if (isExpired(daysPassed))   return 3;  // stuck at apply window (expired)
+  if (saved === 4)             return 4;
+  if (isExpired(daysPassed))   return 3;
   if (canApply(daysPassed))    return 3;
   if (isInWaitPeriod(daysPassed)) return 2;
   return 1;
@@ -114,7 +111,7 @@ function getAlertMessage(alertLevel, daysRemaining, daysPassed) {
 }
 
 /* ─── DocumentChecklist Engine ─────────────────
-   Mirrors Member 1's DocumentChecklist class
+   Mirrors the C++ DocumentChecklist class
    ─────────────────────────────────────────────── */
 const CHECKLISTS = {
   '2W': [
@@ -162,7 +159,6 @@ const CHECKLISTS = {
 
 function getChecklist(vehicleType, age) {
   let items = [...(CHECKLISTS[vehicleType] || CHECKLISTS['2W'])];
-  // Remove medical cert for 4W if age <= 40
   if (vehicleType === '4W' && age <= 40) {
     items = items.filter(i => i.id !== 'c8');
   }
@@ -170,7 +166,7 @@ function getChecklist(vehicleType, age) {
 }
 
 /* ─── TestGuide Engine ──────────────────────────
-   Mirrors Member 1's TestGuide class
+   Mirrors the C++ TestGuide class
    ─────────────────────────────────────────────── */
 const TEST_TIPS = {
   '2W': [
@@ -253,69 +249,40 @@ function addDays(dateStr, days) {
   return d.toISOString().split('T')[0];
 }
 
-/* ─── Flask-ready API wrapper ───────────────────
-   When USE_FLASK = true, these functions call
-   Flask instead of computing locally.
+/* ─── API wrapper (Node.js version) ─────────────
+   All calculations still done in JS (mirrors C++)
+   DB is used for persistence only
    ─────────────────────────────────────────────── */
 
 async function apiCalculate(llDate, vehicleType) {
-  if (!USE_FLASK) {
-    // Local JS calculation (current mode)
-    const daysPassed    = calculateDaysPassed(llDate);
-    const daysRemaining = getDaysRemaining(daysPassed);
-    const user          = getUser();
-    const alertLevel    = getAlertLevel(daysPassed);
-    const stage         = getCurrentStage(daysPassed, user.dlObtained);
-    return {
-      daysPassed,
-      daysRemaining,
-      waitRemaining: getWaitRemaining(daysPassed),
-      alertLevel,
-      alertMessage: getAlertMessage(alertLevel, daysRemaining, daysPassed),
-      currentStage: stage,
-      isExpired:    isExpired(daysPassed),
-      canApply:     canApply(daysPassed),
-      isInWait:     isInWaitPeriod(daysPassed),
-    };
-  } else {
-    // Flask mode
-    const res = await fetch(`${FLASK_BASE}/api/calculate`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ llDate, vehicleType }),
-    });
-    return await res.json();
-  }
+  const daysPassed    = calculateDaysPassed(llDate);
+  const daysRemaining = getDaysRemaining(daysPassed);
+  const user          = getUser();
+  const alertLevel    = getAlertLevel(daysPassed);
+  const stage         = getCurrentStage(daysPassed, user.dlObtained);
+  return {
+    daysPassed,
+    daysRemaining,
+    waitRemaining: getWaitRemaining(daysPassed),
+    alertLevel,
+    alertMessage: getAlertMessage(alertLevel, daysRemaining, daysPassed),
+    currentStage: stage,
+    isExpired:    isExpired(daysPassed),
+    canApply:     canApply(daysPassed),
+    isInWait:     isInWaitPeriod(daysPassed),
+  };
 }
 
 async function apiChecklist(vehicleType, age) {
-  if (!USE_FLASK) {
-    return { items: getChecklist(vehicleType, age) };
-  } else {
-    const res = await fetch(`${FLASK_BASE}/api/checklist`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ vehicleType, age }),
-    });
-    return await res.json();
-  }
+  return { items: getChecklist(vehicleType, age) };
 }
 
 async function apiTestGuide(vehicleType) {
-  if (!USE_FLASK) {
-    return {
-      tips:       TEST_TIPS[vehicleType]     || TEST_TIPS['2W'],
-      failReasons: FAIL_REASONS[vehicleType] || FAIL_REASONS['2W'],
-      signs:      TRAFFIC_SIGNS,
-    };
-  } else {
-    const res = await fetch(`${FLASK_BASE}/api/testguide`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ vehicleType }),
-    });
-    return await res.json();
-  }
+  return {
+    tips:        TEST_TIPS[vehicleType]     || TEST_TIPS['2W'],
+    failReasons: FAIL_REASONS[vehicleType] || FAIL_REASONS['2W'],
+    signs:       TRAFFIC_SIGNS,
+  };
 }
 
 /* ─── Stage label helpers ───────────────────── */
@@ -369,3 +336,29 @@ function requireRegistration() {
     window.location.href = 'index.html';
   }
 }
+// 🔥 STEP 3: Fetch stage from backend (C++)
+async function fetchStageFromBackend() {
+  try {
+    const res = await fetch('/api/cpp/stage/1'); // test with id=1
+    const data = await res.json();
+
+    console.log("Backend Data:", data);
+
+    // Update UI
+    const stageElement = document.getElementById('stage');
+    if (stageElement) {
+      stageElement.innerText = data.stage;
+    }
+
+    const daysElement = document.getElementById('days');
+    if (daysElement) {
+      daysElement.innerText = "Days Passed: " + data.days_passed;
+    }
+
+  } catch (err) {
+    console.error("Error fetching stage:", err);
+  }
+}
+document.addEventListener("DOMContentLoaded", () => {
+  fetchStageFromBackend();
+});

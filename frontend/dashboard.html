@@ -140,121 +140,131 @@
 
   <script src="script.js"></script>
   <script>
-    requireRegistration();
+requireRegistration();
 
-    async function loadDashboard() {
-      const user = getUser();
+async function loadDashboard() {
+  const citizenId = localStorage.getItem('citizen_id');
+  let user = getUser();
 
-      // Welcome
-      document.getElementById('welcomeName').textContent = user.name;
-      document.getElementById('vehicleTag').innerHTML =
-        `<span class="tag">🚗 ${user.vehicleType} &nbsp;|&nbsp; ${user.city}</span>`;
-
-      // API call (local JS or Flask)
-      const data = await apiCalculate(user.llDate, user.vehicleType);
-
-      // Info tiles
-      document.getElementById('daysPassed').textContent    = data.daysPassed;
-      const remEl = document.getElementById('daysRemaining');
-      remEl.textContent = data.isExpired ? 'Expired' : data.daysRemaining;
-      remEl.style.color = data.isExpired ? 'var(--red)' :
-                          data.daysRemaining <= 10 ? 'var(--red)' :
-                          data.daysRemaining <= 30 ? 'var(--yellow)' : 'var(--green)';
-
-      document.getElementById('llIssueDateTile').textContent = formatDate(user.llDate);
-      document.getElementById('llExpiryTile').textContent    = 'Expires: ' + formatDate(addDays(user.llDate, 180));
-      document.getElementById('llNumberTile').textContent    = user.llNumber;
-      document.getElementById('cityTile').textContent        = user.city;
-
-      // Stage tracker
-      const stage = data.currentStage;
-      renderStageTracker('stageTrackerContainer', stage);
-
-      // Stage message
-      const messages = [
-        '',
-        '📄 Stage 1 — Your Learner License has been obtained. The 30-day waiting period has begun.',
-        '⏳ Stage 2 — You are in the mandatory waiting period. You cannot apply for DL yet. Days left to wait: ' + data.waitRemaining,
-        '🏛️ Stage 3 — You are in the apply window! Visit your nearest RTO to take the driving test and get your Permanent DL.',
-        '✅ Stage 4 — Driving test cleared! Submit your documents at RTO to receive your Permanent DL.',
-        '🎉 Stage 5 — Congratulations! Your Permanent DL has been issued.',
-      ];
-      document.getElementById('stageMessage').textContent = messages[stage] || '';
-
-      // Manual stage buttons — show only if in stage 3 or 4
-      const manualDiv = document.getElementById('manualStageActions');
-      if (stage >= 3 && stage < 5) {
-        manualDiv.style.display = 'block';
-        document.getElementById('btnMarkTestCleared').style.display = stage === 3 ? 'inline-flex' : 'none';
-        document.getElementById('btnMarkDLReceived').style.display  = stage >= 3 ? 'inline-flex' : 'none';
-      }
-
-      // Alert badge (top right)
-      renderAlertBadge('alertBadgeTop', data.alertLevel);
-
-      // Alert card
-      renderAlertCard(data);
-
-      // DL completion card
-      if (stage === 5) {
-        document.getElementById('dlCompletionCard').style.display = 'block';
-        const dlNum  = user.dlNumber;
-        const dlDate = user.dlDate;
-        if (dlNum && dlDate) {
-          document.getElementById('dlSummary').style.display = 'block';
-          document.getElementById('dlSummaryText').innerHTML =
-            `DL Number: <strong>${dlNum}</strong> &nbsp;|&nbsp; Issued: <strong>${formatDate(dlDate)}</strong> &nbsp;|&nbsp; Valid till: <strong>${formatDate(addDays(dlDate, 365*20))}</strong>`;
+  // Fetch latest data from DB (optional)
+  if (citizenId) {
+    try {
+      const res = await fetch(`/api/citizen/stage/${citizenId}`);
+      if (res.ok) {
+        const dbData = await res.json();
+        if (dbData) {
+          if (dbData.ll_issue_date) {
+            const llDate = dbData.ll_issue_date.split('T')[0];
+            localStorage.setItem(KEYS.LL_DATE, llDate);
+          }
+          if (dbData.name) localStorage.setItem(KEYS.NAME, dbData.name);
+          user = getUser();
         }
       }
+    } catch (e) {
+      console.log('DB fetch failed:', e);
     }
+  }
 
-    function renderAlertCard(data) {
-      const cls = data.alertLevel.toLowerCase();
-      const icons = { green: '✅', yellow: '⚠️', red: '🚨', expired: '❌' };
-      const titles = {
-        green:   'SAFE ZONE — You have time',
-        yellow:  'WARNING — Apply Soon',
-        red:     'CRITICAL — Apply Immediately',
-        expired: 'LL EXPIRED — Re-apply Required',
-      };
-      const container = document.getElementById('alertCardContainer');
-      container.innerHTML = `
-        <div class="alert-card ${cls}">
-          <div class="alert-card-title">${icons[cls]} ${titles[cls]}</div>
-          <div style="font-size:13px; opacity:0.8; margin-bottom:6px;">Days remaining in apply window</div>
-          <div class="alert-days-big">${data.isExpired ? '0' : data.daysRemaining}</div>
-          <div style="font-size:14px; margin-top:10px;">${data.alertMessage}</div>
-          <div style="margin-top:14px;">
-            <a href="alert.html" class="btn btn-sm" style="background:rgba(0,0,0,0.1); color:inherit; border:1.5px solid currentColor;">
-              View Full Alert Details →
-            </a>
-          </div>
-        </div>`;
-    }
+  // Welcome UI
+  document.getElementById('welcomeName').textContent = user.name;
+  document.getElementById('vehicleTag').innerHTML =
+    `<span class="tag">🚗 ${user.vehicleType} | ${user.city}</span>`;
 
-    function markStage(stageNum) {
-      localStorage.setItem(KEYS.STAGE, stageNum);
-      loadDashboard();
-    }
+  // 🔥 FETCH FROM C++ BACKEND
+  let data = {
+    daysPassed: 0,
+    daysRemaining: 0,
+    waitRemaining: 0,
+    alertLevel: 'GREEN',
+    alertMessage: '',
+    currentStage: 1,
+    isExpired: false,
+    canApply: false,
+    isInWait: true
+  };
 
-    function markDLReceived() {
-      localStorage.setItem(KEYS.DL_OBTAINED, 'true');
-      localStorage.setItem(KEYS.STAGE, '5');
-      loadDashboard();
-    }
+  try {
+    const res = await fetch('/api/cpp/stage/1');
+    const backendData = await res.json();
 
-    function saveDLDetails() {
-      const dlNumber = document.getElementById('dlNumber').value.trim();
-      const dlDate   = document.getElementById('dlDate').value;
-      if (!dlNumber || !dlDate) { alert('Please enter DL Number and Issue Date.'); return; }
-      localStorage.setItem(KEYS.DL_NUMBER, dlNumber);
-      localStorage.setItem(KEYS.DL_DATE,   dlDate);
-      loadDashboard();
-    }
+    console.log("C++ Data:", backendData);
 
-    // Load on page ready
-    loadDashboard();
+    const daysPassed = backendData.days_passed || 0;
+
+    data = {
+      daysPassed: daysPassed,
+      daysRemaining: Math.max(0, 180 - daysPassed),
+      waitRemaining: Math.max(0, 30 - daysPassed),
+      alertLevel: daysPassed >= 180 ? 'EXPIRED' :
+                  (180 - daysPassed <= 10 ? 'RED' :
+                  (180 - daysPassed <= 30 ? 'YELLOW' : 'GREEN')),
+      alertMessage: backendData.stage,
+      currentStage: backendData.stage === "DL Received" ? 5 :
+                    backendData.stage === "Ready for DL Test" ? 3 :
+                    backendData.stage === "Waiting Period" ? 2 : 1,
+      isExpired: daysPassed >= 180,
+      canApply: daysPassed >= 30,
+      isInWait: daysPassed < 30
+    };
+
+  } catch (err) {
+    console.error("Backend error:", err);
+  }
+
+  // Info Tiles
+  document.getElementById('daysPassed').textContent = data.daysPassed;
+
+  const remEl = document.getElementById('daysRemaining');
+  remEl.textContent = data.isExpired ? 'Expired' : data.daysRemaining;
+  remEl.style.color = data.isExpired ? 'var(--red)' :
+                      data.daysRemaining <= 10 ? 'var(--red)' :
+                      data.daysRemaining <= 30 ? 'var(--yellow)' : 'var(--green)';
+
+  document.getElementById('llIssueDateTile').textContent = formatDate(user.llDate);
+  document.getElementById('llExpiryTile').textContent    = 'Expires: ' + formatDate(addDays(user.llDate, 180));
+  document.getElementById('llNumberTile').textContent    = user.llNumber;
+  document.getElementById('cityTile').textContent        = user.city;
+
+  // Stage Tracker
+  const stage = data.currentStage;
+  renderStageTracker('stageTrackerContainer', stage);
+
+  const messages = [
+    '',
+    '📄 LL obtained. Waiting period started.',
+    '⏳ Waiting period ongoing.',
+    '🏛️ You can apply for DL now.',
+    '✅ Test cleared.',
+    '🎉 DL issued successfully!'
+  ];
+
+  document.getElementById('stageMessage').textContent = messages[stage] || '';
+
+  // Manual buttons
+  const manualDiv = document.getElementById('manualStageActions');
+  if (stage >= 3 && stage < 5) {
+    manualDiv.style.display = 'block';
+    document.getElementById('btnMarkTestCleared').style.display = stage === 3 ? 'inline-flex' : 'none';
+    document.getElementById('btnMarkDLReceived').style.display  = 'inline-flex';
+  }
+
+  renderAlertBadge('alertBadgeTop', data.alertLevel);
+  // renderAlertCard(data);
+}
+
+// Load
+loadDashboard();
   </script>
+function renderAlertCard(data) {
+  const container = document.getElementById('alertCardContainer');
+  if (!container) return;
 
+  container.innerHTML = `
+    <div style="padding:15px; background:#f5f5f5; border-radius:8px;">
+      <strong>Alert:</strong> ${data.alertMessage}
+    </div>
+  `;
+}
 </body>
 </html>

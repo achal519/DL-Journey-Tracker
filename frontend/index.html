@@ -95,7 +95,7 @@
       </button>
 
       <p class="text-center text-grey mt-8" style="font-size:12px;">
-        Your data is saved locally on your device only.
+        Your data is saved securely in the database.
       </p>
 
     </div>
@@ -128,10 +128,10 @@
 
   <script src="script.js"></script>
   <script>
-    // Set max date as today (can't issue LL in future)
+    // Set max date as today
     document.getElementById('llDate').max = new Date().toISOString().split('T')[0];
 
-    function handleSubmit() {
+    async function handleSubmit() {
       const name        = document.getElementById('name').value.trim();
       const age         = document.getElementById('age').value.trim();
       const city        = document.getElementById('city').value.trim();
@@ -160,26 +160,86 @@
 
       errEl.style.display = 'none';
 
-      // Save to localStorage
-      saveUser({
-        [KEYS.NAME]:      name,
-        [KEYS.AGE]:       age,
-        [KEYS.CITY]:      city,
-        [KEYS.VEHICLE]:   vehicleType,
-        [KEYS.LL_NUMBER]: llNumber,
-        [KEYS.LL_DATE]:   llDate,
-        [KEYS.STAGE]:     '1',
-        [KEYS.DL_OBTAINED]: 'false',
-      });
+      // Map vehicle type to DB format
+      const vehicleMap = {
+        '2W': 'two_wheeler',
+        '4W': 'four_wheeler',
+        'Both': 'both',
+        'Commercial': 'two_wheeler'
+      };
 
-      // Button feedback
       const btn = document.getElementById('submitBtn');
       btn.textContent = 'Saving...';
       btn.disabled = true;
 
-      setTimeout(() => {
+      try {
+        // Generate unique email from name + timestamp
+        const email    = name.toLowerCase().replace(/\s/g, '') + '_' + Date.now() + '@dltracker.com';
+        const password = llNumber; // LL number as default password
+
+        // Register citizen in DB
+        const res = await fetch('/api/citizen/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name,
+            dob: llDate,
+            vehicle_type: vehicleMap[vehicleType] || 'two_wheeler',
+            email,
+            password
+          })
+        });
+
+        const data = await res.json();
+
+        if (data.error) {
+          errEl.textContent = '⚠️ ' + data.error;
+          errEl.style.display = 'block';
+          btn.textContent = 'Start Tracking My DL Journey →';
+          btn.disabled = false;
+          return;
+        }
+
+        // Save session info to localStorage
+        localStorage.setItem('citizen_id',   data.citizen_id);
+        localStorage.setItem('citizen_name', name);
+        localStorage.setItem('ll_date',      llDate);
+        localStorage.setItem('ll_number',    llNumber);
+        localStorage.setItem('vehicle_type', vehicleType);
+        localStorage.setItem('city',         city);
+        localStorage.setItem('age',          age);
+
+        // Also save old KEYS format so script.js helpers still work
+        saveUser({
+          [KEYS.NAME]:      name,
+          [KEYS.AGE]:       age,
+          [KEYS.CITY]:      city,
+          [KEYS.VEHICLE]:   vehicleType,
+          [KEYS.LL_NUMBER]: llNumber,
+          [KEYS.LL_DATE]:   llDate,
+          [KEYS.STAGE]:     '1',
+          [KEYS.DL_OBTAINED]: 'false',
+        });
+
+        // Save LL issue date in DB
+        await fetch('/api/license/update-stage', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            citizen_id: data.citizen_id,
+            stage: 'll_issued',
+            date: llDate
+          })
+        });
+
         window.location.href = 'dashboard.html';
-      }, 400);
+
+      } catch (err) {
+        errEl.textContent = '⚠️ Server error. Make sure the server is running on port 3000.';
+        errEl.style.display = 'block';
+        btn.textContent = 'Start Tracking My DL Journey →';
+        btn.disabled = false;
+      }
     }
   </script>
 

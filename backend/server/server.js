@@ -22,10 +22,12 @@ app.use(express.static(path.join(__dirname, '../../frontend')));
 const citizenRoutes = require('./routes/citizen');
 const licenseRoutes = require('./routes/license');
 const alertRoutes  = require('./routes/alerts');
+const cppRoutes    = require('./routes/cpp');
 
 app.use('/api/citizen', citizenRoutes);
 app.use('/api/license', licenseRoutes);
 app.use('/api/alerts',  alertRoutes);
+app.use('/api/cpp',     cppRoutes);
 
 // Start server
 const PORT = 3000;
