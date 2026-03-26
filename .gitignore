@@ -11,3 +11,11 @@ backend/cpp/output
 # System files
 .DS_Store
 Thumbs.db
+
+# Node.js — never push this to GitHub
+node_modules/
+backend/server/node_modules/
+
+# npm logs
+npm-debug.log*
+package-lock.json
