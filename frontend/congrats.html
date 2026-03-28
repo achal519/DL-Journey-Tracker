@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DL Journey Tracker — Congratulations!</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .confetti-banner {
+      text-align: center;
+      padding: 40px 20px 20px;
+    }
+    .confetti-banner .big-emoji {
+      font-size: 72px;
+      display: block;
+      margin-bottom: 12px;
+      animation: bounce 1s infinite alternate;
+    }
+    @keyframes bounce {
+      from { transform: translateY(0); }
+      to   { transform: translateY(-12px); }
+    }
+    .congrats-title {
+      font-family: var(--font-display);
+      font-size: 32px;
+      font-weight: 800;
+      color: var(--navy);
+      margin-bottom: 8px;
+    }
+    .congrats-sub {
+      font-size: 15px;
+      color: var(--grey-mid);
+    }
+    .journey-summary-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-top: 16px;
+    }
+    @media (max-width: 600px) {
+      .journey-summary-grid { grid-template-columns: 1fr; }
+    }
+    .summary-item {
+      padding: 14px 18px;
+      background: var(--grey-light);
+      border-radius: var(--radius);
+      border-left: 4px solid var(--orange);
+    }
+    .summary-item-label {
+      font-size: 11px;
+      color: var(--grey-mid);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 4px;
+    }
+    .summary-item-value {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--navy);
+    }
+    .stage-complete-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .stage-complete-list li {
+      padding: 10px 0;
+      border-bottom: 1px solid var(--grey-light);
+      font-size: 14px;
+      color: var(--grey-dark);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .stage-complete-list li:last-child {
+      border-bottom: none;
+    }
+    .dl-card {
+      background: linear-gradient(135deg, #1a237e 0%, #283593 100%);
+      color: white;
+      border-radius: 16px;
+      padding: 28px 32px;
+      margin-top: 8px;
+      position: relative;
+      overflow: hidden;
+    }
+    .dl-card::before {
+      content: '🇮🇳';
+      position: absolute;
+      top: 16px;
+      right: 20px;
+      font-size: 28px;
+    }
+    .dl-card-label {
+      font-size: 11px;
+      opacity: 0.7;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 4px;
+    }
+    .dl-card-value {
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      margin-bottom: 16px;
+    }
+    .dl-card-row {
+      display: flex;
+      gap: 32px;
+      flex-wrap: wrap;
+    }
+    .dl-card-field { min-width: 120px; }
+  </style>
+</head>
+<body>
+
+  <div class="top-bar">
+    Government of India &nbsp;|&nbsp; Ministry of Road Transport &amp; Highways &nbsp;|&nbsp; Citizen Services
+  </div>
+
+  <nav class="navbar">
+    <a class="navbar-brand" href="index.html">
+      <div class="brand-icon">🚗</div>
+      <div class="brand-text">
+        <span class="brand-title">DL Journey Tracker</span>
+        <span class="brand-sub">LL to Permanent License</span>
+      </div>
+    </a>
+  </nav>
+
+  <div class="page-wrapper" style="max-width: 720px;">
+
+    <!-- Confetti Banner -->
+    <div class="confetti-banner">
+      <span class="big-emoji">🎉</span>
+      <div class="congrats-title">Congratulations, <span id="congrats-name"></span>!</div>
+      <div class="congrats-sub">You have successfully completed your DL Journey. Your Permanent Driving License has been issued!</div>
+    </div>
+
+    <!-- DL Card -->
+    <div class="card">
+      <div class="card-title">🪪 Your Permanent Driving License</div>
+      <div class="dl-card">
+        <div class="dl-card-label">Driving License Number</div>
+        <div class="dl-card-value" id="dl-number">—</div>
+        <div class="dl-card-row">
+          <div class="dl-card-field">
+            <div class="dl-card-label">Holder Name</div>
+            <div style="font-size:15px; font-weight:600;" id="dl-name">—</div>
+          </div>
+          <div class="dl-card-field">
+            <div class="dl-card-label">Issue Date</div>
+            <div style="font-size:15px; font-weight:600;" id="dl-issue-date">—</div>
+          </div>
+          <div class="dl-card-field">
+            <div class="dl-card-label">Valid Till</div>
+            <div style="font-size:15px; font-weight:600;" id="dl-valid-till">—</div>
+          </div>
+          <div class="dl-card-field">
+            <div class="dl-card-label">Vehicle Type</div>
+            <div style="font-size:15px; font-weight:600;" id="dl-vehicle">—</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Journey Summary -->
+    <div class="card">
+      <div class="card-title">📊 Your Journey Summary</div>
+      <div class="journey-summary-grid">
+        <div class="summary-item">
+          <div class="summary-item-label">Total Days Taken</div>
+          <div class="summary-item-value" id="total-days">—</div>
+        </div>
+        <div class="summary-item">
+          <div class="summary-item-label">LL Issue Date</div>
+          <div class="summary-item-value" id="summary-ll-date">—</div>
+        </div>
+        <div class="summary-item">
+          <div class="summary-item-label">RTO Test Center</div>
+          <div class="summary-item-value" id="summary-rto-center">—</div>
+        </div>
+        <div class="summary-item">
+          <div class="summary-item-label">RTO Test Date</div>
+          <div class="summary-item-value" id="summary-rto-date">—</div>
+        </div>
+        <div class="summary-item">
+          <div class="summary-item-label">City / District</div>
+          <div class="summary-item-value" id="summary-city">—</div>
+        </div>
+        <div class="summary-item">
+          <div class="summary-item-label">LL Number</div>
+          <div class="summary-item-value" id="summary-ll-number">—</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stage Completion List -->
+    <div class="card">
+      <div class="card-title">✅ All Stages Completed</div>
+      <ul class="stage-complete-list">
+        <li>📄 <strong>Stage 1</strong> — Learner License Obtained</li>
+        <li>⏳ <strong>Stage 2</strong> — 30-Day Waiting Period Completed</li>
+        <li>🏛️ <strong>Stage 3</strong> — Applied for DL Test at RTO</li>
+        <li>✅ <strong>Stage 4</strong> — Driving Test Cleared</li>
+        <li>🎉 <strong>Stage 5</strong> — Permanent DL Issued</li>
+      </ul>
+    </div>
+
+    <!-- Important Reminders -->
+    <div class="card">
+      <div class="card-title">📌 Important Reminders</div>
+      <ul style="padding-left:20px; font-size:14px; line-height:2.2; color:var(--grey-dark);">
+        <li>Your DL is valid for <strong>20 years</strong> from issue date</li>
+        <li>Always carry your DL while driving — it is mandatory by law</li>
+        <li>Renew your DL <strong>before expiry</strong> to avoid penalties</li>
+        <li>Update your address on DL if you change residence</li>
+        <li>Traffic violations can lead to DL suspension — drive responsibly!</li>
+      </ul>
+    </div>
+
+    <!-- Action Buttons -->
+    <div style="display:flex; gap:12px; flex-wrap:wrap; justify-content:center; margin-top:8px; margin-bottom:32px;">
+      <a class="btn btn-primary" href="dashboard.html">← Back to Dashboard</a>
+      <button class="btn btn-outline" onclick="window.print()">🖨️ Print Summary</button>
+    </div>
+
+  </div>
+
+  <footer class="footer">
+    DL Journey Tracker &nbsp;|&nbsp; OOP Mini Project &nbsp;|&nbsp; Built with <span>♥</span> in C++ &amp; Web
+  </footer>
+
+  <script src="script.js"></script>
+  <script>
+    // Redirect if not completed
+    const stage = parseInt(localStorage.getItem(KEYS.STAGE)) || 1;
+    if (stage < 5) {
+      window.location.href = 'dashboard.html';
+    }
+
+    function loadCongratsPage() {
+      const user      = getUser();
+      const dlNumber  = localStorage.getItem(KEYS.DL_NUMBER) || '—';
+      const dlDate    = localStorage.getItem(KEYS.DL_DATE)   || '';
+      const rtoDate   = localStorage.getItem('rto_date')     || '';
+      const rtoCenter = localStorage.getItem('rto_center')   || '—';
+
+      // Name
+      document.getElementById('congrats-name').textContent = user.name;
+
+      // DL Card
+      document.getElementById('dl-number').textContent    = dlNumber;
+      document.getElementById('dl-name').textContent      = user.name;
+      document.getElementById('dl-issue-date').textContent = formatDate(dlDate);
+      document.getElementById('dl-valid-till').textContent = formatDate(addDays(dlDate, 365 * 20));
+      document.getElementById('dl-vehicle').textContent   = user.vehicleType;
+
+      // Journey Summary
+      const llDate   = user.llDate;
+      const daysTaken = llDate && dlDate
+        ? Math.floor((new Date(dlDate) - new Date(llDate)) / (1000 * 60 * 60 * 24))
+        : '—';
+
+      document.getElementById('total-days').textContent        = daysTaken + (daysTaken !== '—' ? ' days' : '');
+      document.getElementById('summary-ll-date').textContent   = formatDate(llDate);
+      document.getElementById('summary-rto-center').textContent = rtoCenter;
+      document.getElementById('summary-rto-date').textContent  = formatDate(rtoDate);
+      document.getElementById('summary-city').textContent      = user.city;
+      document.getElementById('summary-ll-number').textContent = user.llNumber;
+    }
+
+    loadCongratsPage();
+  </script>
+
+</body>
+</html>

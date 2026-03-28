@@ -1,169 +1,208 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>DL Journey Tracker — Document Checklist</title>
-  <link rel="stylesheet" href="style.css" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Checklist</title>
+
+<style>
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background: #f4f6f9;
+  margin: 0;
+}
+
+/* HEADER */
+.top-bar {
+  background:#1e2a47;
+  color:white;
+  padding:10px;
+  text-align:center;
+}
+
+.navbar {
+  display:flex;
+  align-items:center;
+  padding:15px 30px;
+  border-bottom:3px solid orange;
+  background:white;
+}
+
+.logo {
+  width:40px;
+  height:40px;
+  background:orange;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  margin-right:10px;
+}
+
+/* MAIN */
+.container {
+  width:60%;
+  margin:auto;
+  margin-top:40px;
+}
+
+.card {
+  background:white;
+  padding:25px;
+  border-radius:12px;
+  box-shadow:0 4px 12px rgba(0,0,0,0.1);
+}
+
+.progress-bar {
+  width:100%;
+  height:10px;
+  background:#ddd;
+  border-radius:10px;
+}
+
+#progressFill {
+  height:10px;
+  width:0%;
+  background:orange;
+}
+
+.check-item {
+  margin:10px 0;
+}
+
+button {
+  padding:8px 14px;
+  margin-top:10px;
+  background:orange;
+  color:white;
+  border:none;
+  border-radius:6px;
+}
+</style>
 </head>
+
 <body>
 
-  <div class="top-bar">
-    Government of India &nbsp;|&nbsp; Ministry of Road Transport &amp; Highways &nbsp;|&nbsp; Citizen Services
-  </div>
+<div class="top-bar">
+Government of India | Ministry of Road Transport & Highways
+</div>
 
-  <nav class="navbar">
-    <a class="navbar-brand" href="index.html">
-      <div class="brand-icon">🚗</div>
-      <div class="brand-text">
-        <span class="brand-title">DL Journey Tracker</span>
-        <span class="brand-sub">LL to Permanent License</span>
-      </div>
-    </a>
-    <div class="nav-links">
-      <a class="nav-btn nav-btn-outline" href="dashboard.html">← Dashboard</a>
-    </div>
-  </nav>
+<div class="navbar">
+<div class="logo">🚗</div>
+<h2>DL Journey Tracker</h2>
+</div>
 
-  <div class="page-wrapper">
+<div class="container">
+<h2>📋 Document Checklist</h2>
 
-    <div class="page-header">
-      <div class="breadcrumb">
-        <a href="dashboard.html">Dashboard</a> › Document Checklist
-      </div>
-      <h1>📋 Document Checklist</h1>
-      <p id="checklistSubtitle">Loading your personalised checklist...</p>
-    </div>
+<div class="card">
 
-    <!-- Progress Bar -->
-    <div class="card" style="padding:18px 24px;">
-      <div class="flex-between" style="margin-bottom:8px;">
-        <span style="font-size:13px; font-weight:600; color:var(--navy);">Documents Ready</span>
-        <span id="progressLabel" style="font-size:13px; font-weight:700; color:var(--orange);">0 / 0</span>
-      </div>
-      <div style="background:var(--grey-light); border-radius:99px; height:10px; overflow:hidden;">
-        <div id="progressBar" style="height:100%; background:var(--orange); border-radius:99px; width:0%; transition:width 0.4s ease;"></div>
-      </div>
-    </div>
+<h4>Documents Ready</h4>
+<div class="progress-bar">
+<div id="progressFill"></div>
+</div>
+<p id="progressText">0 / 0</p>
 
-    <!-- Checklist Card -->
-    <div class="card">
-      <div class="card-title" id="checklistTitle">📄 Required Documents</div>
-      <div id="checklistContainer">
-        <div style="text-align:center; padding:20px; color:var(--grey-mid);">
-          <div class="spinner"></div>
-          <p style="margin-top:12px; font-size:13px;">Loading checklist...</p>
-        </div>
-      </div>
+<div id="checklistContainer"></div>
 
-      <hr class="divider" />
-      <div style="display:flex; gap:10px; flex-wrap:wrap;">
-        <button class="btn btn-outline btn-sm" onclick="resetChecklist()">↺ Reset All</button>
-        <button class="btn btn-primary btn-sm" onclick="checkAll()">✓ Mark All Ready</button>
-      </div>
-    </div>
+<button onclick="resetChecklist()">Reset</button>
+<button onclick="markAll()">Mark All</button>
 
-    <!-- Important Note -->
-    <div class="card" style="border-left: 4px solid var(--orange);">
-      <div class="card-title">⚠️ Important Notes</div>
-      <ul style="padding-left:18px; font-size:14px; line-height:2; color:var(--grey-dark);">
-        <li>Carry both <strong>originals and photocopies</strong> of all documents.</li>
-        <li>All photographs must be recent (taken within 3 months).</li>
-        <li>Form 9 is available at your RTO office or on <strong>mParivahan portal</strong>.</li>
-        <li>Fee amounts may vary slightly by state — confirm at your local RTO.</li>
-        <li>Arrive at RTO <strong>before 10:00 AM</strong> to avoid long queues.</li>
-      </ul>
-    </div>
+</div>
+</div>
 
-    <!-- Back Button -->
-    <div class="text-center mt-16">
-      <a class="btn btn-navy" href="dashboard.html">← Back to Dashboard</a>
-    </div>
+<script>
 
-  </div>
+const defaultItems = [
+{ id:"aadhar", text:"Aadhar Card"},
+{ id:"pan", text:"PAN Card"},
+{ id:"photo", text:"Passport Photos"},
+{ id:"form9", text:"Form 9"},
+{ id:"address", text:"Address Proof"}
+];
 
-  <footer class="footer">
-    DL Journey Tracker &nbsp;|&nbsp; OOP Mini Project &nbsp;|&nbsp; Built with <span>♥</span> in C++ &amp; Web
-  </footer>
+async function loadChecklist(){
+const citizenId = localStorage.getItem('citizen_id');
 
-  <script src="script.js"></script>
-  <script>
-    requireRegistration();
+if(!citizenId){
+alert("Register first");
+window.location.href="index.html";
+return;
+}
 
-    const CHECKED_KEY = 'dl_checklist_checked';
-    let totalItems = 0;
+let saved = {};
 
-    async function loadChecklist() {
-      const user = getUser();
-      const data = await apiChecklist(user.vehicleType, user.age);
-      const items = data.items;
-      totalItems = items.length;
+try{
+const res = await fetch('/api/citizen/checklist/'+citizenId);
+const data = await res.json();
 
-      // Subtitle
-      const vehicleNames = { '2W':'2 Wheeler', '4W':'4 Wheeler', 'Both':'Both (2W + 4W)', 'Commercial':'Commercial Vehicle' };
-      document.getElementById('checklistSubtitle').textContent =
-        `Personalised for: ${user.name} — ${vehicleNames[user.vehicleType] || user.vehicleType}`;
-      document.getElementById('checklistTitle').textContent =
-        `📄 Documents for ${vehicleNames[user.vehicleType]} (${items.length} items)`;
+data.forEach(i=>{
+saved[i.document_name] = i.is_submitted==1;
+});
 
-      // Load saved checked state
-      const savedChecked = JSON.parse(localStorage.getItem(CHECKED_KEY) || '{}');
+}catch(e){}
 
-      // Render
-      const container = document.getElementById('checklistContainer');
-      container.innerHTML = items.map((item, idx) => {
-        const isChecked = savedChecked[item.id] === true;
-        return `
-          <div class="checklist-item ${isChecked ? 'checked' : ''}" id="row-${item.id}">
-            <span class="checklist-num">${idx + 1}.</span>
-            <input type="checkbox" id="chk-${item.id}" ${isChecked ? 'checked' : ''}
-              onchange="toggleItem('${item.id}', this.checked)" />
-            <label for="chk-${item.id}">${item.text}</label>
-          </div>`;
-      }).join('');
+const container = document.getElementById("checklistContainer");
+container.innerHTML="";
 
-      updateProgress(savedChecked, items);
-    }
+defaultItems.forEach((item,i)=>{
+container.innerHTML += `
+<div class="check-item">
+<input type="checkbox"
+${saved[item.id]?"checked":""}
+onchange="toggleItem('${item.id}',this.checked)">
+${i+1}. ${item.text}
+</div>`;
+});
 
-    function toggleItem(id, checked) {
-      const saved = JSON.parse(localStorage.getItem(CHECKED_KEY) || '{}');
-      saved[id] = checked;
-      localStorage.setItem(CHECKED_KEY, JSON.stringify(saved));
+updateProgress(saved);
+}
 
-      const row = document.getElementById('row-' + id);
-      if (checked) row.classList.add('checked');
-      else row.classList.remove('checked');
+async function toggleItem(id,checked){
+const citizenId = localStorage.getItem('citizen_id');
 
-      const user = getUser();
-      apiChecklist(user.vehicleType, user.age).then(data => updateProgress(saved, data.items));
-    }
+await fetch('/api/citizen/checklist/update',{
+method:'POST',
+headers:{'Content-Type':'application/json'},
+body:JSON.stringify({
+citizen_id: citizenId,
+document_name:id,
+is_submitted: checked?1:0
+})
+});
 
-    function updateProgress(savedChecked, items) {
-      const count = items.filter(i => savedChecked[i.id] === true).length;
-      const pct = items.length ? Math.round((count / items.length) * 100) : 0;
-      document.getElementById('progressLabel').textContent = `${count} / ${items.length}`;
-      document.getElementById('progressBar').style.width = pct + '%';
-      document.getElementById('progressBar').style.background =
-        pct === 100 ? 'var(--green)' : pct > 50 ? 'var(--orange)' : 'var(--orange)';
-    }
+loadChecklist();
+}
 
-    function resetChecklist() {
-      localStorage.removeItem(CHECKED_KEY);
-      loadChecklist();
-    }
+function updateProgress(saved){
+let count=0;
+defaultItems.forEach(i=>{
+if(saved[i.id]) count++;
+});
 
-    function checkAll() {
-      const user = getUser();
-      apiChecklist(user.vehicleType, user.age).then(data => {
-        const allChecked = {};
-        data.items.forEach(i => allChecked[i.id] = true);
-        localStorage.setItem(CHECKED_KEY, JSON.stringify(allChecked));
-        loadChecklist();
-      });
-    }
+const percent=(count/defaultItems.length)*100;
 
-    loadChecklist();
-  </script>
+document.getElementById("progressText").innerText =
+`${count} / ${defaultItems.length}`;
 
+document.getElementById("progressFill").style.width =
+percent+"%";
+}
+
+async function resetChecklist(){
+for(let item of defaultItems){
+await toggleItem(item.id,false);
+}
+}
+
+async function markAll(){
+for(let item of defaultItems){
+await toggleItem(item.id,true);
+}
+}
+
+loadChecklist();
+
+</script>
 </body>
 </html>

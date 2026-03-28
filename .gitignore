@@ -1,21 +1,41 @@
-# Compiled output
-backend/cpp/output.exe
-backend/cpp/output
-*.exe
-*.o
-*.out
-
-# VS Code settings
-.vscode/
-
-# System files
-.DS_Store
-Thumbs.db
-
-# Node.js — never push this to GitHub
+# -----------------------------
+# Node.js
+# -----------------------------
 node_modules/
 backend/server/node_modules/
 
-# npm logs
+# Logs
 npm-debug.log*
-package-lock.json
+*.log
+
+# -----------------------------
+# Build / Compiled files
+# -----------------------------
+*.exe
+*.out
+*.o
+*.obj
+backend/cpp/output.exe
+backend/cpp/output
+
+# -----------------------------
+# Environment files
+# -----------------------------
+.env
+
+# -----------------------------
+# OS files
+# -----------------------------
+.DS_Store
+Thumbs.db
+
+# -----------------------------
+# VS Code
+# -----------------------------
+.vscode/
+
+# -----------------------------
+# Optional (keep repo clean)
+# -----------------------------
+*.tmp
+*.cache

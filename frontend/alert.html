@@ -69,16 +69,12 @@
     <div class="card">
       <div class="card-title">📊 LL Validity Timeline</div>
       <div style="position:relative; height:60px; margin:10px 0 30px;">
-        <!-- Background bar -->
         <div style="position:absolute; top:20px; left:0; right:0; height:16px; border-radius:8px; background:var(--grey-light);"></div>
-        <!-- Zones -->
         <div style="position:absolute; top:20px; left:0; width:16.67%; height:16px; background:#FFF0E8; border-radius:8px 0 0 8px; border:1px solid var(--orange);"></div>
         <div style="position:absolute; top:20px; left:16.67%; width:83.33%; height:16px; background:var(--green-bg); border:1px solid var(--green);"></div>
-        <!-- Today marker -->
         <div id="todayMarker" style="position:absolute; top:14px; width:4px; height:28px; background:var(--navy); border-radius:2px; transform:translateX(-50%); transition:left 0.5s ease;">
           <div style="position:absolute; top:-18px; left:50%; transform:translateX(-50%); font-size:10px; font-weight:700; color:var(--navy); white-space:nowrap;">TODAY</div>
         </div>
-        <!-- Labels -->
         <div style="position:absolute; bottom:-20px; left:0; font-size:10px; color:var(--grey-mid);">Day 0</div>
         <div style="position:absolute; bottom:-20px; left:16.67%; transform:translateX(-50%); font-size:10px; color:var(--orange); font-weight:600;">Day 30</div>
         <div style="position:absolute; bottom:-20px; right:0; font-size:10px; color:var(--red); font-weight:600;">Day 180</div>
@@ -96,6 +92,14 @@
           <div style="width:4px; height:14px; background:var(--navy); border-radius:2px;"></div>
           Your position today
         </div>
+      </div>
+    </div>
+
+    <!-- Alert History from DB -->
+    <div class="card">
+      <div class="card-title">🗂️ Alert History (from Database)</div>
+      <div id="alertHistoryContainer">
+        <div style="font-size:13px; color:var(--grey-mid);">Loading alert history...</div>
       </div>
     </div>
 
@@ -130,6 +134,66 @@
   <script>
     requireRegistration();
 
+    // ── Load alert history from DB ───────────────────
+    async function loadAlertHistory() {
+      const citizenId = localStorage.getItem('citizen_id');
+      if (!citizenId) {
+        document.getElementById('alertHistoryContainer').innerHTML =
+          '<div style="font-size:13px; color:var(--grey-mid);">No alert history found.</div>';
+        return;
+      }
+      try {
+        const res    = await fetch('/api/alerts/' + citizenId);
+        const alerts = await res.json();
+        const container = document.getElementById('alertHistoryContainer');
+
+        if (!alerts || alerts.length === 0) {
+          container.innerHTML =
+            '<div style="font-size:13px; color:var(--grey-mid);">No alerts saved yet. Visit dashboard to generate alerts.</div>';
+          return;
+        }
+
+        const iconMap = { GREEN: '🟢', YELLOW: '🟡', RED: '🔴', EXPIRED: '⚫' };
+        container.innerHTML = alerts.map(alert => `
+          <div style="padding:12px 16px; margin-bottom:10px; border-radius:8px;
+               background:var(--grey-light); border-left:4px solid var(--orange);">
+            <div style="font-size:13px; font-weight:600; color:var(--navy); margin-bottom:4px;">
+              ${iconMap[alert.alert_type] || '🔔'} ${alert.alert_type} Alert
+              &nbsp;|&nbsp;
+              <span style="font-weight:400; color:var(--grey-mid);">
+                ${new Date(alert.alert_date).toLocaleDateString('en-IN', {day:'2-digit', month:'short', year:'numeric'})}
+              </span>
+            </div>
+            <div style="font-size:13px; color:var(--grey-dark);">${alert.message}</div>
+          </div>
+        `).join('');
+      } catch (e) {
+        document.getElementById('alertHistoryContainer').innerHTML =
+          '<div style="font-size:13px; color:var(--grey-mid);">Could not load alert history.</div>';
+      }
+    }
+
+    // ── Save current alert to DB ─────────────────────
+    async function saveCurrentAlert(alertLevel, alertMessage) {
+      const citizenId = localStorage.getItem('citizen_id');
+      if (!citizenId) return;
+      try {
+        await fetch('/api/alerts/create', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            citizen_id: parseInt(citizenId),
+            alert_type: alertLevel,
+            alert_date: new Date().toISOString().split('T')[0],
+            message:    alertMessage
+          })
+        });
+      } catch (e) {
+        console.log('Alert save failed:', e);
+      }
+    }
+
+    // ── Main page loader ─────────────────────────────
     async function loadAlertPage() {
       const user = getUser();
       const data = await apiCalculate(user.llDate, user.vehicleType);
@@ -158,10 +222,10 @@
         </div>`;
 
       // Key dates
-      document.getElementById('llIssueDate').textContent      = formatDate(user.llDate);
-      document.getElementById('earliestApplyDate').textContent = formatDate(addDays(user.llDate, 30));
-      document.getElementById('lastApplyDate').textContent     = formatDate(addDays(user.llDate, 179));
-      document.getElementById('expiryDate').textContent        = formatDate(addDays(user.llDate, 180));
+      document.getElementById('llIssueDate').textContent       = formatDate(user.llDate);
+      document.getElementById('earliestApplyDate').textContent  = formatDate(addDays(user.llDate, 30));
+      document.getElementById('lastApplyDate').textContent      = formatDate(addDays(user.llDate, 179));
+      document.getElementById('expiryDate').textContent         = formatDate(addDays(user.llDate, 180));
 
       // Timeline today marker
       const pct = Math.min(Math.max((data.daysPassed / 180) * 100, 0), 100);
@@ -171,6 +235,10 @@
       if (data.isExpired) {
         document.getElementById('reapplyCard').style.display = 'block';
       }
+
+      // Save alert to DB then load history
+      await saveCurrentAlert(data.alertLevel, data.alertMessage);
+      await loadAlertHistory();
     }
 
     loadAlertPage();
