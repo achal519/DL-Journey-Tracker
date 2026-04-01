@@ -3,9 +3,7 @@ const router = express.Router();
 const db = require('../db/db');
 const bcrypt = require('bcrypt');
 
-// =============================
-// 🟢 REGISTER
-// =============================
+// ── REGISTER ─────────────────────────────────────
 router.post('/register', async (req, res) => {
   const { name, dob, vehicle_type, email, password } = req.body;
   try {
@@ -22,9 +20,7 @@ router.post('/register', async (req, res) => {
   }
 });
 
-// =============================
-// 🟢 LOGIN
-// =============================
+// ── LOGIN ─────────────────────────────────────────
 router.post('/login', (req, res) => {
   const { email, password } = req.body;
   db.query(`SELECT * FROM citizens WHERE email = ?`, [email], async (err, rows) => {
@@ -39,9 +35,7 @@ router.post('/login', (req, res) => {
   });
 });
 
-// =============================
-// 🟢 GET STAGE INFO
-// =============================
+// ── GET STAGE INFO ────────────────────────────────
 router.get('/stage/:id', (req, res) => {
   const sql = `SELECT c.name, c.vehicle_type, ls.*
                FROM citizens c
@@ -53,41 +47,28 @@ router.get('/stage/:id', (req, res) => {
   });
 });
 
-// =============================
-// 🟢 GET CHECKLIST
-// =============================
+// ── GET CHECKLIST ─────────────────────────────────
 router.get('/checklist/:id', (req, res) => {
-  const sql = `SELECT document_name, is_submitted
-               FROM document_checklist
-               WHERE citizen_id = ?`;
-  db.query(sql, [req.params.id], (err, result) => {
-    if (err) {
-      console.error("Checklist GET error:", err);
-      return res.status(500).json([]);
+  db.query(
+    `SELECT document_name, is_submitted FROM document_checklist WHERE citizen_id = ?`,
+    [req.params.id],
+    (err, result) => {
+      if (err) return res.status(500).json([]);
+      res.json(result);
     }
-    res.json(result);
-  });
+  );
 });
 
-// =============================
-// 🟢 UPDATE CHECKLIST
-// =============================
+// ── UPDATE CHECKLIST ──────────────────────────────
 router.post('/checklist/update', (req, res) => {
-  console.log("Checklist Update API called:", req.body);
   const { citizen_id, document_name, is_submitted } = req.body;
   const sql = `INSERT INTO document_checklist (citizen_id, document_name, is_submitted)
                VALUES (?, ?, ?)
                ON DUPLICATE KEY UPDATE is_submitted = ?`;
   db.query(sql, [citizen_id, document_name, is_submitted, is_submitted], (err) => {
-    if (err) {
-      console.error("Checklist UPDATE error:", err);
-      return res.status(500).json({ success: false });
-    }
+    if (err) return res.status(500).json({ success: false });
     res.json({ success: true });
   });
 });
 
-// =============================
-// EXPORT
-// =============================
 module.exports = router;
