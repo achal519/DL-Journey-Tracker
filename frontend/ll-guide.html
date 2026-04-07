@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DL Journey Tracker — How to Apply for LL</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .step-timeline { list-style: none; padding: 0; margin: 0; position: relative; }
+    .step-timeline::before {
+      content: ''; position: absolute; left: 20px; top: 0; bottom: 0;
+      width: 3px; background: linear-gradient(180deg, var(--orange), #ff8f00);
+    }
+    .step-timeline li {
+      padding: 14px 16px 14px 54px;
+      position: relative; margin-bottom: 4px;
+      background: white; border-radius: 10px;
+      box-shadow: 0 1px 6px rgba(0,0,0,0.06);
+      font-size: 13px; color: var(--grey-dark); line-height: 1.7;
+    }
+    .step-timeline li::before {
+      content: attr(data-step);
+      position: absolute; left: 8px; top: 14px;
+      width: 26px; height: 26px;
+      background: var(--orange); color: white;
+      border-radius: 50%; font-size: 12px; font-weight: 800;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .step-timeline li strong { color: var(--navy); font-size: 14px; display: block; margin-bottom: 3px; }
+    .step-timeline li .step-tip {
+      display: inline-block; margin-top: 6px;
+      padding: 3px 10px; background: var(--orange-pale);
+      color: var(--orange); font-size: 11px; font-weight: 600;
+      border-radius: 6px;
+    }
+    .doc-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 10px; margin-top: 8px;
+    }
+    @media(max-width:560px){ .doc-grid { grid-template-columns: 1fr; } }
+    .doc-item {
+      padding: 10px 14px; background: var(--grey-light);
+      border-radius: 8px; font-size: 13px; color: var(--grey-dark);
+      display: flex; align-items: flex-start; gap: 8px;
+    }
+    .doc-item .doc-icon { font-size: 18px; min-width: 22px; }
+    .faq-item {
+      border-bottom: 1px solid var(--grey-light); padding: 14px 0;
+    }
+    .faq-item:last-child { border-bottom: none; }
+    .faq-q {
+      font-size: 14px; font-weight: 700; color: var(--navy);
+      cursor: pointer; display: flex;
+      justify-content: space-between; align-items: center;
+      user-select: none;
+    }
+    .faq-a {
+      font-size: 13px; color: var(--grey-dark);
+      line-height: 1.7; margin-top: 8px; display: none;
+    }
+    .faq-a.open { display: block; }
+    .faq-arrow { font-size: 12px; color: var(--orange); transition: transform 0.2s; }
+    .faq-arrow.open { transform: rotate(180deg); }
+    .cost-table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 8px; }
+    .cost-table th { background: var(--navy); color: white; padding: 8px 12px; text-align: left; font-size: 12px; }
+    .cost-table td { padding: 8px 12px; border-bottom: 1px solid var(--grey-light); color: var(--grey-dark); }
+    .cost-table tr:nth-child(even) td { background: var(--grey-light); }
+    .done-banner {
+      background: linear-gradient(135deg, #1a237e, #283593);
+      color: white; border-radius: 12px;
+      padding: 28px 24px; text-align: center; margin-top: 8px;
+    }
+    .done-banner h3 { font-size: 20px; font-weight: 800; margin-bottom: 8px; }
+    .done-banner p  { font-size: 14px; opacity: 0.85; margin-bottom: 20px; }
+  </style>
+</head>
+<body>
+
+  <div class="top-bar">
+    Government of India &nbsp;|&nbsp; Ministry of Road Transport &amp; Highways &nbsp;|&nbsp; Citizen Services
+  </div>
+
+  <nav class="navbar">
+    <a class="navbar-brand" href="index.html">
+      <div class="brand-icon">🚗</div>
+      <div class="brand-text">
+        <span class="brand-title">DL Journey Tracker</span>
+        <span class="brand-sub">LL to Permanent License</span>
+      </div>
+    </a>
+    <div class="nav-links" style="margin-left:auto;">
+      <a class="nav-btn nav-btn-outline" href="index.html">← Back</a>
+    </div>
+  </nav>
+
+  <div class="page-wrapper-wide" style="max-width:760px;">
+
+    <div class="page-header">
+      <div class="breadcrumb"><a href="index.html">Home</a> › Apply for Learner License</div>
+      <h1>📋 How to Apply for Learner License (LL)</h1>
+      <p>A complete step-by-step guide to get your Learner License — the first step towards your Permanent DL</p>
+    </div>
+
+    <!-- What is LL -->
+    <div class="card">
+      <div class="card-title">🪪 What is a Learner License?</div>
+      <p style="font-size:14px; color:var(--grey-dark); line-height:1.8; margin:0;">
+        A Learner License (LL) is a temporary driving permit issued by the RTO that allows you to practice driving
+        under supervision before applying for a Permanent Driving License. It is valid for <strong>6 months (180 days)</strong>
+        from the date of issue. You must wait <strong>at least 30 days</strong> after getting your LL before applying
+        for the Permanent DL test.
+      </p>
+      <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; margin-top:16px;">
+        <div class="info-tile text-center">
+          <div class="info-tile-label">Minimum Age</div>
+          <div class="info-tile-value orange">16</div>
+          <div class="info-tile-sub">years (2W)</div>
+        </div>
+        <div class="info-tile text-center">
+          <div class="info-tile-label">Valid For</div>
+          <div class="info-tile-value orange">180</div>
+          <div class="info-tile-sub">days</div>
+        </div>
+        <div class="info-tile text-center">
+          <div class="info-tile-label">Wait Before DL</div>
+          <div class="info-tile-value orange">30</div>
+          <div class="info-tile-sub">days minimum</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step by Step Process -->
+    <div class="card">
+      <div class="card-title">🗺️ Step-by-Step Process to Get LL</div>
+
+      <ul class="step-timeline">
+        <li data-step="1">
+          <strong>Check Eligibility</strong>
+          Make sure you meet the age requirement: 16+ years for 2-wheeler, 18+ years for 4-wheeler and commercial vehicles.
+          You must be a citizen of India or have valid residency proof.
+          <span class="step-tip">⏱ Time: 2 minutes</span>
+        </li>
+        <li data-step="2">
+          <strong>Go to Parivahan Portal (Online — Recommended)</strong>
+          Visit <a href="https://parivahan.gov.in" target="_blank" style="color:var(--orange);">parivahan.gov.in</a>
+          → Click "Driving License Related Services" → Select your State → Click "Apply for Learner License".
+          <span class="step-tip">⏱ Time: 10 minutes</span>
+        </li>
+        <li data-step="3">
+          <strong>Fill Application Form (Form 2)</strong>
+          Enter your personal details: full name, date of birth, address, vehicle category.
+          Upload scanned documents (Aadhaar, photo, signature). Verify mobile number via OTP.
+          <span class="step-tip">⏱ Time: 15 minutes</span>
+        </li>
+        <li data-step="4">
+          <strong>Book Appointment Slot</strong>
+          Select your nearest RTO from the list. Choose an available date and time slot for the theory test.
+          Note down your Application Number — you will need it at the RTO.
+          <span class="step-tip">⏱ Time: 5 minutes</span>
+        </li>
+        <li data-step="5">
+          <strong>Pay Application Fee Online</strong>
+          Pay the LL application fee online via Net Banking, UPI, or Debit/Credit Card.
+          Save the payment receipt. Fee is approximately ₹200–₹300 depending on your state.
+          <span class="step-tip">⏱ Time: 5 minutes</span>
+        </li>
+        <li data-step="6">
+          <strong>Visit RTO on Appointment Day</strong>
+          Arrive 15 minutes before your slot. Carry all original documents + photocopies.
+          Submit documents at the counter. Get your token number for the theory test.
+          <span class="step-tip">🏛️ Visit RTO on your booked date</span>
+        </li>
+        <li data-step="7">
+          <strong>Clear the Theory Test (Computer Based)</strong>
+          The LL theory test is a 15-question computer-based MCQ test on traffic signs, rules, and road safety.
+          You need 9/15 correct answers to pass (60% passing marks). Duration: 15 minutes.
+          <span class="step-tip">📝 Test duration: 15 minutes</span>
+        </li>
+        <li data-step="8">
+          <strong>Collect Your Learner License</strong>
+          If you pass, your LL is issued the same day. Some states send it by post within 7 days.
+          Your LL card shows: your name, photo, LL number, issue date, and expiry date.
+          <span class="step-tip">✅ LL issued same day or by post</span>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Documents Required -->
+    <div class="card">
+      <div class="card-title">📦 Documents Required for LL Application</div>
+      <div class="doc-grid">
+        <div class="doc-item"><span class="doc-icon">🪪</span><div><strong>Age Proof</strong><br/>Aadhaar Card / Birth Certificate / 10th Marksheet</div></div>
+        <div class="doc-item"><span class="doc-icon">🏠</span><div><strong>Address Proof</strong><br/>Aadhaar Card / Voter ID / Passport / Utility Bill</div></div>
+        <div class="doc-item"><span class="doc-icon">📸</span><div><strong>Passport Photos</strong><br/>2 recent photos (white background, 3.5 × 4.5 cm)</div></div>
+        <div class="doc-item"><span class="doc-icon">✍️</span><div><strong>Signature</strong><br/>Scanned signature on white paper (for online)</div></div>
+        <div class="doc-item"><span class="doc-icon">📋</span><div><strong>Form 2</strong><br/>LL Application Form (auto-generated on portal)</div></div>
+        <div class="doc-item"><span class="doc-icon">🩺</span><div><strong>Medical Certificate</strong><br/>Form 1 (self-declaration) / Form 1A if age 40+</div></div>
+      </div>
+      <div style="margin-top:12px; padding:10px 14px; background:var(--orange-pale); border-radius:8px; font-size:13px; color:var(--navy);">
+        💡 <strong>Tip:</strong> Carry both original documents AND photocopies. Keep payment receipt safely.
+      </div>
+    </div>
+
+    <!-- Theory Test Guide -->
+    <div class="card">
+      <div class="card-title">📝 LL Theory Test — What to Study</div>
+      <p style="font-size:13px; color:var(--grey-dark); margin-bottom:12px;">
+        The theory test has 15 MCQ questions. Topics covered:
+      </p>
+      <div class="doc-grid">
+        <div class="doc-item"><span class="doc-icon">🚦</span><div><strong>Traffic Signals</strong><br/>Red, Yellow, Green light rules</div></div>
+        <div class="doc-item"><span class="doc-icon">⚠️</span><div><strong>Road Signs</strong><br/>Mandatory, cautionary, informatory signs</div></div>
+        <div class="doc-item"><span class="doc-icon">📏</span><div><strong>Speed Limits</strong><br/>City, highway, school zone limits</div></div>
+        <div class="doc-item"><span class="doc-icon">🛑</span><div><strong>Driving Rules</strong><br/>Overtaking, lane discipline, parking</div></div>
+        <div class="doc-item"><span class="doc-icon">🚑</span><div><strong>Emergency Rules</strong><br/>Ambulance right of way, accident protocol</div></div>
+        <div class="doc-item"><span class="doc-icon">⚖️</span><div><strong>Motor Vehicle Act</strong><br/>Penalties, drunk driving, seatbelt rules</div></div>
+      </div>
+      <div style="margin-top:12px; padding:10px 14px; background:var(--green-bg); border-radius:8px; font-size:13px;">
+        ✅ <strong>Passing mark: 9/15 (60%)</strong> — Study traffic signs especially, they are most common in the test.
+      </div>
+    </div>
+
+    <!-- Fee Structure -->
+    <div class="card">
+      <div class="card-title">💰 Fee Structure</div>
+      <table class="cost-table">
+        <thead><tr><th>Item</th><th>Approx. Fee</th></tr></thead>
+        <tbody>
+          <tr><td>LL Application Fee (2W)</td><td>₹200</td></tr>
+          <tr><td>LL Application Fee (4W)</td><td>₹300</td></tr>
+          <tr><td>LL Application Fee (Both)</td><td>₹500</td></tr>
+          <tr><td>Smart Card Charges</td><td>₹200</td></tr>
+          <tr><td>Theory Test Fee</td><td>₹50 – ₹100</td></tr>
+          <tr><td><strong>Total Approximate</strong></td><td><strong>₹400 – ₹800</strong></td></tr>
+        </tbody>
+      </table>
+      <p style="font-size:12px; color:var(--grey-mid); margin-top:8px;">* Fees vary by state. Check your state's RTO portal for exact amounts.</p>
+    </div>
+
+    <!-- FAQ -->
+    <div class="card">
+      <div class="card-title">❓ Frequently Asked Questions</div>
+      <div id="faqContainer">
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFAQ(this)">Can I apply for LL online without visiting RTO? <span class="faq-arrow">▼</span></div>
+          <div class="faq-a">Yes! You can complete the entire application online on parivahan.gov.in including document upload, fee payment, and slot booking. You only need to visit RTO for the theory test and document verification.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFAQ(this)">What if I fail the LL theory test? <span class="faq-arrow">▼</span></div>
+          <div class="faq-a">Don't worry! You can retake the test after 7 days. You will need to pay the test fee again. Most states allow unlimited attempts. Study traffic signs and Motor Vehicle Act rules carefully before retrying.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFAQ(this)">How long is the LL valid? <span class="faq-arrow">▼</span></div>
+          <div class="faq-a">Your Learner License is valid for 6 months (180 days) from the date of issue. You must apply for your Permanent DL within this period. If it expires, you must apply for a fresh LL from scratch.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFAQ(this)">Can I drive alone with a Learner License? <span class="faq-arrow">▼</span></div>
+          <div class="faq-a">No! A Learner License holder MUST be accompanied by a person who holds a valid Permanent Driving License. You must also display an "L" board (red L on white background) on your vehicle. Driving alone with LL is illegal.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFAQ(this)">What is the minimum age for LL? <span class="faq-arrow">▼</span></div>
+          <div class="faq-a">For 2-wheelers up to 50cc: 16 years. For all other vehicles (2W above 50cc, 4W, commercial): 18 years. For commercial vehicles: 18 years with additional requirements.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Done Banner -->
+    <div class="done-banner">
+      <h3>🎉 Applied for LL? Come Back Here!</h3>
+      <p>Once you receive your Learner License card, come back and register it here to start tracking your DL journey.</p>
+      <a href="index.html" class="btn btn-primary" style="display:inline-block; padding:12px 32px; font-size:15px;">
+        ✅ I Have My LL — Start Tracking →
+      </a>
+    </div>
+
+    <div style="height:32px;"></div>
+
+  </div>
+
+  <footer class="footer">
+    DL Journey Tracker &nbsp;|&nbsp; OOP Mini Project &nbsp;|&nbsp; Built with <span>♥</span> in C++ &amp; Web
+  </footer>
+
+  <script src="script.js"></script>
+  <script>
+    function toggleFAQ(el) {
+      const answer = el.nextElementSibling;
+      const arrow  = el.querySelector('.faq-arrow');
+      answer.classList.toggle('open');
+      arrow.classList.toggle('open');
+    }
+  </script>
+
+</body>
+</html>

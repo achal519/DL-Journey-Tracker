@@ -94,6 +94,30 @@ function getAlertLevel(daysPassed) {
   if (rem <= 30)                          return 'YELLOW';
   return 'GREEN';
 }
+function bookAppointment() {
+  const date = document.getElementById("rtoDate").value;
+  const center = document.getElementById("rtoCenter").value;
+
+  if (!date || !center) {
+    alert("⚠ Please enter both date and RTO center");
+    return;
+  }
+
+  // Save data
+  localStorage.setItem("rto_date", date);
+  localStorage.setItem("rto_center", center);
+
+  // ✅ ADD THIS LINE HERE (VERY IMPORTANT)
+  localStorage.setItem("stage", 4);
+
+  alert(`✅ Appointment Booked!
+
+📅 Date: ${date}
+📍 RTO: ${center}`);
+
+  // Redirect
+  window.location.href = "appointment.html";
+}
 
 function getAlertMessage(alertLevel, daysRemaining, daysPassed) {
   switch (alertLevel) {

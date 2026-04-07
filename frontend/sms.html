@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DL Journey Tracker — Notifications</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .sms-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 20px; flex-wrap: wrap; gap: 10px;
+    }
+    .sms-inbox {
+      display: flex; flex-direction: column; gap: 12px;
+    }
+    .sms-card {
+      padding: 14px 18px;
+      border-radius: 12px;
+      background: white;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      border-left: 5px solid var(--orange);
+      position: relative;
+      animation: slideIn 0.3s ease;
+    }
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .sms-card.green  { border-left-color: var(--green); }
+    .sms-card.red    { border-left-color: var(--red); }
+    .sms-card.blue   { border-left-color: #1565c0; }
+    .sms-card.grey   { border-left-color: #999; }
+    .sms-title {
+      font-size: 14px; font-weight: 700;
+      color: var(--navy); margin-bottom: 4px;
+    }
+    .sms-body {
+      font-size: 13px; color: var(--grey-dark); line-height: 1.6;
+    }
+    .sms-time {
+      font-size: 11px; color: var(--grey-mid);
+      margin-top: 8px; text-align: right;
+    }
+    .sms-badge {
+      display: inline-block; padding: 2px 8px;
+      border-radius: 10px; font-size: 10px;
+      font-weight: 700; margin-bottom: 6px;
+    }
+    .badge-warning { background: #fff3e0; color: #e65100; }
+    .badge-success { background: var(--green-bg); color: var(--green); }
+    .badge-danger  { background: var(--red-bg); color: var(--red); }
+    .badge-info    { background: #e3f2fd; color: #1565c0; }
+    .badge-system  { background: #f5f5f5; color: #666; }
+    .empty-state {
+      text-align: center; padding: 48px 20px;
+      color: var(--grey-mid);
+    }
+    .empty-state .empty-icon { font-size: 48px; margin-bottom: 12px; }
+    .clear-btn {
+      padding: 8px 16px; background: transparent;
+      border: 1.5px solid var(--red); color: var(--red);
+      border-radius: 8px; font-size: 12px;
+      font-weight: 600; cursor: pointer; transition: all 0.2s;
+    }
+    .clear-btn:hover { background: var(--red); color: white; }
+    .unread-dot {
+      width: 8px; height: 8px; background: var(--orange);
+      border-radius: 50%; position: absolute;
+      top: 14px; right: 14px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="top-bar">
+    Government of India &nbsp;|&nbsp; Ministry of Road Transport &amp; Highways &nbsp;|&nbsp; Citizen Services
+  </div>
+
+  <nav class="navbar">
+    <a class="navbar-brand" href="index.html">
+      <div class="brand-icon">🚗</div>
+      <div class="brand-text">
+        <span class="brand-title">DL Journey Tracker</span>
+        <span class="brand-sub">LL to Permanent License</span>
+      </div>
+    </a>
+    <div class="nav-links" style="margin-left:auto;">
+      <a class="nav-btn nav-btn-outline" href="dashboard.html">← Dashboard</a>
+    </div>
+  </nav>
+
+  <div class="page-wrapper" style="max-width:680px;">
+
+    <div class="page-header">
+      <div class="breadcrumb"><a href="dashboard.html">Dashboard</a> › Notifications</div>
+      <h1>📩 Notifications</h1>
+      <p>Your DL journey alerts and system messages</p>
+    </div>
+
+    <div class="card">
+      <div class="sms-header">
+        <div style="font-size:13px; color:var(--grey-mid);">
+          <span id="notifCount">0</span> notifications
+        </div>
+        <button class="clear-btn" onclick="clearAll()">🗑️ Clear All</button>
+      </div>
+      <div class="sms-inbox" id="smsInbox">
+        <div class="empty-state">
+          <div class="empty-icon">📭</div>
+          <div>No notifications yet</div>
+          <div style="font-size:12px; margin-top:6px;">Notifications will appear here as your journey progresses</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <footer class="footer">
+    DL Journey Tracker &nbsp;|&nbsp; OOP Mini Project &nbsp;|&nbsp; Built with <span>♥</span> in C++ &amp; Web
+  </footer>
+
+  <script src="script.js"></script>
+  <script>
+
+    // ── Notification Engine ──────────────────────────
+    function getNotifications() {
+      return JSON.parse(localStorage.getItem('dl_notifications') || '[]');
+    }
+
+    function saveNotifications(list) {
+      localStorage.setItem('dl_notifications', JSON.stringify(list));
+    }
+
+    function addNotification(title, body, type = 'warning', read = false) {
+      const list = getNotifications();
+      // Avoid duplicate same-day notifications
+      const today = new Date().toDateString();
+      const exists = list.find(n => n.title === title && new Date(n.date).toDateString() === today);
+      if (exists) return;
+      list.unshift({
+        id: Date.now(),
+        title, body, type, read,
+        date: new Date().toISOString()
+      });
+      saveNotifications(list);
+    }
+
+    function generateNotifications() {
+      const user = getUser();
+      if (!user.llDate) return;
+
+      const daysPassed    = calculateDaysPassed(user.llDate);
+      const daysRemaining = getDaysRemaining(daysPassed);
+
+      // System welcome
+      addNotification(
+        '🎉 Welcome to DL Journey Tracker!',
+        `Hello ${user.name}! Your journey from Learner License to Permanent DL starts here. We will notify you at every important step.`,
+        'info'
+      );
+
+      // Stage notifications
+      if (daysPassed >= 1) {
+        addNotification(
+          '📄 LL Registered Successfully',
+          `Your Learner License (${user.llNumber}) has been registered. The 30-day waiting period has started.`,
+          'success'
+        );
+      }
+      if (daysPassed >= 30) {
+        addNotification(
+          '🏛️ Apply Window Open!',
+          `Your 30-day waiting period is complete. You are now eligible to apply for your Permanent DL test at your nearest RTO.`,
+          'success'
+        );
+      }
+      if (daysRemaining <= 30 && daysRemaining > 10 && !isExpired(daysPassed)) {
+        addNotification(
+          '⚠️ Apply Soon — Only ' + daysRemaining + ' Days Left',
+          `Your LL apply window is closing soon. Visit your nearest RTO before ${formatDate(addDays(user.llDate, 180))} to avoid LL expiry.`,
+          'warning'
+        );
+      }
+      if (daysRemaining <= 10 && !isExpired(daysPassed)) {
+        addNotification(
+          '🚨 URGENT — Only ' + daysRemaining + ' Days Remaining!',
+          `Critical alert! Your Learner License expires on ${formatDate(addDays(user.llDate, 180))}. Apply for your DL test immediately.`,
+          'danger'
+        );
+      }
+      if (isExpired(daysPassed)) {
+        addNotification(
+          '❌ LL Expired — Re-apply Required',
+          `Your Learner License has expired. You must visit your nearest RTO and apply for a fresh LL (Form 2) to restart your journey.`,
+          'danger'
+        );
+      }
+
+      // Checklist notification
+      const citizenId = localStorage.getItem('citizen_id');
+      if (citizenId) {
+        fetch('/api/citizen/checklist/' + citizenId)
+          .then(r => r.json())
+          .then(data => {
+            const done = data.filter(d => d.is_submitted).length;
+            if (done === 5) {
+              addNotification(
+                '✅ Documents Ready!',
+                'All 5 required documents have been marked as ready. You are eligible for the DL driving test at RTO.',
+                'success'
+              );
+            } else if (done > 0) {
+              addNotification(
+                `📋 Checklist Update — ${done}/5 Documents Ready`,
+                `You have completed ${done} out of 5 required documents. Complete the remaining ${5-done} document(s) before your RTO visit.`,
+                'warning'
+              );
+            }
+            renderInbox();
+          }).catch(() => renderInbox());
+      } else {
+        renderInbox();
+      }
+    }
+
+    function renderInbox() {
+      const list      = getNotifications();
+      const inbox     = document.getElementById('smsInbox');
+      const countEl   = document.getElementById('notifCount');
+      countEl.textContent = list.length;
+
+      if (list.length === 0) {
+        inbox.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-icon">📭</div>
+            <div>No notifications yet</div>
+            <div style="font-size:12px; margin-top:6px;">Notifications will appear here as your journey progresses</div>
+          </div>`;
+        return;
+      }
+
+      const typeMap = {
+        warning: { badge: 'badge-warning', label: 'ALERT',   color: 'orange' },
+        success: { badge: 'badge-success', label: 'SUCCESS',  color: 'green'  },
+        danger:  { badge: 'badge-danger',  label: 'URGENT',   color: 'red'    },
+        info:    { badge: 'badge-info',    label: 'INFO',     color: 'blue'   },
+        system:  { badge: 'badge-system',  label: 'SYSTEM',   color: 'grey'   },
+      };
+
+      inbox.innerHTML = list.map(n => {
+        const t    = typeMap[n.type] || typeMap.system;
+        const date = new Date(n.date);
+        const dateStr = date.toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' });
+        const timeStr = date.toLocaleTimeString('en-IN', { hour:'2-digit', minute:'2-digit' });
+        return `
+          <div class="sms-card ${t.color}">
+            ${!n.read ? '<div class="unread-dot"></div>' : ''}
+            <span class="sms-badge ${t.badge}">${t.label}</span>
+            <div class="sms-title">${n.title}</div>
+            <div class="sms-body">${n.body}</div>
+            <div class="sms-time">${dateStr} at ${timeStr}</div>
+          </div>`;
+      }).join('');
+
+      // Mark all as read
+      list.forEach(n => n.read = true);
+      saveNotifications(list);
+    }
+
+    function clearAll() {
+      if (confirm('Clear all notifications?')) {
+        localStorage.removeItem('dl_notifications');
+        renderInbox();
+      }
+    }
+
+    generateNotifications();
+  </script>
+
+</body>
+</html>

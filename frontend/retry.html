@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Test Failed — DL Journey Tracker</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Poppins', sans-serif; background: #f5f6fa; color: #1a1a2e; }
+
+    /* NAVBAR */
+    .navbar {
+      background: #1a1a2e;
+      padding: 14px 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .navbar .brand { color: #ff6b35; font-weight: 700; font-size: 1.1rem; }
+    .navbar a { color: #ccc; text-decoration: none; font-size: 0.85rem; }
+    .navbar a:hover { color: #ff6b35; }
+
+    /* HERO FAIL BANNER */
+    .fail-banner {
+      background: linear-gradient(135deg, #c0392b, #8e1a11);
+      color: white;
+      text-align: center;
+      padding: 48px 24px 36px;
+      position: relative;
+      overflow: hidden;
+    }
+    .fail-banner::before {
+      content: '';
+      position: absolute;
+      top: -40px; right: -40px;
+      width: 200px; height: 200px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 50%;
+    }
+    .fail-icon { font-size: 4rem; margin-bottom: 12px; animation: shake 0.6s ease; }
+    @keyframes shake {
+      0%,100%{transform:translateX(0)}
+      25%{transform:translateX(-8px)}
+      75%{transform:translateX(8px)}
+    }
+    .fail-banner h1 { font-size: 1.8rem; font-weight: 700; margin-bottom: 8px; }
+    .fail-banner p { font-size: 0.95rem; opacity: 0.85; max-width: 480px; margin: 0 auto; }
+
+    /* MAIN CONTAINER */
+    .container { max-width: 860px; margin: 0 auto; padding: 28px 20px 60px; }
+
+    /* RETRY COUNTDOWN CARD */
+    .countdown-card {
+      background: white;
+      border-radius: 16px;
+      padding: 28px;
+      margin-bottom: 24px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      border-left: 5px solid #ff6b35;
+      text-align: center;
+    }
+    .countdown-card h2 { font-size: 1.1rem; color: #666; margin-bottom: 16px; }
+    .countdown-boxes {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+    .cd-box {
+      background: #1a1a2e;
+      color: white;
+      border-radius: 12px;
+      padding: 16px 24px;
+      min-width: 80px;
+    }
+    .cd-box .cd-num { font-size: 2.2rem; font-weight: 700; color: #ff6b35; line-height: 1; }
+    .cd-box .cd-label { font-size: 0.7rem; opacity: 0.7; margin-top: 4px; }
+    .retry-date-info { color: #888; font-size: 0.85rem; margin-top: 8px; }
+    .retry-date-info span { color: #ff6b35; font-weight: 600; }
+
+    /* WHAT WENT WRONG */
+    .section-card {
+      background: white;
+      border-radius: 16px;
+      padding: 24px 28px;
+      margin-bottom: 24px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    }
+    .section-card h3 {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #1a1a2e;
+      margin-bottom: 18px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .section-card h3 .icon { font-size: 1.3rem; }
+
+    /* FAIL REASON SELECTOR */
+    .reason-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .reason-item {
+      border: 2px solid #eee;
+      border-radius: 10px;
+      padding: 12px 14px;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-size: 0.85rem;
+      color: #444;
+    }
+    .reason-item:hover { border-color: #ff6b35; background: #fff5f0; }
+    .reason-item.selected { border-color: #ff6b35; background: #fff5f0; color: #c0392b; font-weight: 600; }
+    .reason-item .reason-icon { font-size: 1.2rem; margin-bottom: 4px; }
+
+    /* TIPS SECTION */
+    .tips-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 14px;
+    }
+    .tip-card {
+      background: #f8f9ff;
+      border-radius: 12px;
+      padding: 16px;
+      border-left: 4px solid #ff6b35;
+    }
+    .tip-card .tip-title { font-weight: 600; font-size: 0.9rem; margin-bottom: 6px; color: #1a1a2e; }
+    .tip-card .tip-desc { font-size: 0.8rem; color: #666; line-height: 1.5; }
+
+    /* PRACTICE PLAN */
+    .plan-timeline { display: flex; flex-direction: column; gap: 14px; }
+    .plan-day {
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+    }
+    .plan-day .day-badge {
+      background: #ff6b35;
+      color: white;
+      border-radius: 8px;
+      padding: 6px 12px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      white-space: nowrap;
+      min-width: 60px;
+      text-align: center;
+    }
+    .plan-day .day-content { font-size: 0.85rem; color: #444; padding-top: 6px; line-height: 1.5; }
+    .plan-day .day-content strong { color: #1a1a2e; }
+
+    /* DO DONT */
+    .dodont-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    @media(max-width:500px){ .dodont-grid { grid-template-columns: 1fr; } }
+    .do-col, .dont-col { border-radius: 12px; padding: 16px; }
+    .do-col { background: #f0fff4; border: 1.5px solid #2ecc71; }
+    .dont-col { background: #fff5f5; border: 1.5px solid #e74c3c; }
+    .do-col h4 { color: #27ae60; font-size: 0.9rem; margin-bottom: 10px; }
+    .dont-col h4 { color: #c0392b; font-size: 0.9rem; margin-bottom: 10px; }
+    .dodont-item { font-size: 0.82rem; color: #444; margin-bottom: 7px; display: flex; gap: 7px; }
+
+    /* ACTIONS */
+    .action-buttons {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      margin-top: 8px;
+    }
+    .btn-primary {
+      background: #ff6b35;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      padding: 13px 24px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+      text-decoration: none;
+      display: inline-block;
+    }
+    .btn-primary:hover { background: #e55a28; }
+    .btn-outline {
+      background: white;
+      color: #ff6b35;
+      border: 2px solid #ff6b35;
+      border-radius: 10px;
+      padding: 11px 22px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-decoration: none;
+      display: inline-block;
+    }
+    .btn-outline:hover { background: #fff5f0; }
+    .btn-disabled {
+      background: #ccc;
+      color: #888;
+      border: none;
+      border-radius: 10px;
+      padding: 13px 24px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: not-allowed;
+    }
+
+    /* MOTIVATIONAL QUOTE */
+    .quote-card {
+      background: linear-gradient(135deg, #1a1a2e, #2d2d4e);
+      color: white;
+      border-radius: 16px;
+      padding: 28px;
+      text-align: center;
+      margin-bottom: 24px;
+    }
+    .quote-card .quote-text { font-size: 1.1rem; font-style: italic; margin-bottom: 10px; opacity: 0.9; }
+    .quote-card .quote-author { font-size: 0.8rem; opacity: 0.6; }
+  </style>
+</head>
+<body>
+
+<nav class="navbar">
+  <span class="brand">🚗 DL Journey Tracker</span>
+  <a href="dashboard.html">← Back to Dashboard</a>
+</nav>
+
+<!-- FAIL BANNER -->
+<div class="fail-banner">
+  <div class="fail-icon">❌</div>
+  <h1>Test Not Cleared — Don't Give Up!</h1>
+  <p>Many people fail on their first attempt. You can retry after 7 days. Use this time to prepare better!</p>
+</div>
+
+<div class="container">
+
+  <!-- COUNTDOWN TO RETRY -->
+  <div class="countdown-card">
+    <h2>⏳ Retry Available In</h2>
+    <div class="countdown-boxes">
+      <div class="cd-box"><div class="cd-num" id="cd-days">7</div><div class="cd-label">DAYS</div></div>
+      <div class="cd-box"><div class="cd-num" id="cd-hrs">00</div><div class="cd-label">HOURS</div></div>
+      <div class="cd-box"><div class="cd-num" id="cd-min">00</div><div class="cd-label">MINUTES</div></div>
+      <div class="cd-box"><div class="cd-num" id="cd-sec">00</div><div class="cd-label">SECONDS</div></div>
+    </div>
+    <div class="retry-date-info">Your retry date: <span id="retry-date-display">—</span></div>
+  </div>
+
+  <!-- MOTIVATIONAL QUOTE -->
+  <div class="quote-card">
+    <div class="quote-text">"Success is not final, failure is not fatal — it is the courage to continue that counts."</div>
+    <div class="quote-author">— Winston Churchill</div>
+  </div>
+
+  <!-- WHY DID YOU FAIL -->
+  <div class="section-card">
+    <h3><span class="icon">🔍</span> What Went Wrong? (Select all that apply)</h3>
+    <div class="reason-grid">
+      <div class="reason-item" onclick="toggleReason(this)">
+        <div class="reason-icon">😰</div>
+        Nervousness / Anxiety
+      </div>
+      <div class="reason-item" onclick="toggleReason(this)">
+        <div class="reason-icon">🪞</div>
+        Forgot to use mirrors
+      </div>
+      <div class="reason-item" onclick="toggleReason(this)">
+        <div class="reason-icon">🚦</div>
+        Missed traffic signals
+      </div>
+      <div class="reason-item" onclick="toggleReason(this)">
+        <div class="reason-icon">🏔️</div>
+        Failed H-Point / Slope
+      </div>
+      <div class="reason-item" onclick="toggleReason(this)">
+        <div class="reason-icon">🔄</div>
+        Figure-8 track mistake
+      </div>
+      <div class="reason-item" onclick="toggleReason(this)">
+        <div class="reason-icon">⚡</div>
+        Speed too fast/slow
+      </div>
+      <div class="reason-item" onclick="toggleReason(this)">
+        <div class="reason-icon">🅿️</div>
+        Parking failed
+      </div>
+      <div class="reason-item" onclick="toggleReason(this)">
+        <div class="reason-icon">🦺</div>
+        No helmet / seatbelt
+      </div>
+    </div>
+  </div>
+
+  <!-- IMPROVEMENT TIPS -->
+  <div class="section-card">
+    <h3><span class="icon">💡</span> Improvement Tips for Next Attempt</h3>
+    <div class="tips-grid">
+      <div class="tip-card">
+        <div class="tip-title">🪞 Mirror Check Habit</div>
+        <div class="tip-desc">Before every turn and lane change — check left mirror, right mirror, rear mirror. Make it a reflex, not a thought.</div>
+      </div>
+      <div class="tip-card">
+        <div class="tip-title">🏔️ H-Point Practice</div>
+        <div class="tip-desc">Practice on a slope daily. Stop the vehicle, hold clutch + brake, then release slowly without rolling back. Repeat 20 times.</div>
+      </div>
+      <div class="tip-card">
+        <div class="tip-title">🔄 Figure-8 Technique</div>
+        <div class="tip-desc">Keep speed very slow (walking speed). Look ahead at where you want to go, not at the ground. Wide turns are safer.</div>
+      </div>
+      <div class="tip-card">
+        <div class="tip-title">😌 Control Anxiety</div>
+        <div class="tip-desc">Take 3 deep breaths before starting. Tell yourself: "I know how to drive." Slow = safe. Inspector prefers slow and careful.</div>
+      </div>
+      <div class="tip-card">
+        <div class="tip-title">⚡ Speed Control</div>
+        <div class="tip-desc">Keep speed between 20–30 kmph throughout the test track. Never accelerate at turns. Brake early and smoothly.</div>
+      </div>
+      <div class="tip-card">
+        <div class="tip-title">🚦 Signal Discipline</div>
+        <div class="tip-desc">Give indicators 30 meters before every turn. Don't jump stop lines. Wait for green even if road is clear.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 7 DAY PRACTICE PLAN -->
+  <div class="section-card">
+    <h3><span class="icon">📅</span> Your 7-Day Practice Plan</h3>
+    <div class="plan-timeline">
+      <div class="plan-day">
+        <div class="day-badge">Day 1</div>
+        <div class="day-content"><strong>Rest + Review</strong> — Watch your test failure areas on YouTube. Understand exactly what the inspector checks.</div>
+      </div>
+      <div class="plan-day">
+        <div class="day-badge">Day 2</div>
+        <div class="day-content"><strong>Mirror Drills</strong> — Practice driving in a parking lot, checking mirrors every 10 seconds. Make it automatic.</div>
+      </div>
+      <div class="plan-day">
+        <div class="day-badge">Day 3</div>
+        <div class="day-content"><strong>Slope Practice</strong> — Find a gentle slope. Practice stopping and restarting 20+ times without rolling back.</div>
+      </div>
+      <div class="plan-day">
+        <div class="day-badge">Day 4</div>
+        <div class="day-content"><strong>Figure-8 + Slow Speed</strong> — Practice tight turns at walking speed. Stay in your lane. No foot on ground (2W).</div>
+      </div>
+      <div class="plan-day">
+        <div class="day-badge">Day 5</div>
+        <div class="day-content"><strong>Full Mock Test</strong> — Do one complete simulation of the test track from start to finish. Time yourself.</div>
+      </div>
+      <div class="plan-day">
+        <div class="day-badge">Day 6</div>
+        <div class="day-content"><strong>Mental Preparation</strong> — Read the pass/fail rules. Visualize clearing the test successfully. Sleep well tonight.</div>
+      </div>
+      <div class="plan-day">
+        <div class="day-badge">Day 7</div>
+        <div class="day-content"><strong>Test Day!</strong> — Arrive 30 mins early. Carry all documents. Breathe. You've got this! 🚀</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DO'S AND DON'TS -->
+  <div class="section-card">
+    <h3><span class="icon">✅</span> Do's & Don'ts on Retry Day</h3>
+    <div class="dodont-grid">
+      <div class="do-col">
+        <h4>✅ Do This</h4>
+        <div class="dodont-item">✔ Arrive 30 minutes early</div>
+        <div class="dodont-item">✔ Wear helmet / seatbelt from start</div>
+        <div class="dodont-item">✔ Check mirrors at every turn</div>
+        <div class="dodont-item">✔ Drive slow and steady</div>
+        <div class="dodont-item">✔ Use indicators before turning</div>
+        <div class="dodont-item">✔ Stay calm and breathe deeply</div>
+      </div>
+      <div class="dont-col">
+        <h4>❌ Don't Do This</h4>
+        <div class="dodont-item">✘ Rush through the track</div>
+        <div class="dodont-item">✘ Forget mirror checks</div>
+        <div class="dodont-item">✘ Jump stop lines</div>
+        <div class="dodont-item">✘ Roll back on slope</div>
+        <div class="dodont-item">✘ Put foot down on figure-8</div>
+        <div class="dodont-item">✘ Argue with inspector</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ACTION BUTTONS -->
+  <div class="section-card">
+    <h3><span class="icon">🚀</span> What To Do Next</h3>
+    <div class="action-buttons">
+      <button class="btn-primary" id="retry-btn" onclick="markRetryBooked()">📅 Book Retry Appointment</button>
+      <a href="testsim.html" class="btn-outline">🏎️ Practice Test Simulation</a>
+      <a href="appointment.html" class="btn-outline">📋 View Test Guide Again</a>
+      <a href="dashboard.html" class="btn-outline">🏠 Back to Dashboard</a>
+    </div>
+    <p style="margin-top:14px;font-size:0.8rem;color:#999;" id="retry-note">
+      ⏳ Retry button will activate after 7 days from your failed test date.
+    </p>
+  </div>
+
+</div>
+
+<script>
+  // Get fail date from localStorage or set today
+  let failDate = localStorage.getItem('dl_fail_date');
+  if (!failDate) {
+    failDate = new Date().toISOString();
+    localStorage.setItem('dl_fail_date', failDate);
+    localStorage.setItem('dl_stage', 'test_failed');
+  }
+
+  const failDateObj = new Date(failDate);
+  const retryDate = new Date(failDateObj);
+  retryDate.setDate(retryDate.getDate() + 7);
+
+  // Display retry date
+  document.getElementById('retry-date-display').textContent =
+    retryDate.toLocaleDateString('en-IN', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+
+  // Countdown timer
+  function updateCountdown() {
+    const now = new Date();
+    const diff = retryDate - now;
+
+    if (diff <= 0) {
+      document.getElementById('cd-days').textContent = '0';
+      document.getElementById('cd-hrs').textContent = '00';
+      document.getElementById('cd-min').textContent = '00';
+      document.getElementById('cd-sec').textContent = '00';
+      document.getElementById('retry-btn').classList.remove('btn-disabled');
+      document.getElementById('retry-note').textContent = '✅ 7 days completed! You can now book your retry appointment.';
+      document.getElementById('retry-note').style.color = '#27ae60';
+      return;
+    }
+
+    const days = Math.floor(diff / (1000*60*60*24));
+    const hrs  = Math.floor((diff % (1000*60*60*24)) / (1000*60*60));
+    const mins = Math.floor((diff % (1000*60*60)) / (1000*60));
+    const secs = Math.floor((diff % (1000*60)) / 1000);
+
+    document.getElementById('cd-days').textContent = days;
+    document.getElementById('cd-hrs').textContent  = String(hrs).padStart(2,'0');
+    document.getElementById('cd-min').textContent  = String(mins).padStart(2,'0');
+    document.getElementById('cd-sec').textContent  = String(secs).padStart(2,'0');
+  }
+
+  updateCountdown();
+  setInterval(updateCountdown, 1000);
+
+  // Reason selector
+  function toggleReason(el) {
+    el.classList.toggle('selected');
+  }
+
+  // Retry booking
+  function markRetryBooked() {
+    const now = new Date();
+    if (retryDate > now) {
+      alert(`⏳ You can only retry after ${retryDate.toLocaleDateString('en-IN')}. ${Math.ceil((retryDate-now)/(1000*60*60*24))} days remaining.`);
+      return;
+    }
+    localStorage.setItem('dl_retry_booked', 'true');
+    localStorage.setItem('dl_stage', 'waiting_period');
+    localStorage.removeItem('dl_fail_date');
+    alert('✅ Retry appointment booked! Redirecting to appointment guide...');
+    window.location.href = 'appointment.html';
+  }
+</script>
+</body>
+</html>

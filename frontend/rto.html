@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DL Journey Tracker — Nearest RTO</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .search-bar-wrap {
+      display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;
+    }
+    .search-bar-wrap input {
+      flex: 1; min-width: 200px;
+    }
+    .rto-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 16px;
+    }
+    .rto-card {
+      background: white; border-radius: 12px;
+      padding: 18px 20px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+      border-top: 4px solid var(--orange);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .rto-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+    }
+    .rto-name {
+      font-size: 15px; font-weight: 700;
+      color: var(--navy); margin-bottom: 6px;
+    }
+    .rto-area {
+      font-size: 13px; color: var(--grey-dark);
+      margin-bottom: 4px;
+    }
+    .rto-code {
+      display: inline-block; padding: 2px 8px;
+      background: var(--orange-pale); color: var(--orange);
+      border-radius: 6px; font-size: 11px;
+      font-weight: 700; margin-bottom: 10px;
+    }
+    .rto-info-row {
+      display: flex; gap: 12px; flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+    .rto-info-item {
+      font-size: 12px; color: var(--grey-mid);
+      display: flex; align-items: center; gap: 4px;
+    }
+    .rto-actions {
+      display: flex; gap: 8px; flex-wrap: wrap;
+    }
+    .rto-btn {
+      padding: 7px 14px; border-radius: 8px;
+      font-size: 12px; font-weight: 600;
+      cursor: pointer; border: none;
+      transition: all 0.2s; text-decoration: none;
+      display: inline-flex; align-items: center; gap: 5px;
+    }
+    .rto-btn-map {
+      background: var(--navy); color: white;
+    }
+    .rto-btn-map:hover { background: #0d1b6e; }
+    .rto-btn-select {
+      background: var(--orange); color: white;
+    }
+    .rto-btn-select:hover { background: #bf360c; }
+    .rto-btn-selected {
+      background: var(--green); color: white;
+    }
+    .state-filter {
+      display: flex; gap: 8px; flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+    .state-chip {
+      padding: 5px 14px; border-radius: 20px;
+      font-size: 12px; font-weight: 600;
+      cursor: pointer; border: 1.5px solid var(--grey-light);
+      background: white; color: var(--grey-dark);
+      transition: all 0.2s;
+    }
+    .state-chip.active {
+      background: var(--navy); color: white;
+      border-color: var(--navy);
+    }
+    .selected-rto-banner {
+      background: var(--green-bg); border: 1.5px solid var(--green);
+      border-radius: var(--radius); padding: 14px 18px;
+      margin-bottom: 16px; display: none;
+    }
+    .selected-rto-banner .label {
+      font-size: 12px; color: var(--green); font-weight: 700;
+      margin-bottom: 4px;
+    }
+    .selected-rto-banner .value {
+      font-size: 14px; color: var(--navy); font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="top-bar">
+    Government of India &nbsp;|&nbsp; Ministry of Road Transport &amp; Highways &nbsp;|&nbsp; Citizen Services
+  </div>
+
+  <nav class="navbar">
+    <a class="navbar-brand" href="index.html">
+      <div class="brand-icon">🚗</div>
+      <div class="brand-text">
+        <span class="brand-title">DL Journey Tracker</span>
+        <span class="brand-sub">LL to Permanent License</span>
+      </div>
+    </a>
+    <div class="nav-links" style="margin-left:auto;">
+      <a class="nav-btn nav-btn-outline" href="dashboard.html">← Dashboard</a>
+    </div>
+  </nav>
+
+  <div class="page-wrapper-wide">
+
+    <div class="page-header">
+      <div class="breadcrumb"><a href="dashboard.html">Dashboard</a> › Nearest RTO</div>
+      <h1>📍 Find Your Nearest RTO</h1>
+      <p>Locate the nearest Regional Transport Office for your driving test</p>
+    </div>
+
+    <!-- Selected RTO Banner -->
+    <div class="selected-rto-banner" id="selectedBanner">
+      <div class="label">✅ YOUR SELECTED RTO</div>
+      <div class="value" id="selectedRTOName">—</div>
+      <div style="font-size:12px; color:var(--grey-dark); margin-top:4px;" id="selectedRTOAddr">—</div>
+    </div>
+
+    <div class="card">
+      <!-- Search -->
+      <div class="search-bar-wrap">
+        <input class="form-control" type="text" id="searchInput"
+          placeholder="🔍 Search by city or RTO name..."
+          oninput="filterRTOs()" />
+        <button class="btn btn-primary" onclick="detectLocation()">
+          📍 Detect My Location
+        </button>
+      </div>
+
+      <!-- State Filter -->
+      <div class="state-filter" id="stateFilter"></div>
+
+      <!-- Result count -->
+      <div style="font-size:13px; color:var(--grey-mid); margin-bottom:12px;">
+        Showing <span id="resultCount">0</span> RTOs
+      </div>
+
+      <!-- RTO Grid -->
+      <div class="rto-grid" id="rtoGrid"></div>
+    </div>
+
+  </div>
+
+  <footer class="footer">
+    DL Journey Tracker &nbsp;|&nbsp; OOP Mini Project &nbsp;|&nbsp; Built with <span>♥</span> in C++ &amp; Web
+  </footer>
+
+  <script src="script.js"></script>
+  <script>
+
+    const RTO_DATA = [
+      // Maharashtra
+      { name: 'RTO Pune', code: 'MH-12', city: 'Pune', area: 'Shivaji Nagar, Pune', state: 'Maharashtra', phone: '020-25671234', timing: 'Mon–Sat: 10AM–5PM', lat: 18.5204, lng: 73.8567 },
+      { name: 'RTO Pimpri-Chinchwad', code: 'MH-14', city: 'Pune', area: 'Pimpri, Pune', state: 'Maharashtra', phone: '020-27426789', timing: 'Mon–Sat: 10AM–5PM', lat: 18.6298, lng: 73.7997 },
+      { name: 'RTO Akola', code: 'MH-30', city: 'Akola', area: 'Civil Lines, Akola', state: 'Maharashtra', phone: '0724-2435678', timing: 'Mon–Sat: 10AM–5PM', lat: 20.7096, lng: 77.0021 },
+      { name: 'RTO Nagpur', code: 'MH-31', city: 'Nagpur', area: 'Civil Lines, Nagpur', state: 'Maharashtra', phone: '0712-2561234', timing: 'Mon–Sat: 10AM–5PM', lat: 21.1458, lng: 79.0882 },
+      { name: 'RTO Mumbai Central', code: 'MH-01', city: 'Mumbai', area: 'Tardeo, Mumbai', state: 'Maharashtra', phone: '022-23521234', timing: 'Mon–Sat: 10AM–5PM', lat: 18.9647, lng: 72.8258 },
+      { name: 'RTO Nashik', code: 'MH-15', city: 'Nashik', area: 'Nashik Road, Nashik', state: 'Maharashtra', phone: '0253-2314567', timing: 'Mon–Sat: 10AM–5PM', lat: 19.9975, lng: 73.7898 },
+      { name: 'RTO Aurangabad', code: 'MH-20', city: 'Aurangabad', area: 'Cidco, Aurangabad', state: 'Maharashtra', phone: '0240-2334567', timing: 'Mon–Sat: 10AM–5PM', lat: 19.8762, lng: 75.3433 },
+      // Delhi
+      { name: 'RTO Delhi Saket', code: 'DL-07', city: 'Delhi', area: 'Saket, New Delhi', state: 'Delhi', phone: '011-29565678', timing: 'Mon–Fri: 9AM–5PM', lat: 28.5244, lng: 77.2066 },
+      { name: 'RTO Delhi Rohini', code: 'DL-04', city: 'Delhi', area: 'Rohini, New Delhi', state: 'Delhi', phone: '011-27862345', timing: 'Mon–Fri: 9AM–5PM', lat: 28.7041, lng: 77.1025 },
+      // Karnataka
+      { name: 'RTO Bengaluru East', code: 'KA-41', city: 'Bengaluru', area: 'Indiranagar, Bengaluru', state: 'Karnataka', phone: '080-25278901', timing: 'Mon–Sat: 10AM–5PM', lat: 12.9716, lng: 77.5946 },
+      { name: 'RTO Bengaluru West', code: 'KA-51', city: 'Bengaluru', area: 'Rajajinagar, Bengaluru', state: 'Karnataka', phone: '080-23454321', timing: 'Mon–Sat: 10AM–5PM', lat: 12.9915, lng: 77.5562 },
+      // Gujarat
+      { name: 'RTO Ahmedabad', code: 'GJ-01', city: 'Ahmedabad', area: 'Lal Darwaja, Ahmedabad', state: 'Gujarat', phone: '079-25505678', timing: 'Mon–Sat: 10AM–5PM', lat: 23.0225, lng: 72.5714 },
+      { name: 'RTO Surat', code: 'GJ-05', city: 'Surat', area: 'Ring Road, Surat', state: 'Gujarat', phone: '0261-2345678', timing: 'Mon–Sat: 10AM–5PM', lat: 21.1702, lng: 72.8311 },
+      // Tamil Nadu
+      { name: 'RTO Chennai North', code: 'TN-09', city: 'Chennai', area: 'Rajaji Salai, Chennai', state: 'Tamil Nadu', phone: '044-25341234', timing: 'Mon–Fri: 9AM–5PM', lat: 13.0827, lng: 80.2707 },
+      { name: 'RTO Chennai South', code: 'TN-22', city: 'Chennai', area: 'Guindy, Chennai', state: 'Tamil Nadu', phone: '044-22501234', timing: 'Mon–Fri: 9AM–5PM', lat: 13.0067, lng: 80.2206 },
+    ];
+
+    let activeState = 'All';
+    let selectedRTO = JSON.parse(localStorage.getItem('selected_rto') || 'null');
+
+    function getStates() {
+      const states = ['All', ...new Set(RTO_DATA.map(r => r.state))];
+      return states;
+    }
+
+    function renderStateFilter() {
+      const wrap = document.getElementById('stateFilter');
+      wrap.innerHTML = getStates().map(s => `
+        <button class="state-chip ${s === activeState ? 'active' : ''}"
+          onclick="setStateFilter('${s}')">${s}</button>
+      `).join('');
+    }
+
+    function setStateFilter(state) {
+      activeState = state;
+      renderStateFilter();
+      renderRTOs();
+    }
+
+    function filterRTOs() { renderRTOs(); }
+
+    function renderRTOs() {
+      const query  = document.getElementById('searchInput').value.toLowerCase();
+      const grid   = document.getElementById('rtoGrid');
+      const countEl = document.getElementById('resultCount');
+
+      let filtered = RTO_DATA.filter(r => {
+        const matchState = activeState === 'All' || r.state === activeState;
+        const matchQuery = !query ||
+          r.name.toLowerCase().includes(query) ||
+          r.city.toLowerCase().includes(query) ||
+          r.area.toLowerCase().includes(query) ||
+          r.code.toLowerCase().includes(query);
+        return matchState && matchQuery;
+      });
+
+      countEl.textContent = filtered.length;
+
+      if (filtered.length === 0) {
+        grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:40px; color:var(--grey-mid);">
+          No RTOs found. Try a different search or state filter.</div>`;
+        return;
+      }
+
+      grid.innerHTML = filtered.map(r => {
+        const isSelected = selectedRTO && selectedRTO.code === r.code;
+        return `
+          <div class="rto-card">
+            <span class="rto-code">${r.code}</span>
+            <div class="rto-name">${r.name}</div>
+            <div class="rto-area">📍 ${r.area}</div>
+            <div class="rto-info-row">
+              <div class="rto-info-item">📞 ${r.phone}</div>
+              <div class="rto-info-item">🕐 ${r.timing}</div>
+            </div>
+            <div class="rto-actions">
+              <a class="rto-btn rto-btn-map"
+                href="https://www.google.com/maps/search/${encodeURIComponent(r.name + ' ' + r.city)}"
+                target="_blank">🗺️ View Map</a>
+              <button class="rto-btn ${isSelected ? 'rto-btn-selected' : 'rto-btn-select'}"
+                onclick="selectRTO('${r.code}')">
+                ${isSelected ? '✅ Selected' : '📌 Select This RTO'}
+              </button>
+            </div>
+          </div>`;
+      }).join('');
+
+      updateSelectedBanner();
+    }
+
+    function selectRTO(code) {
+      const rto = RTO_DATA.find(r => r.code === code);
+      if (!rto) return;
+      selectedRTO = rto;
+      localStorage.setItem('selected_rto', JSON.stringify(rto));
+      localStorage.setItem('rto_center', rto.name + ', ' + rto.city);
+      renderRTOs();
+    }
+
+    function updateSelectedBanner() {
+      const banner = document.getElementById('selectedBanner');
+      if (selectedRTO) {
+        banner.style.display = 'block';
+        document.getElementById('selectedRTOName').textContent = selectedRTO.name + ' (' + selectedRTO.code + ')';
+        document.getElementById('selectedRTOAddr').textContent = selectedRTO.area + ' | ' + selectedRTO.timing;
+      } else {
+        banner.style.display = 'none';
+      }
+    }
+
+    function detectLocation() {
+      if (!navigator.geolocation) {
+        alert('Geolocation not supported by your browser.');
+        return;
+      }
+      navigator.geolocation.getCurrentPosition(pos => {
+        const { latitude, longitude } = pos.coords;
+        // Find nearest RTO by simple distance
+        let nearest = null; let minDist = Infinity;
+        RTO_DATA.forEach(r => {
+          const dist = Math.sqrt(
+            Math.pow(r.lat - latitude, 2) + Math.pow(r.lng - longitude, 2)
+          );
+          if (dist < minDist) { minDist = dist; nearest = r; }
+        });
+        if (nearest) {
+          document.getElementById('searchInput').value = nearest.city;
+          activeState = nearest.state;
+          renderStateFilter();
+          renderRTOs();
+          alert(`📍 Nearest RTO found: ${nearest.name}\n${nearest.area}`);
+        }
+      }, () => {
+        alert('Could not detect location. Please search manually.');
+      });
+    }
+
+    // Init
+    renderStateFilter();
+    renderRTOs();
+    updateSelectedBanner();
+
+    // Auto-filter by user's city
+    const user = getUser();
+    if (user && user.city) {
+      const city = user.city.split(',')[0].trim();
+      document.getElementById('searchInput').value = city;
+      filterRTOs();
+    }
+  </script>
+
+</body>
+</html>

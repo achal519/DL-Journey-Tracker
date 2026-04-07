@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DL Journey Tracker — Test Simulation</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .sim-header {
+      text-align: center; padding: 20px 0;
+    }
+    .sim-progress-bar {
+      width: 100%; height: 10px;
+      background: var(--grey-light); border-radius: 10px;
+      margin: 16px 0; overflow: hidden;
+    }
+    .sim-progress-fill {
+      height: 100%; border-radius: 10px;
+      background: linear-gradient(90deg, #e65100, #ff8f00);
+      transition: width 0.5s ease;
+    }
+    .step-card {
+      display: none;
+      animation: fadeIn 0.4s ease;
+    }
+    .step-card.active { display: block; }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .step-icon {
+      font-size: 56px; text-align: center;
+      margin: 16px 0 8px;
+    }
+    .step-title {
+      font-size: 20px; font-weight: 800;
+      color: var(--navy); text-align: center;
+      margin-bottom: 8px;
+    }
+    .step-desc {
+      font-size: 14px; color: var(--grey-dark);
+      line-height: 1.8; text-align: center;
+      max-width: 480px; margin: 0 auto 20px;
+    }
+    .step-rules {
+      background: var(--grey-light); border-radius: var(--radius);
+      padding: 14px 18px; margin-bottom: 16px;
+    }
+    .step-rules li {
+      font-size: 13px; color: var(--grey-dark);
+      padding: 4px 0; display: flex;
+      align-items: center; gap: 8px;
+    }
+    .timer-wrap {
+      text-align: center; margin: 16px 0;
+    }
+    .timer-circle {
+      width: 80px; height: 80px;
+      border: 5px solid var(--orange);
+      border-radius: 50%; display: inline-flex;
+      align-items: center; justify-content: center;
+      font-size: 24px; font-weight: 800;
+      color: var(--navy);
+    }
+    .timer-circle.warning { border-color: var(--red); color: var(--red); }
+    .sim-nav {
+      display: flex; justify-content: space-between;
+      align-items: center; gap: 12px; flex-wrap: wrap;
+      margin-top: 20px;
+    }
+    .sim-btn {
+      padding: 10px 24px; border-radius: 8px;
+      font-size: 14px; font-weight: 600;
+      cursor: pointer; border: none; transition: all 0.2s;
+    }
+    .sim-btn-prev { background: var(--grey-light); color: var(--navy); }
+    .sim-btn-prev:hover { background: #ccc; }
+    .sim-btn-next { background: var(--orange); color: white; }
+    .sim-btn-next:hover { background: #bf360c; }
+    .sim-btn-pass { background: var(--green); color: white; font-size: 16px; width: 100%; margin-top: 12px; }
+    .result-card {
+      text-align: center; padding: 32px 20px;
+    }
+    .result-icon { font-size: 80px; margin-bottom: 16px; animation: bounce 0.8s ease; }
+    @keyframes bounce {
+      0%,100% { transform: scale(1); }
+      50%      { transform: scale(1.2); }
+    }
+    .result-title { font-size: 28px; font-weight: 800; margin-bottom: 8px; }
+    .result-title.pass { color: var(--green); }
+    .result-title.fail { color: var(--red); }
+    .score-wrap {
+      display: flex; justify-content: center;
+      gap: 24px; flex-wrap: wrap; margin: 20px 0;
+    }
+    .score-item {
+      padding: 16px 24px; border-radius: 12px;
+      background: var(--grey-light); min-width: 100px;
+    }
+    .score-item .val { font-size: 28px; font-weight: 800; color: var(--navy); }
+    .score-item .lbl { font-size: 12px; color: var(--grey-mid); margin-top: 4px; }
+    .question-opt {
+      padding: 12px 16px; border-radius: 8px;
+      background: var(--grey-light); margin-bottom: 8px;
+      cursor: pointer; font-size: 13px; color: var(--grey-dark);
+      border: 2px solid transparent; transition: all 0.2s;
+    }
+    .question-opt:hover { border-color: var(--orange); background: var(--orange-pale); }
+    .question-opt.correct { background: var(--green-bg); border-color: var(--green); color: var(--green); }
+    .question-opt.wrong   { background: var(--red-bg); border-color: var(--red); color: var(--red); }
+    .step-counter {
+      font-size: 13px; color: var(--grey-mid); font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="top-bar">
+    Government of India &nbsp;|&nbsp; Ministry of Road Transport &amp; Highways &nbsp;|&nbsp; Citizen Services
+  </div>
+
+  <nav class="navbar">
+    <a class="navbar-brand" href="index.html">
+      <div class="brand-icon">🚗</div>
+      <div class="brand-text">
+        <span class="brand-title">DL Journey Tracker</span>
+        <span class="brand-sub">LL to Permanent License</span>
+      </div>
+    </a>
+    <div class="nav-links" style="margin-left:auto;">
+      <a class="nav-btn nav-btn-outline" href="dashboard.html">← Dashboard</a>
+    </div>
+  </nav>
+
+  <div class="page-wrapper" style="max-width:680px;">
+
+    <div class="page-header">
+      <div class="breadcrumb"><a href="dashboard.html">Dashboard</a> › Test Simulation</div>
+      <h1>🏎️ Driving Test Simulation</h1>
+      <p>Practice your RTO driving test step by step before the real one</p>
+    </div>
+
+    <div class="card">
+
+      <!-- Progress -->
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <span class="step-counter">Step <span id="currentStepNum">1</span> of <span id="totalSteps">8</span></span>
+        <span style="font-size:13px; color:var(--orange); font-weight:700;" id="scoreDisplay">Score: 0</span>
+      </div>
+      <div class="sim-progress-bar">
+        <div class="sim-progress-fill" id="simProgress" style="width:0%"></div>
+      </div>
+
+      <!-- Steps Container -->
+      <div id="stepsContainer"></div>
+
+      <!-- Result Screen -->
+      <div id="resultScreen" style="display:none;">
+        <div class="result-card">
+          <div class="result-icon" id="resultIcon">🎉</div>
+          <div class="result-title" id="resultTitle">TEST PASSED!</div>
+          <div style="font-size:14px; color:var(--grey-dark); margin-bottom:20px;" id="resultMsg"></div>
+          <div class="score-wrap">
+            <div class="score-item">
+              <div class="val" id="finalScore">0</div>
+              <div class="lbl">Score</div>
+            </div>
+            <div class="score-item">
+              <div class="val" id="finalCorrect">0</div>
+              <div class="lbl">Correct</div>
+            </div>
+            <div class="score-item">
+              <div class="val" id="finalTotal">0</div>
+              <div class="lbl">Total</div>
+            </div>
+          </div>
+          <button class="sim-btn sim-btn-next" style="width:100%; margin-top:8px;" onclick="restartSim()">
+            🔄 Try Again
+          </button>
+          <a href="dashboard.html" class="btn btn-outline" style="display:block; margin-top:10px; text-align:center;">
+            ← Back to Dashboard
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <footer class="footer">
+    DL Journey Tracker &nbsp;|&nbsp; OOP Mini Project &nbsp;|&nbsp; Built with <span>♥</span> in C++ &amp; Web
+  </footer>
+
+  <script src="script.js"></script>
+  <script>
+
+    const STEPS = [
+      {
+        type: 'info',
+        icon: '🚗',
+        title: 'Step 1: Approach & Pre-Check',
+        desc: 'Walk to your vehicle confidently. The inspector is watching from the beginning.',
+        rules: [
+          '✅ Walk to the vehicle calmly',
+          '✅ Check around the vehicle (front, back, sides)',
+          '✅ Adjust seat position before entering',
+          '❌ Do NOT rush or look nervous',
+        ],
+        timer: 30
+      },
+      {
+        type: 'info',
+        icon: '🪞',
+        title: 'Step 2: Pre-Start Routine',
+        desc: 'Before starting the engine, do the mandatory pre-start safety checks.',
+        rules: [
+          '✅ Wear helmet (2W) / seatbelt (4W) FIRST',
+          '✅ Adjust rear-view mirror',
+          '✅ Adjust side mirrors',
+          '✅ Check handbrake is engaged',
+          '❌ Do NOT start engine before safety checks',
+        ],
+        timer: 30
+      },
+      {
+        type: 'quiz',
+        icon: '🚦',
+        title: 'Traffic Sign Quiz — Stop Sign',
+        desc: 'What does a red octagonal sign mean?',
+        options: [
+          { text: 'Slow down and proceed', correct: false },
+          { text: 'STOP — come to a complete halt', correct: true },
+          { text: 'No entry for heavy vehicles', correct: false },
+          { text: 'Speed limit 30 kmph', correct: false },
+        ]
+      },
+      {
+        type: 'info',
+        icon: '➡️',
+        title: 'Step 3: Straight Line Drive',
+        desc: 'Drive straight on the test track at a controlled, steady speed.',
+        rules: [
+          '✅ Maintain 20–30 kmph',
+          '✅ Look ahead, not at the ground',
+          '✅ Keep both hands on wheel/handlebar',
+          '❌ Do NOT swerve or drift',
+          '❌ Do NOT exceed 30 kmph',
+        ],
+        timer: 20
+      },
+      {
+        type: 'quiz',
+        icon: '⛰️',
+        title: 'H-Point / Slope Start (4W)',
+        desc: 'On a slope start, what should you do FIRST after stopping?',
+        options: [
+          { text: 'Release clutch immediately', correct: false },
+          { text: 'Apply handbrake and select first gear', correct: true },
+          { text: 'Press accelerator hard', correct: false },
+          { text: 'Turn off engine', correct: false },
+        ]
+      },
+      {
+        type: 'info',
+        icon: '🔄',
+        title: 'Step 4: Turning',
+        desc: 'Signal, check mirror, slow down, and execute the turn safely.',
+        rules: [
+          '✅ Signal at least 30 metres before turn',
+          '✅ Check mirror before turning',
+          '✅ Slow down before the turn',
+          '✅ Stop completely at stop line',
+          '❌ Do NOT turn without signalling',
+        ],
+        timer: 25
+      },
+      {
+        type: 'quiz',
+        icon: '🏍️',
+        title: 'Figure-8 Test (2W)',
+        desc: 'During the Figure-8 test, your feet should be:',
+        options: [
+          { text: 'Touching the ground for balance', correct: false },
+          { text: 'On the footrests throughout', correct: true },
+          { text: 'Extended outward', correct: false },
+          { text: 'Raised above the footrests', correct: false },
+        ]
+      },
+      {
+        type: 'info',
+        icon: '🏁',
+        title: 'Step 5: Finish & Result',
+        desc: 'Stop at the finish line correctly. The inspector will announce your result.',
+        rules: [
+          '✅ Stop completely at the finish line',
+          '✅ Apply handbrake / put on stand',
+          '✅ Turn off engine',
+          '✅ Wait for inspector to speak first',
+          '❌ Do NOT exit vehicle before told',
+        ],
+        timer: 15
+      },
+    ];
+
+    let currentStep = 0;
+    let score = 0;
+    let correctCount = 0;
+    let timerInterval = null;
+    let timerVal = 0;
+
+    function renderStep() {
+      const step = STEPS[currentStep];
+      const container = document.getElementById('stepsContainer');
+      const pct = (currentStep / STEPS.length) * 100;
+
+      document.getElementById('simProgress').style.width = pct + '%';
+      document.getElementById('currentStepNum').textContent = currentStep + 1;
+      document.getElementById('totalSteps').textContent = STEPS.length;
+      document.getElementById('scoreDisplay').textContent = 'Score: ' + score;
+
+      clearInterval(timerInterval);
+
+      if (step.type === 'info') {
+        timerVal = step.timer || 30;
+        container.innerHTML = `
+          <div class="step-card active">
+            <div class="step-icon">${step.icon}</div>
+            <div class="step-title">${step.title}</div>
+            <div class="step-desc">${step.desc}</div>
+            <div class="timer-wrap">
+              <div class="timer-circle" id="timerCircle">${timerVal}</div>
+              <div style="font-size:12px; color:var(--grey-mid); margin-top:6px;">seconds to read</div>
+            </div>
+            <ul class="step-rules">
+              ${step.rules.map(r => `<li>${r}</li>`).join('')}
+            </ul>
+            <div class="sim-nav">
+              <button class="sim-btn sim-btn-prev" onclick="prevStep()" ${currentStep === 0 ? 'disabled' : ''}>← Back</button>
+              <button class="sim-btn sim-btn-next" id="nextBtn" onclick="nextStep()">Next Step →</button>
+            </div>
+          </div>`;
+
+        // Countdown timer
+        timerInterval = setInterval(() => {
+          timerVal--;
+          const el = document.getElementById('timerCircle');
+          if (el) {
+            el.textContent = Math.max(0, timerVal);
+            if (timerVal <= 5) el.classList.add('warning');
+          }
+          if (timerVal <= 0) clearInterval(timerInterval);
+        }, 1000);
+
+      } else if (step.type === 'quiz') {
+        container.innerHTML = `
+          <div class="step-card active">
+            <div class="step-icon">${step.icon}</div>
+            <div class="step-title">${step.title}</div>
+            <div class="step-desc">${step.desc}</div>
+            <div id="quizOptions">
+              ${step.options.map((opt, i) => `
+                <div class="question-opt" id="opt${i}" onclick="selectAnswer(${i})">
+                  ${String.fromCharCode(65+i)}. ${opt.text}
+                </div>`).join('')}
+            </div>
+            <div id="quizFeedback" style="display:none; padding:12px 16px; border-radius:8px; margin-top:12px; font-size:13px;"></div>
+            <div class="sim-nav" style="margin-top:16px;">
+              <button class="sim-btn sim-btn-prev" onclick="prevStep()">← Back</button>
+              <button class="sim-btn sim-btn-next" id="nextBtn" onclick="nextStep()" style="display:none;">Next Step →</button>
+            </div>
+          </div>`;
+      }
+    }
+
+    function selectAnswer(idx) {
+      const step = STEPS[currentStep];
+      const opts = document.querySelectorAll('.question-opt');
+      const feedback = document.getElementById('quizFeedback');
+      const nextBtn  = document.getElementById('nextBtn');
+
+      // Disable all options
+      opts.forEach(o => o.style.pointerEvents = 'none');
+
+      const chosen  = step.options[idx];
+      const correct = step.options.findIndex(o => o.correct);
+
+      opts[idx].classList.add(chosen.correct ? 'correct' : 'wrong');
+      opts[correct].classList.add('correct');
+
+      if (chosen.correct) {
+        score += 10; correctCount++;
+        feedback.style.background = 'var(--green-bg)';
+        feedback.style.color      = 'var(--green)';
+        feedback.textContent      = '✅ Correct! +10 points';
+      } else {
+        feedback.style.background = 'var(--red-bg)';
+        feedback.style.color      = 'var(--red)';
+        feedback.textContent      = '❌ Wrong. Correct answer highlighted above.';
+      }
+      feedback.style.display = 'block';
+      document.getElementById('scoreDisplay').textContent = 'Score: ' + score;
+      if (nextBtn) nextBtn.style.display = 'inline-flex';
+    }
+
+    function nextStep() {
+      clearInterval(timerInterval);
+      if (currentStep < STEPS.length - 1) {
+        currentStep++;
+        renderStep();
+      } else {
+        showResult();
+      }
+    }
+
+    function prevStep() {
+      clearInterval(timerInterval);
+      if (currentStep > 0) { currentStep--; renderStep(); }
+    }
+
+    function showResult() {
+      clearInterval(timerInterval);
+      document.getElementById('stepsContainer').style.display = 'none';
+      document.getElementById('resultScreen').style.display  = 'block';
+      document.getElementById('simProgress').style.width = '100%';
+
+      const quizTotal = STEPS.filter(s => s.type === 'quiz').length;
+      const maxScore  = quizTotal * 10;
+      const passed    = score >= (maxScore * 0.6);
+
+      document.getElementById('resultIcon').textContent  = passed ? '🎉' : '😔';
+      document.getElementById('resultTitle').textContent = passed ? 'TEST PASSED!' : 'TEST FAILED';
+      document.getElementById('resultTitle').className   = 'result-title ' + (passed ? 'pass' : 'fail');
+      document.getElementById('resultMsg').textContent   = passed
+        ? 'Excellent! You are ready for the real RTO driving test. Go get that DL!'
+        : 'Don\'t worry — review the steps and try again. Practice makes perfect!';
+      document.getElementById('finalScore').textContent   = score;
+      document.getElementById('finalCorrect').textContent = correctCount;
+      document.getElementById('finalTotal').textContent   = quizTotal;
+    }
+
+    function restartSim() {
+      currentStep = 0; score = 0; correctCount = 0;
+      document.getElementById('stepsContainer').style.display = 'block';
+      document.getElementById('resultScreen').style.display  = 'none';
+      renderStep();
+    }
+
+    // Init
+    renderStep();
+  </script>
+
+</body>
+</html>

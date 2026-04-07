@@ -3,17 +3,91 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>DL Journey Tracker — Register</title>
+  <title>DL Journey Tracker — Start</title>
   <link rel="stylesheet" href="style.css" />
+  <style>
+    /* ── LL Check Screen ─────────────────────────── */
+    #llCheckScreen {
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      min-height: 70vh; padding: 20px;
+    }
+    .ll-check-card {
+      max-width: 560px; width: 100%;
+      background: white; border-radius: 16px;
+      padding: 40px 36px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.10);
+      text-align: center;
+    }
+    .ll-check-icon { font-size: 64px; margin-bottom: 16px; }
+    .ll-check-title {
+      font-size: 22px; font-weight: 800;
+      color: var(--navy); margin-bottom: 8px;
+    }
+    .ll-check-sub {
+      font-size: 14px; color: var(--grey-mid);
+      margin-bottom: 32px; line-height: 1.6;
+    }
+    .ll-choice-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 16px; margin-bottom: 20px;
+    }
+    @media(max-width:480px){ .ll-choice-grid { grid-template-columns: 1fr; } }
+    .ll-choice-btn {
+      padding: 20px 16px; border-radius: 12px;
+      border: 2px solid var(--grey-light);
+      background: white; cursor: pointer;
+      transition: all 0.2s; text-align: center;
+    }
+    .ll-choice-btn:hover {
+      border-color: var(--orange);
+      box-shadow: 0 4px 16px rgba(230,81,0,0.15);
+      transform: translateY(-2px);
+    }
+    .ll-choice-btn.yes-btn:hover { border-color: var(--green); box-shadow: 0 4px 16px rgba(46,125,50,0.15); }
+    .ll-choice-icon { font-size: 36px; margin-bottom: 10px; }
+    .ll-choice-label { font-size: 15px; font-weight: 700; color: var(--navy); margin-bottom: 4px; }
+    .ll-choice-desc  { font-size: 12px; color: var(--grey-mid); }
+
+    /* ── Registration Screen ─────────────────────── */
+    #registrationScreen { display: none; }
+
+    /* ── Progress Steps ──────────────────────────── */
+    .reg-steps {
+      display: flex; justify-content: center;
+      gap: 0; margin-bottom: 24px;
+      max-width: 620px; margin-left: auto; margin-right: auto;
+    }
+    .reg-step {
+      flex: 1; text-align: center;
+      position: relative; padding-bottom: 8px;
+    }
+    .reg-step::after {
+      content: '';
+      position: absolute; top: 14px; left: 50%; right: -50%;
+      height: 2px; background: var(--grey-light); z-index: 0;
+    }
+    .reg-step:last-child::after { display: none; }
+    .reg-step-circle {
+      width: 28px; height: 28px; border-radius: 50%;
+      background: var(--grey-light); color: var(--grey-mid);
+      font-size: 12px; font-weight: 700;
+      display: inline-flex; align-items: center; justify-content: center;
+      position: relative; z-index: 1; margin-bottom: 4px;
+    }
+    .reg-step.done .reg-step-circle  { background: var(--green); color: white; }
+    .reg-step.active .reg-step-circle { background: var(--orange); color: white; }
+    .reg-step-label { font-size: 10px; color: var(--grey-mid); }
+    .reg-step.active .reg-step-label { color: var(--orange); font-weight: 700; }
+    .reg-step.done .reg-step-label   { color: var(--green); }
+  </style>
 </head>
 <body>
 
-  <!-- Top Bar -->
   <div class="top-bar">
     Government of India &nbsp;|&nbsp; Ministry of Road Transport &amp; Highways &nbsp;|&nbsp; Citizen Services
   </div>
 
-  <!-- Navbar -->
   <nav class="navbar">
     <a class="navbar-brand" href="index.html">
       <div class="brand-icon">🚗</div>
@@ -24,112 +98,183 @@
     </a>
   </nav>
 
-  <!-- Page Content -->
-  <div class="page-wrapper">
-
-    <div class="page-header text-center" style="margin-bottom:32px;">
-      <h1>Citizen Registration</h1>
-      <p>Enter your details to begin tracking your Driving License journey</p>
-    </div>
-
-    <!-- Registration Card -->
-    <div class="card" style="max-width:620px; margin:0 auto;">
-      <div class="card-title">
-        📋 Personal &amp; License Details
+  <!-- ══ SCREEN 1: LL Check ════════════════════════ -->
+  <div id="llCheckScreen">
+    <div class="ll-check-card">
+      <div class="ll-check-icon">🪪</div>
+      <div class="ll-check-title">Welcome to DL Journey Tracker</div>
+      <div class="ll-check-sub">
+        This system guides you from your very first step all the way to receiving your Permanent Driving License.<br/>
+        First, let us know where you are in your journey.
       </div>
 
-      <!-- Name + Age -->
-      <div class="form-row">
-        <div class="form-group">
-          <label class="form-label" for="name">Full Name <span>*</span></label>
-          <input class="form-control" type="text" id="name" placeholder="e.g. Rahul Sharma" autocomplete="off" />
+      <div class="ll-choice-grid">
+        <!-- YES — has LL -->
+        <div class="ll-choice-btn yes-btn" onclick="hasLL()">
+          <div class="ll-choice-icon">✅</div>
+          <div class="ll-choice-label">Yes, I have LL</div>
+          <div class="ll-choice-desc">I already have my Learner License and want to track my DL journey</div>
         </div>
-        <div class="form-group">
-          <label class="form-label" for="age">Age <span>*</span></label>
-          <input class="form-control" type="number" id="age" placeholder="e.g. 22" min="16" max="100" />
+
+        <!-- NO — no LL -->
+        <div class="ll-choice-btn" onclick="noLL()">
+          <div class="ll-choice-icon">❓</div>
+          <div class="ll-choice-label">No, I don't have LL</div>
+          <div class="ll-choice-desc">I need help applying for a Learner License first</div>
         </div>
       </div>
 
-      <!-- City -->
-      <div class="form-group">
-        <label class="form-label" for="city">City / District <span>*</span></label>
-        <input class="form-control" type="text" id="city" placeholder="e.g. Nashik, Maharashtra" autocomplete="off" />
-      </div>
-
-      <!-- Vehicle Type -->
-      <div class="form-group">
-        <label class="form-label" for="vehicleType">Vehicle Type <span>*</span></label>
-        <select class="form-control" id="vehicleType">
-          <option value="" disabled selected>— Select vehicle category —</option>
-          <option value="2W">2 Wheeler (Motorcycle / Scooter)</option>
-          <option value="4W">4 Wheeler (Car / Jeep)</option>
-          <option value="Both">Both (2W + 4W)</option>
-          <option value="Commercial">Commercial Vehicle</option>
-        </select>
-      </div>
-
-      <hr class="divider" />
-
-      <!-- LL Number -->
-      <div class="form-group">
-        <label class="form-label" for="llNumber">Learner License Number <span>*</span></label>
-        <input class="form-control" type="text" id="llNumber" placeholder="e.g. MH1520240012345" autocomplete="off" />
-        <p class="form-hint">Enter exactly as printed on your LL card</p>
-      </div>
-
-      <!-- LL Issue Date -->
-      <div class="form-group">
-        <label class="form-label" for="llDate">LL Issue Date <span>*</span></label>
-        <input class="form-control" type="date" id="llDate" />
-        <p class="form-hint">The date printed on your Learner License (not the test date)</p>
-      </div>
-
-      <!-- Error message -->
-      <div id="errorMsg" style="display:none; color:var(--red); font-size:13px; margin-bottom:12px; padding:10px 14px; background:var(--red-bg); border-radius:var(--radius);">
-        ⚠️ Please fill all required fields correctly.
-      </div>
-
-      <!-- Submit -->
-      <button class="btn btn-primary btn-full" id="submitBtn" onclick="handleSubmit()">
-        Start Tracking My DL Journey →
-      </button>
-
-      <p class="text-center text-grey mt-8" style="font-size:12px;">
-        Your data is saved securely in the database.
+      <p style="font-size:12px; color:var(--grey-mid);">
+        Not sure? A Learner License (LL) is the first step before getting a Permanent Driving License.
       </p>
-
     </div>
-
-    <!-- Info Strip -->
-    <div style="max-width:620px; margin:20px auto 0; display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px;">
-      <div class="info-tile text-center">
-        <div class="info-tile-label">Waiting Period</div>
-        <div class="info-tile-value orange">30</div>
-        <div class="info-tile-sub">days minimum</div>
-      </div>
-      <div class="info-tile text-center">
-        <div class="info-tile-label">Apply Window</div>
-        <div class="info-tile-value orange">180</div>
-        <div class="info-tile-sub">days total</div>
-      </div>
-      <div class="info-tile text-center">
-        <div class="info-tile-label">DL Valid For</div>
-        <div class="info-tile-value orange">20</div>
-        <div class="info-tile-sub">years</div>
-      </div>
-    </div>
-
   </div>
 
-  <!-- Footer -->
+  <!-- ══ SCREEN 2: Registration Form ═══════════════ -->
+  <div id="registrationScreen">
+    <div class="page-wrapper">
+
+      <!-- Progress Steps -->
+      <div class="reg-steps">
+        <div class="reg-step done">
+          <div class="reg-step-circle">✓</div>
+          <div class="reg-step-label">LL Check</div>
+        </div>
+        <div class="reg-step active">
+          <div class="reg-step-circle">2</div>
+          <div class="reg-step-label">Register</div>
+        </div>
+        <div class="reg-step">
+          <div class="reg-step-circle">3</div>
+          <div class="reg-step-label">Dashboard</div>
+        </div>
+        <div class="reg-step">
+          <div class="reg-step-circle">4</div>
+          <div class="reg-step-label">DL Test</div>
+        </div>
+        <div class="reg-step">
+          <div class="reg-step-circle">5</div>
+          <div class="reg-step-label">DL Issued</div>
+        </div>
+      </div>
+
+      <div class="page-header text-center" style="margin-bottom:32px;">
+        <h1>Citizen Registration</h1>
+        <p>Enter your Learner License details to begin tracking your DL journey</p>
+      </div>
+
+      <!-- Registration Card -->
+      <div class="card" style="max-width:620px; margin:0 auto;">
+        <div class="card-title">📋 Personal &amp; License Details</div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="name">Full Name <span>*</span></label>
+            <input class="form-control" type="text" id="name" placeholder="e.g. Rahul Sharma" autocomplete="off" />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="age">Age <span>*</span></label>
+            <input class="form-control" type="number" id="age" placeholder="e.g. 22" min="16" max="100" />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="city">City / District <span>*</span></label>
+          <input class="form-control" type="text" id="city" placeholder="e.g. Nashik, Maharashtra" autocomplete="off" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="vehicleType">Vehicle Type <span>*</span></label>
+          <select class="form-control" id="vehicleType">
+            <option value="" disabled selected>— Select vehicle category —</option>
+            <option value="2W">2 Wheeler (Motorcycle / Scooter)</option>
+            <option value="4W">4 Wheeler (Car / Jeep)</option>
+            <option value="Both">Both (2W + 4W)</option>
+            <option value="Commercial">Commercial Vehicle</option>
+          </select>
+        </div>
+
+        <hr class="divider" />
+
+        <div class="form-group">
+          <label class="form-label" for="llNumber">Learner License Number <span>*</span></label>
+          <input class="form-control" type="text" id="llNumber" placeholder="e.g. MH1520240012345" autocomplete="off" />
+          <p class="form-hint">Enter exactly as printed on your LL card</p>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="llDate">LL Issue Date <span>*</span></label>
+          <input class="form-control" type="date" id="llDate" />
+          <p class="form-hint">The date printed on your Learner License (not the test date)</p>
+        </div>
+
+        <div id="errorMsg" style="display:none; color:var(--red); font-size:13px; margin-bottom:12px; padding:10px 14px; background:var(--red-bg); border-radius:var(--radius);">
+          ⚠️ Please fill all required fields correctly.
+        </div>
+
+        <button class="btn btn-primary btn-full" id="submitBtn" onclick="handleSubmit()">
+          Start Tracking My DL Journey →
+        </button>
+
+        <p style="text-align:center; font-size:12px; color:var(--grey-mid); margin-top:12px;">
+          <a href="#" onclick="showLLCheck()" style="color:var(--orange);">← Go back</a>
+          &nbsp;|&nbsp; Your data is saved securely in the database.
+        </p>
+      </div>
+
+      <!-- Info Strip -->
+      <div style="max-width:620px; margin:20px auto 0; display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px;">
+        <div class="info-tile text-center">
+          <div class="info-tile-label">Waiting Period</div>
+          <div class="info-tile-value orange">30</div>
+          <div class="info-tile-sub">days minimum</div>
+        </div>
+        <div class="info-tile text-center">
+          <div class="info-tile-label">Apply Window</div>
+          <div class="info-tile-value orange">180</div>
+          <div class="info-tile-sub">days total</div>
+        </div>
+        <div class="info-tile text-center">
+          <div class="info-tile-label">DL Valid For</div>
+          <div class="info-tile-value orange">20</div>
+          <div class="info-tile-sub">years</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
   <footer class="footer">
     DL Journey Tracker &nbsp;|&nbsp; OOP Mini Project &nbsp;|&nbsp; Built with <span>♥</span> in C++ &amp; Web
   </footer>
 
   <script src="script.js"></script>
   <script>
-    // Set max date as today
     document.getElementById('llDate').max = new Date().toISOString().split('T')[0];
+
+    // Only redirect if FULLY registered (citizen_id + ll_date both exist)
+    // Prevents old/partial localStorage data from skipping the LL check screen
+    const citizenId  = localStorage.getItem('citizen_id');
+    const llDateSaved = localStorage.getItem('dl_llDate');
+    if (citizenId && llDateSaved && citizenId !== 'null' && llDateSaved !== 'null') {
+      window.location.href = 'dashboard.html';
+    }
+
+    function hasLL() {
+      document.getElementById('llCheckScreen').style.display    = 'none';
+      document.getElementById('registrationScreen').style.display = 'block';
+    }
+
+    function noLL() {
+      window.location.href = 'll-guide.html';
+    }
+
+    function showLLCheck() {
+      document.getElementById('llCheckScreen').style.display    = 'flex';
+      document.getElementById('registrationScreen').style.display = 'none';
+    }
+
+    const vehicleMap = { '2W': 'two_wheeler', '4W': 'four_wheeler', 'Both': 'both', 'Commercial': 'two_wheeler' };
 
     async function handleSubmit() {
       const name        = document.getElementById('name').value.trim();
@@ -140,67 +285,45 @@
       const llDate      = document.getElementById('llDate').value;
       const errEl       = document.getElementById('errorMsg');
 
-      // Validation
       if (!name || !age || !city || !vehicleType || !llNumber || !llDate) {
         errEl.textContent = '⚠️ Please fill all required fields.';
-        errEl.style.display = 'block';
-        return;
+        errEl.style.display = 'block'; return;
       }
       if (parseInt(age) < 16 || parseInt(age) > 100) {
         errEl.textContent = '⚠️ Please enter a valid age (16–100).';
-        errEl.style.display = 'block';
-        return;
+        errEl.style.display = 'block'; return;
       }
-      const llDateObj = new Date(llDate);
-      if (llDateObj > new Date()) {
+      if (new Date(llDate) > new Date()) {
         errEl.textContent = '⚠️ LL Issue Date cannot be in the future.';
-        errEl.style.display = 'block';
-        return;
+        errEl.style.display = 'block'; return;
       }
-
       errEl.style.display = 'none';
 
-      // Map vehicle type to DB format
-      const vehicleMap = {
-        '2W': 'two_wheeler',
-        '4W': 'four_wheeler',
-        'Both': 'both',
-        'Commercial': 'two_wheeler'
-      };
-
       const btn = document.getElementById('submitBtn');
-      btn.textContent = 'Saving...';
-      btn.disabled = true;
+      btn.textContent = 'Saving...'; btn.disabled = true;
 
       try {
-        // Generate unique email from name + timestamp
-        const email    = name.toLowerCase().replace(/\s/g, '') + '_' + Date.now() + '@dltracker.com';
-        const password = llNumber; // LL number as default password
+        const email    = name.toLowerCase().replace(/\s/g,'') + '_' + Date.now() + '@dltracker.com';
+        const password = llNumber;
 
-        // Register citizen in DB
         const res = await fetch('/api/citizen/register', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            name,
-            dob: llDate,
+            name, dob: llDate,
             vehicle_type: vehicleMap[vehicleType] || 'two_wheeler',
-            email,
-            password
+            email, password
           })
         });
-
         const data = await res.json();
 
         if (data.error) {
           errEl.textContent = '⚠️ ' + data.error;
           errEl.style.display = 'block';
           btn.textContent = 'Start Tracking My DL Journey →';
-          btn.disabled = false;
-          return;
+          btn.disabled = false; return;
         }
 
-        // Save session info to localStorage
         localStorage.setItem('citizen_id',   data.citizen_id);
         localStorage.setItem('citizen_name', name);
         localStorage.setItem('ll_date',      llDate);
@@ -209,31 +332,19 @@
         localStorage.setItem('city',         city);
         localStorage.setItem('age',          age);
 
-        // Also save old KEYS format so script.js helpers still work
         saveUser({
-          [KEYS.NAME]:      name,
-          [KEYS.AGE]:       age,
-          [KEYS.CITY]:      city,
-          [KEYS.VEHICLE]:   vehicleType,
-          [KEYS.LL_NUMBER]: llNumber,
-          [KEYS.LL_DATE]:   llDate,
-          [KEYS.STAGE]:     '1',
-          [KEYS.DL_OBTAINED]: 'false',
+          [KEYS.NAME]: name, [KEYS.AGE]: age, [KEYS.CITY]: city,
+          [KEYS.VEHICLE]: vehicleType, [KEYS.LL_NUMBER]: llNumber,
+          [KEYS.LL_DATE]: llDate, [KEYS.STAGE]: '1', [KEYS.DL_OBTAINED]: 'false',
         });
 
-        // Save LL issue date in DB
         await fetch('/api/license/update-stage', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            citizen_id: data.citizen_id,
-            stage: 'll_issued',
-            date: llDate
-          })
+          body: JSON.stringify({ citizen_id: data.citizen_id, stage: 'll_issued', date: llDate })
         });
 
         window.location.href = 'dashboard.html';
-
       } catch (err) {
         errEl.textContent = '⚠️ Server error. Make sure the server is running on port 3000.';
         errEl.style.display = 'block';

@@ -28,6 +28,14 @@ body {
   background:white;
 }
 
+/* push button to right */
+.navbar button {
+  margin-left:auto;
+  background:white;
+  border:2px solid orange;
+  color:orange;
+}
+
 .logo {
   width:40px;
   height:40px;
@@ -73,10 +81,11 @@ body {
 button {
   padding:8px 14px;
   margin-top:10px;
-  background:orange;
-  color:white;
   border:none;
   border-radius:6px;
+  cursor:pointer;
+  background:orange;
+  color:white;
 }
 </style>
 </head>
@@ -88,8 +97,13 @@ Government of India | Ministry of Road Transport & Highways
 </div>
 
 <div class="navbar">
-<div class="logo">🚗</div>
-<h2>DL Journey Tracker</h2>
+  <div style="display:flex; align-items:center;">
+    <div class="logo">🚗</div>
+    <h2>DL Journey Tracker</h2>
+  </div>
+
+  <!-- ✅ Dashboard Button -->
+  <button onclick="goDashboard()">← Dashboard</button>
 </div>
 
 <div class="container">
@@ -98,20 +112,34 @@ Government of India | Ministry of Road Transport & Highways
 <div class="card">
 
 <h4>Documents Ready</h4>
+
 <div class="progress-bar">
 <div id="progressFill"></div>
 </div>
+
 <p id="progressText">0 / 0</p>
 
 <div id="checklistContainer"></div>
 
+<!-- Buttons -->
 <button onclick="resetChecklist()">Reset</button>
 <button onclick="markAll()">Mark All</button>
+<button onclick="refreshChecklist()" style="background:#1e90ff;">
+  🔄 Refresh
+</button>
 
 </div>
 </div>
 
 <script>
+
+function goDashboard() {
+  window.location.href = "dashboard.html";
+}
+
+function refreshChecklist() {
+  loadChecklist();
+}
 
 const defaultItems = [
 { id:"aadhar", text:"Aadhar Card"},
@@ -176,6 +204,7 @@ loadChecklist();
 
 function updateProgress(saved){
 let count=0;
+
 defaultItems.forEach(i=>{
 if(saved[i.id]) count++;
 });
@@ -204,5 +233,6 @@ await toggleItem(item.id,true);
 loadChecklist();
 
 </script>
+
 </body>
 </html>

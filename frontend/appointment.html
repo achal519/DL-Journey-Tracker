@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DL Journey Tracker — Appointment Confirmed</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    /* ── Confirmation Banner ─────────────────────── */
+    .confirm-banner {
+      background: linear-gradient(135deg, #1b5e20, #2e7d32);
+      color: white; border-radius: 14px;
+      padding: 28px 28px; margin-bottom: 20px;
+      display: flex; align-items: center;
+      justify-content: space-between; flex-wrap: wrap; gap: 16px;
+    }
+    .confirm-banner .conf-left h2 {
+      font-size: 22px; font-weight: 800; margin-bottom: 4px;
+    }
+    .confirm-banner .conf-left p {
+      font-size: 13px; opacity: 0.85; margin: 0;
+    }
+    .confirm-icon { font-size: 56px; }
+
+    /* ── Appointment Card ────────────────────────── */
+    .appt-card {
+      background: white; border-radius: 14px;
+      border: 2px solid var(--green);
+      padding: 20px 24px; margin-bottom: 20px;
+    }
+    .appt-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 14px; margin-top: 12px;
+    }
+    @media(max-width:560px){ .appt-grid { grid-template-columns: 1fr; } }
+    .appt-item {
+      padding: 12px 16px; background: var(--grey-light);
+      border-radius: 10px; border-left: 4px solid var(--green);
+    }
+    .appt-item .lbl { font-size: 11px; color: var(--grey-mid); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+    .appt-item .val { font-size: 15px; font-weight: 700; color: var(--navy); }
+
+    /* ── Countdown ───────────────────────────────── */
+    .countdown-wrap {
+      text-align: center; padding: 20px;
+      background: var(--orange-pale); border-radius: 12px;
+      margin-bottom: 20px; border: 2px dashed var(--orange);
+    }
+    .countdown-label { font-size: 13px; color: var(--grey-mid); margin-bottom: 6px; }
+    .countdown-value { font-size: 48px; font-weight: 800; color: var(--orange); line-height: 1; }
+    .countdown-sub   { font-size: 13px; color: var(--grey-dark); margin-top: 6px; }
+
+    /* ── Timeline steps ──────────────────────────── */
+    .timeline-steps { list-style: none; padding: 0; margin: 0; position: relative; }
+    .timeline-steps::before {
+      content: ''; position: absolute; left: 15px; top: 0; bottom: 0;
+      width: 2px; background: var(--orange);
+    }
+    .timeline-steps li {
+      padding: 10px 10px 10px 44px; position: relative;
+      font-size: 13px; color: var(--grey-dark); line-height: 1.6;
+      border-bottom: 1px dashed var(--grey-light);
+    }
+    .timeline-steps li:last-child { border-bottom: none; }
+    .timeline-steps li::before {
+      content: attr(data-step); position: absolute; left: 4px; top: 10px;
+      width: 24px; height: 24px; background: var(--orange); color: white;
+      border-radius: 50%; font-size: 11px; font-weight: 800;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .time-badge {
+      display: inline-block; background: var(--navy); color: white;
+      font-size: 10px; padding: 2px 7px; border-radius: 10px;
+      margin-left: 6px; font-weight: 600; vertical-align: middle;
+    }
+
+    /* ── Route box ───────────────────────────────── */
+    .route-box {
+      background: var(--navy); color: white;
+      border-radius: var(--radius); padding: 16px 20px;
+      margin-top: 8px; font-size: 13px; line-height: 1.8;
+    }
+    .route-step { display: flex; align-items: flex-start; gap: 10px; padding: 7px 0; border-bottom: 1px solid rgba(255,255,255,0.1); }
+    .route-step:last-child { border-bottom: none; }
+    .route-icon { font-size: 18px; min-width: 28px; margin-top: 2px; }
+
+    /* ── Discipline grid ─────────────────────────── */
+    .discipline-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 8px; }
+    @media(max-width:560px){ .discipline-grid { grid-template-columns: 1fr; } }
+    .discipline-card {
+      padding: 12px 14px; background: var(--grey-light);
+      border-radius: var(--radius); border-left: 3px solid var(--orange);
+      font-size: 12px; color: var(--grey-dark);
+    }
+    .discipline-card strong { display: block; font-size: 13px; color: var(--navy); margin-bottom: 4px; }
+
+    /* ── Do / Don't ──────────────────────────────── */
+    .do-dont-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 8px; }
+    @media(max-width:560px){ .do-dont-grid { grid-template-columns: 1fr; } }
+    .do-box   { background: var(--green-bg); border: 1px solid var(--green); border-radius: var(--radius); padding: 12px 14px; }
+    .dont-box { background: var(--red-bg);   border: 1px solid var(--red);   border-radius: var(--radius); padding: 12px 14px; }
+    .do-box h4   { color: var(--green); font-size: 13px; margin: 0 0 8px; }
+    .dont-box h4 { color: var(--red);   font-size: 13px; margin: 0 0 8px; }
+    .do-box li, .dont-box li { font-size: 12px; color: var(--grey-dark); margin-bottom: 5px; line-height: 1.5; }
+
+    /* ── Pass/Fail table ─────────────────────────── */
+    .pf-table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 8px; }
+    .pf-table th { background: var(--navy); color: white; padding: 8px 12px; text-align: left; font-size: 12px; }
+    .pf-table td { padding: 8px 12px; border-bottom: 1px solid var(--grey-light); color: var(--grey-dark); }
+    .pf-table tr:nth-child(even) td { background: var(--grey-light); }
+    .pass { color: var(--green); font-weight: 700; }
+    .fail { color: var(--red);   font-weight: 700; }
+
+    /* ── Carry checklist ─────────────────────────── */
+    .carry-list { background: var(--orange-pale); border-radius: var(--radius); padding: 14px 18px; }
+    .carry-list li { font-size: 13px; color: var(--navy); padding: 4px 0; display: flex; align-items: center; gap: 8px; }
+
+    /* ── Section headings ────────────────────────── */
+    .section-h { font-size: 14px; font-weight: 700; color: var(--navy); margin: 18px 0 8px; display: flex; align-items: center; gap: 8px; }
+
+    /* ── Bottom action bar ───────────────────────── */
+    .bottom-actions {
+      display: flex; gap: 12px; flex-wrap: wrap;
+      justify-content: center; margin-top: 8px; margin-bottom: 32px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="top-bar">
+    Government of India &nbsp;|&nbsp; Ministry of Road Transport &amp; Highways &nbsp;|&nbsp; Citizen Services
+  </div>
+
+  <nav class="navbar">
+    <a class="navbar-brand" href="index.html">
+      <div class="brand-icon">🚗</div>
+      <div class="brand-text">
+        <span class="brand-title">DL Journey Tracker</span>
+        <span class="brand-sub">LL to Permanent License</span>
+      </div>
+    </a>
+    <div class="nav-links" style="margin-left:auto;">
+      <a class="nav-btn nav-btn-outline" href="dashboard.html">← Dashboard</a>
+    </div>
+  </nav>
+
+  <div class="page-wrapper-wide" style="max-width:820px;">
+
+    <div class="page-header">
+      <div class="breadcrumb"><a href="dashboard.html">Dashboard</a> › RTO Appointment</div>
+    </div>
+
+    <!-- ── Confirmation Banner ──────────────────── -->
+    <div class="confirm-banner">
+      <div class="conf-left">
+        <h2>✅ Appointment Confirmed!</h2>
+        <p>Your RTO driving test appointment has been successfully recorded. You are now at <strong>Stage 4</strong>.</p>
+      </div>
+      <div class="confirm-icon">🏛️</div>
+    </div>
+
+    <!-- ── Appointment Summary Card ─────────────── -->
+    <div class="appt-card">
+      <div class="card-title" style="margin:0 0 4px;">📋 Your Appointment Details</div>
+      <div style="font-size:12px; color:var(--grey-mid); margin-bottom:4px;">Keep this information handy on your test day</div>
+      <div class="appt-grid">
+        <div class="appt-item">
+          <div class="lbl">📅 Test Date</div>
+          <div class="val" id="apptDate">—</div>
+        </div>
+        <div class="appt-item">
+          <div class="lbl">🏛️ RTO Center</div>
+          <div class="val" id="apptCenter">—</div>
+        </div>
+        <div class="appt-item">
+          <div class="lbl">👤 Applicant Name</div>
+          <div class="val" id="apptName">—</div>
+        </div>
+        <div class="appt-item">
+          <div class="lbl">🚗 Vehicle Type</div>
+          <div class="val" id="apptVehicle">—</div>
+        </div>
+        <div class="appt-item">
+          <div class="lbl">🪪 LL Number</div>
+          <div class="val" id="apptLL">—</div>
+        </div>
+        <div class="appt-item">
+          <div class="lbl">📍 City</div>
+          <div class="val" id="apptCity">—</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Countdown ─────────────────────────────── -->
+    <div class="countdown-wrap">
+      <div class="countdown-label">⏳ Days until your RTO test</div>
+      <div class="countdown-value" id="daysToTest">—</div>
+      <div class="countdown-sub" id="countdownSub">—</div>
+    </div>
+
+    <!-- ── What to Carry ─────────────────────────── -->
+    <div class="card">
+      <div class="card-title">📦 What to Carry on Test Day</div>
+      <ul class="carry-list" style="list-style:none; padding:0; margin:0;" id="carryList">
+        <li>✅ Original Learner License (LL)</li>
+        <li>✅ 2 Photocopies of LL</li>
+        <li>✅ Original Age Proof (Aadhaar / Birth Certificate)</li>
+        <li>✅ Original Address Proof (Aadhaar / Voter ID)</li>
+        <li>✅ Filled Form 9 (Application for DL)</li>
+        <li>✅ 2 Recent Passport-size Photographs</li>
+        <li>✅ RTO Test Fee — ₹300 approx (cash or DD)</li>
+        <li>✅ Payment receipt from your LL application</li>
+        <li id="medItem" style="display:none;">✅ Medical Certificate Form 1A (age above 40)</li>
+      </ul>
+      <div style="margin-top:10px; padding:10px 14px; background:var(--green-bg); border-radius:8px; font-size:13px; color:var(--green);">
+        💡 Carry <strong>both originals and photocopies</strong> of every document. Missing even one can disqualify you.
+      </div>
+    </div>
+
+    <!-- ── Day Timeline ───────────────────────────── -->
+    <div class="card">
+      <div class="card-title">⏰ Test Day — Hour by Hour Plan</div>
+      <ul class="timeline-steps">
+        <li data-step="1"><strong>Reach RTO Office</strong><span class="time-badge">7:30 AM</span><br/>Arrive 30 minutes before your slot. Find the DL Test counter and submit your documents to the clerk.</li>
+        <li data-step="2"><strong>Document Verification</strong><span class="time-badge">8:00 AM</span><br/>Officer checks your LL, Form 9, age/address proof and photographs. You receive a token number for your test slot.</li>
+        <li data-step="3"><strong>Fee Payment</strong><span class="time-badge">8:30 AM</span><br/>Pay the driving test fee at the cash counter. Keep the receipt safely — it is required for DL collection later.</li>
+        <li data-step="4"><strong>Wait for Your Token</strong><span class="time-badge">9:00 AM</span><br/>Wait in the designated area. Tests are called by token number. Average wait time: 30–60 minutes depending on footfall.</li>
+        <li data-step="5"><strong>Driving Test Begins</strong><span class="time-badge">10:00 AM</span><br/>Inspector calls your token. Bring your vehicle to the test track. Test duration: 5–10 minutes per candidate.</li>
+        <li data-step="6"><strong>Result Announcement</strong><span class="time-badge">11:00 AM</span><br/>Inspector marks Pass/Fail on your form. If passed, submit remaining documents. If failed, you can retry after 7 days.</li>
+        <li data-step="7"><strong>DL Dispatch</strong><span class="time-badge">Within 30 days</span><br/>Your Permanent DL is dispatched to your registered address by Speed Post. Track on parivahan.gov.in using your application number.</li>
+      </ul>
+    </div>
+
+    <!-- ── Test Track Path ───────────────────────── -->
+    <div class="card">
+      <div class="card-title">🛣️ How the Test Track Works</div>
+      <div class="route-box">
+        <div style="font-size:12px; opacity:0.7; margin-bottom:10px;">Standard RTO test track path (may vary slightly by RTO):</div>
+        <div class="route-step"><span class="route-icon">🚦</span><div><strong>Start Point</strong> — Inspector signals you to begin. Check mirrors, wear seatbelt/helmet BEFORE starting engine.</div></div>
+        <div class="route-step"><span class="route-icon">➡️</span><div><strong>Straight Line Drive</strong> — Drive straight at controlled speed (20–30 kmph). No swerving or lane crossing.</div></div>
+        <div class="route-step"><span class="route-icon">🔄</span><div><strong>Left Turn</strong> — Signal left, check mirror, slow down, take wide turn. Stop completely at stop line before proceeding.</div></div>
+        <div class="route-step"><span class="route-icon">⛰️</span><div><strong>H-Point / Slope Start (4W)</strong> — Stop on slope, apply handbrake. Start without rolling back more than 30cm.</div></div>
+        <div class="route-step"><span class="route-icon">🔢</span><div><strong>Figure-8 (2W)</strong> — Ride figure-8 pattern at slow speed. Both feet must stay on footrests throughout.</div></div>
+        <div class="route-step"><span class="route-icon">🅿️</span><div><strong>Parking (4W)</strong> — Parallel park or reverse park in the marked bay within 3 attempts maximum.</div></div>
+        <div class="route-step"><span class="route-icon">🏁</span><div><strong>End Point</strong> — Stop at marked finish line. Apply handbrake. Turn off engine. Wait for inspector's verdict.</div></div>
+      </div>
+    </div>
+
+    <!-- ── Key Disciplines ───────────────────────── -->
+    <div class="card">
+      <div class="card-title">🎯 Key Disciplines Inspector Will Check</div>
+      <div class="discipline-grid">
+        <div class="discipline-card"><strong>🪞 Mirror Usage</strong>Check rear and side mirrors before every turn, lane change, and stop. Inspector watches your eye movement.</div>
+        <div class="discipline-card"><strong>🚦 Signal Usage</strong>Indicate left/right at least 30 metres before turning. Never turn without signalling first.</div>
+        <div class="discipline-card"><strong>⚖️ Speed Control</strong>Maintain 20–30 kmph on test track. No sudden acceleration or harsh braking at any point.</div>
+        <div class="discipline-card"><strong>🛑 Stop Lines</strong>Come to a complete stop at every stop line. Rolling stops are marked as failures automatically.</div>
+        <div class="discipline-card"><strong>🦺 Safety Gear</strong>Helmet mandatory for 2W. Seatbelt mandatory for 4W. Must be worn BEFORE starting the engine.</div>
+        <div class="discipline-card"><strong>👀 Road Awareness</strong>Look ahead, not at the ground. Watch for inspector's hand signals throughout the test.</div>
+        <div class="discipline-card"><strong>🔄 Gear Shifting (4W)</strong>Shift gears smoothly without stalling. No grinding. Use clutch properly before every gear change.</div>
+        <div class="discipline-card"><strong>📏 Lane Discipline</strong>Stay in your designated lane. Do not cross marked lines. Keep safe distance from cones/markers.</div>
+      </div>
+    </div>
+
+    <!-- ── Do's and Don'ts ───────────────────────── -->
+    <div class="card">
+      <div class="card-title">✅ Do's and ❌ Don'ts</div>
+      <div class="do-dont-grid">
+        <div class="do-box">
+          <h4>✅ DO These</h4>
+          <ul style="padding-left:16px; margin:0;">
+            <li>Greet the inspector politely</li>
+            <li>Adjust mirrors before starting engine</li>
+            <li>Wear helmet / seatbelt FIRST</li>
+            <li>Stop completely at all stop lines</li>
+            <li>Signal before every turn</li>
+            <li>Drive at steady controlled speed</li>
+            <li>Stay calm — take deep breaths</li>
+            <li>Ask inspector politely if unclear</li>
+          </ul>
+        </div>
+        <div class="dont-box">
+          <h4>❌ DON'T Do These</h4>
+          <ul style="padding-left:16px; margin:0;">
+            <li>Don't use mobile phone on track</li>
+            <li>Don't skip mirror checks</li>
+            <li>Don't roll back on slope (4W)</li>
+            <li>Don't put feet down on 2W</li>
+            <li>Don't brake suddenly or harshly</li>
+            <li>Don't argue with inspector</li>
+            <li>Don't stall engine 3+ times</li>
+            <li>Don't cross any stop lines</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Pass / Fail Criteria ──────────────────── -->
+    <div class="card">
+      <div class="card-title">📋 Pass / Fail Criteria</div>
+      <table class="pf-table">
+        <thead><tr><th>Action</th><th>Result</th></tr></thead>
+        <tbody>
+          <tr><td>Complete all track sections smoothly</td><td class="pass">PASS ✅</td></tr>
+          <tr><td>Stop completely at all stop lines</td><td class="pass">PASS ✅</td></tr>
+          <tr><td>Signal correctly before every turn</td><td class="pass">PASS ✅</td></tr>
+          <tr><td>Not wearing helmet / seatbelt</td><td class="fail">INSTANT FAIL ❌</td></tr>
+          <tr><td>Rolling back more than 30cm on slope</td><td class="fail">FAIL ❌</td></tr>
+          <tr><td>Putting feet down on 2W unnecessarily</td><td class="fail">FAIL ❌</td></tr>
+          <tr><td>Missing or rolling through stop line</td><td class="fail">FAIL ❌</td></tr>
+          <tr><td>Stalling engine 3 or more times</td><td class="fail">FAIL ❌</td></tr>
+          <tr><td>Using mobile phone during test</td><td class="fail">INSTANT FAIL ❌</td></tr>
+          <tr><td>Arguing with or ignoring inspector</td><td class="fail">INSTANT FAIL ❌</td></tr>
+        </tbody>
+      </table>
+      <div style="margin-top:10px; padding:10px 14px; background:var(--red-bg); border-radius:8px; font-size:13px; color:var(--red);">
+        ⚠️ If you fail, you can <strong>retry after 7 days</strong> by paying the test fee again. Most candidates pass on 2nd attempt after practice.
+      </div>
+    </div>
+
+    <!-- ── What After Test ────────────────────────── -->
+    <div class="card" style="border-left:4px solid var(--green);">
+      <div class="card-title">🎯 After Passing the Test — What Next?</div>
+      <ul style="list-style:none; padding:0; margin:0;">
+        <li style="padding:8px 0; border-bottom:1px solid var(--grey-light); font-size:13px; display:flex; gap:10px;">
+          <span>1️⃣</span>
+          <div><strong>Submit all documents</strong> at the RTO counter after your test result is announced</div>
+        </li>
+        <li style="padding:8px 0; border-bottom:1px solid var(--grey-light); font-size:13px; display:flex; gap:10px;">
+          <span>2️⃣</span>
+          <div><strong>Get your application number</strong> — use it to track DL status on parivahan.gov.in</div>
+        </li>
+        <li style="padding:8px 0; border-bottom:1px solid var(--grey-light); font-size:13px; display:flex; gap:10px;">
+          <span>3️⃣</span>
+          <div><strong>Wait 7–30 days</strong> — your Permanent DL will arrive by Speed Post at your registered address</div>
+        </li>
+        <li style="padding:8px 0; font-size:13px; display:flex; gap:10px;">
+          <span>4️⃣</span>
+          <div><strong>Come back here</strong> and enter your DL Number on the dashboard to complete your journey 🎉</div>
+        </li>
+      </ul>
+    </div>
+
+    <!-- ── Practice Button ───────────────────────── -->
+    <div class="card" style="text-align:center; background: linear-gradient(135deg, #1a237e, #283593); color:white;">
+      <div style="font-size:20px; font-weight:800; margin-bottom:8px;">🏎️ Want to Practice Before the Real Test?</div>
+      <div style="font-size:13px; opacity:0.85; margin-bottom:16px;">Take our interactive driving test simulation to build confidence!</div>
+      <a href="testsim.html" class="btn btn-primary" style="display:inline-block; padding:12px 28px; font-size:14px; background:var(--orange); border-color:var(--orange);">
+        🏎️ Start Test Simulation →
+      </a>
+    </div>
+
+    <!-- ── Mark Test Cleared from here ─────────────── -->
+    <div class="card" style="border-left:4px solid var(--green); background:var(--green-bg);" id="markClearedSection">
+      <div style="font-size:15px; font-weight:700; color:var(--navy); margin-bottom:6px;">
+        ✅ Went to RTO and cleared your driving test?
+      </div>
+      <div style="font-size:13px; color:var(--grey-dark); margin-bottom:14px;">
+        Mark your test as cleared to move to Stage 4. Your DL will arrive by post in 7–30 days.
+      </div>
+      <button class="btn btn-primary" style="background:var(--green); border-color:var(--green);" onclick="markTestClearedFromAppt()">
+        ✅ Yes, I Cleared My Driving Test — Move to Stage 4
+      </button>
+    </div>
+
+    <!-- ── Bottom Actions ────────────────────────── -->
+    <div class="bottom-actions">
+      <a href="dashboard.html" class="btn btn-outline">← Back to Dashboard</a>
+      <button class="btn btn-primary" onclick="window.print()">🖨️ Print This Page</button>
+      <a href="rto.html" class="btn btn-outline">📍 Find Nearest RTO</a>
+    </div>
+
+  </div>
+
+  <footer class="footer">
+    DL Journey Tracker &nbsp;|&nbsp; OOP Mini Project &nbsp;|&nbsp; Built with <span>♥</span> in C++ &amp; Web
+  </footer>
+
+  <script src="script.js"></script>
+  <script>
+    // Allow access from stage 3 onwards (appointment booked at stage 3)
+    const stage = parseInt(localStorage.getItem(KEYS.STAGE)) || 1;
+    if (stage < 3) {
+      window.location.href = 'dashboard.html';
+    }
+
+    function loadAppointmentPage() {
+      const user      = getUser();
+      const rtoDate   = localStorage.getItem('rto_date')   || '';
+      const rtoCenter = localStorage.getItem('rto_center') || '—';
+
+      // Fill appointment details
+      document.getElementById('apptDate').textContent    = formatDate(rtoDate);
+      document.getElementById('apptCenter').textContent  = rtoCenter;
+      document.getElementById('apptName').textContent    = user.name    || '—';
+      document.getElementById('apptVehicle').textContent = user.vehicleType || '—';
+      document.getElementById('apptLL').textContent      = user.llNumber || '—';
+      document.getElementById('apptCity').textContent    = user.city    || '—';
+
+      // Countdown to test date
+      if (rtoDate) {
+        const today    = new Date();
+        const testDay  = new Date(rtoDate);
+        today.setHours(0,0,0,0);
+        testDay.setHours(0,0,0,0);
+        const diff = Math.ceil((testDay - today) / (1000 * 60 * 60 * 24));
+
+        const countEl = document.getElementById('daysToTest');
+        const subEl   = document.getElementById('countdownSub');
+
+        if (diff > 0) {
+          countEl.textContent = diff;
+          subEl.textContent   = `days remaining until your test on ${formatDate(rtoDate)}`;
+          countEl.style.color = diff <= 3 ? 'var(--red)' : 'var(--orange)';
+        } else if (diff === 0) {
+          countEl.textContent = 'TODAY';
+          countEl.style.fontSize = '32px';
+          subEl.textContent   = '🚨 Your test is today! Good luck!';
+          countEl.style.color = 'var(--red)';
+        } else {
+          countEl.textContent = 'Done';
+          countEl.style.fontSize = '32px';
+          subEl.textContent   = `Test was on ${formatDate(rtoDate)}. Awaiting your DL by post.`;
+          countEl.style.color = 'var(--green)';
+        }
+      }
+
+      // Show medical item if age > 40
+      if (user.age > 40) {
+        const el = document.getElementById('medItem');
+        if (el) el.style.display = 'flex';
+      }
+    }
+
+    async function markTestClearedFromAppt() {
+      localStorage.setItem(KEYS.STAGE, '4');
+      const citizenId = localStorage.getItem('citizen_id');
+      const rtoDate   = localStorage.getItem('rto_date') || new Date().toISOString().split('T')[0];
+      if (citizenId) {
+        try {
+          await fetch('/api/license/update-stage', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ citizen_id: parseInt(citizenId), stage: 'dl_applied', date: rtoDate })
+          });
+        } catch(e) {}
+      }
+      // Hide the button after clicking
+      document.getElementById('markClearedSection').innerHTML = `
+        <div style="font-size:14px; color:var(--green); font-weight:700;">
+          ✅ Test marked as cleared! Moving to Stage 4...
+        </div>`;
+      setTimeout(() => { window.location.href = 'dashboard.html'; }, 1500);
+    }
+
+    loadAppointmentPage();
+  </script>
+
+</body>
+</html>
