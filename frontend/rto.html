@@ -98,6 +98,50 @@
     .selected-rto-banner .value {
       font-size: 14px; color: var(--navy); font-weight: 600;
     }
+
+    /* ── Map Section ─────────────────────────────── */
+    .map-section {
+      background: white; border-radius: 16px;
+      padding: 24px 28px; margin-top: 20px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      display: none;
+    }
+    .map-section h3 {
+      font-size: 15px; font-weight: 700;
+      color: var(--navy); margin-bottom: 16px;
+    }
+    .map-frame-wrap {
+      border-radius: 12px; overflow: hidden;
+      border: 2px solid var(--grey-light); margin-bottom: 16px;
+    }
+    .map-info-bar {
+      background: var(--grey-light); border-radius: 10px;
+      padding: 12px 16px; display: flex;
+      align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 10px; margin-bottom: 14px;
+    }
+    .map-info-bar .map-addr { font-size: 13px; color: var(--grey-dark); }
+    .map-action-btns { display: flex; gap: 10px; flex-wrap: wrap; }
+    .map-btn {
+      padding: 9px 16px; border-radius: 8px; font-size: 12px;
+      font-weight: 700; cursor: pointer; border: none;
+      display: inline-flex; align-items: center; gap: 6px;
+      transition: all 0.2s; text-decoration: none; color: white;
+    }
+    .map-btn-orange { background: var(--orange); }
+    .map-btn-orange:hover { background: #bf360c; }
+    .map-btn-navy { background: var(--navy); }
+    .map-btn-navy:hover { background: #0d1b6e; }
+    .map-btn-green { background: #27ae60; }
+    .map-btn-green:hover { background: #1e8449; }
+    .distance-result {
+      background: #f0fff4; border-radius: 10px; padding: 12px 16px;
+      font-size: 13px; color: #27ae60; font-weight: 600;
+      display: none; margin-top: 10px; border-left: 4px solid #27ae60;
+    }
+    .rto-card.highlighted {
+      border-top-color: #27ae60; box-shadow: 0 0 0 2px #27ae60;
+    }
   </style>
 </head>
 <body>
@@ -155,6 +199,34 @@
 
       <!-- RTO Grid -->
       <div class="rto-grid" id="rtoGrid"></div>
+    </div>
+
+    <!-- ── Live Map Section ── -->
+    <div class="map-section" id="mapSection">
+      <h3>🗺️ RTO Location Map — <span id="mapRTOName">Select an RTO above to see its map</span></h3>
+
+      <div class="map-frame-wrap">
+        <iframe id="rtoMapFrame"
+          src="https://www.google.com/maps?q=RTO+Office+Maharashtra+India&output=embed"
+          width="100%" height="340"
+          style="border:none; display:block;"
+          allowfullscreen="" loading="lazy">
+        </iframe>
+      </div>
+
+      <div class="map-info-bar">
+        <div class="map-addr">📍 <span id="mapAddrText">—</span></div>
+        <div class="map-action-btns">
+          <button class="map-btn map-btn-orange" onclick="detectAndGetDirections()">
+            📡 Get Directions from My Location
+          </button>
+          <button class="map-btn map-btn-navy" onclick="openInGoogleMaps()">
+            🗺️ Open in Google Maps
+          </button>
+        </div>
+      </div>
+
+      <div class="distance-result" id="distanceResult"></div>
     </div>
 
   </div>
@@ -269,6 +341,85 @@
       localStorage.setItem('selected_rto', JSON.stringify(rto));
       localStorage.setItem('rto_center', rto.name + ', ' + rto.city);
       renderRTOs();
+      showRTOOnMap(rto);
+    }
+
+    // ── MAP FUNCTIONS ───────────────────────────────
+    function showRTOOnMap(rto) {
+      const query = encodeURIComponent(`${rto.name} ${rto.city} ${rto.state} India`);
+
+      // Update map iframe
+      document.getElementById('rtoMapFrame').src =
+        `https://www.google.com/maps?q=${query}&output=embed`;
+
+      // Update labels
+      document.getElementById('mapRTOName').textContent = `${rto.name} (${rto.code})`;
+      document.getElementById('mapAddrText').textContent = `${rto.area} | ${rto.timing} | ${rto.phone}`;
+
+      // Store for directions
+      window._activeRTO = rto;
+      window._activeRTOQuery = query;
+
+      // Show section and scroll to it
+      const section = document.getElementById('mapSection');
+      section.style.display = 'block';
+      setTimeout(() => section.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
+
+      // Hide old distance result
+      const distEl = document.getElementById('distanceResult');
+      distEl.style.display = 'none';
+    }
+
+    function openInGoogleMaps() {
+      const q = window._activeRTOQuery;
+      if (!q) { alert('Please select an RTO first.'); return; }
+      window.open(`https://www.google.com/maps/search/?api=1&query=${q}`, '_blank');
+    }
+
+    function detectAndGetDirections() {
+      if (!window._activeRTO) { alert('Please select an RTO first.'); return; }
+      if (!navigator.geolocation) { alert('Geolocation not supported.'); return; }
+
+      const btn = event.target;
+      btn.textContent = '📡 Detecting...';
+      btn.disabled = true;
+
+      navigator.geolocation.getCurrentPosition(pos => {
+        btn.textContent = '📡 Get Directions from My Location';
+        btn.disabled = false;
+
+        const { latitude, longitude } = pos.coords;
+        const rto = window._activeRTO;
+
+        // Calculate straight-line distance (km)
+        const R = 6371;
+        const dLat = (rto.lat - latitude) * Math.PI / 180;
+        const dLng = (rto.lng - longitude) * Math.PI / 180;
+        const a = Math.sin(dLat/2)**2 +
+                  Math.cos(latitude * Math.PI/180) * Math.cos(rto.lat * Math.PI/180) *
+                  Math.sin(dLng/2)**2;
+        const dist = (R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a))).toFixed(1);
+
+        // Directions URL
+        const rtoQ = window._activeRTOQuery;
+        const directionsUrl = `https://www.google.com/maps/dir/${latitude},${longitude}/${rtoQ}`;
+
+        // Show result
+        const distEl = document.getElementById('distanceResult');
+        distEl.style.display = 'block';
+        distEl.innerHTML = `
+          📍 You are approximately <strong>${dist} km</strong> from ${rto.name}.
+          &nbsp;&nbsp;
+          <a href="${directionsUrl}" target="_blank"
+             style="color:#27ae60; text-decoration:underline; font-weight:700;">
+            🗺️ Get Turn-by-Turn Directions →
+          </a>`;
+
+      }, () => {
+        btn.textContent = '📡 Get Directions from My Location';
+        btn.disabled = false;
+        alert('Could not detect location. Please allow location access in your browser.');
+      });
     }
 
     function updateSelectedBanner() {
@@ -313,6 +464,9 @@
     renderStateFilter();
     renderRTOs();
     updateSelectedBanner();
+
+    // If RTO already selected, show map immediately
+    if (selectedRTO) showRTOOnMap(selectedRTO);
 
     // Auto-filter by user's city
     const user = getUser();

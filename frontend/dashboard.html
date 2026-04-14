@@ -198,6 +198,84 @@
       background: var(--orange-pale); border-radius: var(--radius);
       padding: 16px 20px; margin-top: 16px; border: 2px solid var(--orange);
     }
+
+    /* ── Notification Bell ───────────────────────── */
+    .notif-bell-wrap { position: relative; display: inline-block; }
+    .notif-bell-btn {
+      background: none; border: none; cursor: pointer;
+      font-size: 1.3rem; color: #ccc; padding: 4px 6px;
+      position: relative; transition: color 0.2s;
+    }
+    .notif-bell-btn:hover { color: #ff6b35; }
+    .notif-dot {
+      position: absolute; top: 0; right: 0;
+      width: 10px; height: 10px; background: #e74c3c;
+      border-radius: 50%; border: 2px solid #1a1a2e; display: none;
+    }
+    .notif-panel {
+      display: none; position: absolute; right: 0; top: 46px;
+      width: 300px; background: white; border-radius: 14px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.18); z-index: 9999;
+      overflow: hidden;
+    }
+    .notif-panel-header {
+      background: #1a1a2e; color: white;
+      padding: 12px 16px; font-size: 0.85rem; font-weight: 600;
+    }
+    .notif-list { max-height: 280px; overflow-y: auto; }
+    .notif-item {
+      padding: 12px 16px; border-bottom: 1px solid #f5f5f5;
+      display: flex; gap: 10px; align-items: flex-start;
+    }
+    .notif-item:last-child { border-bottom: none; }
+    .notif-item-text { font-size: 0.78rem; color: #444; line-height: 1.5; }
+    .notif-panel-footer {
+      padding: 10px 16px; border-top: 1px solid #eee; text-align: center;
+    }
+    .notif-panel-footer a { font-size: 0.78rem; color: #ff6b35; text-decoration: none; }
+
+    /* ── DL Delivery Tracker ─────────────────────── */
+    .dl-delivery-card {
+      background: white; border-radius: 16px; padding: 24px 28px;
+      margin-top: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    }
+    .dl-delivery-card h3 { font-size: 1rem; font-weight: 700; color: #1a1a2e; margin-bottom: 20px; }
+    .dl-track-steps {
+      display: flex; align-items: center; gap: 0;
+      overflow-x: auto; padding-bottom: 8px; margin-bottom: 20px;
+    }
+    .dl-step { display: flex; flex-direction: column; align-items: center; gap: 6px; min-width: 80px; }
+    .dl-step-icon {
+      width: 44px; height: 44px; border-radius: 50%; background: #eee;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.2rem; border: 3px solid #ddd; transition: all 0.3s;
+    }
+    .dl-step.active .dl-step-icon { background: #ff6b35; border-color: #ff6b35; }
+    .dl-step.done .dl-step-icon   { background: #27ae60; border-color: #27ae60; }
+    .dl-step-label { font-size: 0.7rem; color: #888; text-align: center; font-weight: 500; }
+    .dl-step.active .dl-step-label, .dl-step.done .dl-step-label { color: #1a1a2e; font-weight: 600; }
+    .dl-step-line { flex: 1; height: 3px; background: #eee; min-width: 30px; transition: background 0.3s; }
+    .dl-step-line.done { background: #27ae60; }
+    .dl-status-msg {
+      background: #f8f9ff; border-radius: 10px; padding: 14px 18px;
+      font-size: 0.85rem; color: #444; margin-bottom: 16px;
+      border-left: 4px solid #ff6b35;
+    }
+    .dl-status-btns { display: flex; gap: 10px; flex-wrap: wrap; }
+    .dl-status-btn {
+      border: none; border-radius: 8px; padding: 9px 16px;
+      font-size: 0.8rem; cursor: pointer; font-weight: 600; color: white;
+    }
+
+    /* ── Fail button ─────────────────────────────── */
+    .fail-test-btn {
+      background: white; color: #c0392b;
+      border: 2px solid #e74c3c; border-radius: 10px;
+      padding: 10px 18px; font-size: 0.85rem; font-weight: 600;
+      cursor: pointer; margin-top: 10px; display: inline-block;
+      transition: all 0.2s;
+    }
+    .fail-test-btn:hover { background: #fff5f5; }
   </style>
 </head>
 <body>
@@ -222,6 +300,19 @@
     </a>
     <div class="nav-links" style="display:flex; align-items:center; gap:12px; margin-left:auto;">
       <a class="nav-btn nav-btn-outline" href="index.html">✏️ Edit Details</a>
+
+      <!-- 🔔 Notification Bell -->
+      <div class="notif-bell-wrap">
+        <button class="notif-bell-btn" onclick="toggleNotifPanel()" title="Notifications">
+          🔔<span class="notif-dot" id="notifDot"></span>
+        </button>
+        <div class="notif-panel" id="notifPanel">
+          <div class="notif-panel-header">🔔 Notifications</div>
+          <div class="notif-list" id="notifList"></div>
+          <div class="notif-panel-footer"><a href="alert.html">View All Alerts →</a></div>
+        </div>
+      </div>
+
       <button class="logout-btn" onclick="handleLogout()">🚪 Logout</button>
     </div>
   </nav>
@@ -462,6 +553,9 @@
           <button class="btn btn-primary" onclick="markTestCleared()">
             📅 Book My RTO Appointment &amp; View Test Guide →
           </button>
+          <button class="fail-test-btn" onclick="markTestFailed()">
+            ❌ I Did Not Clear My Driving Test
+          </button>
         </div>
       </div>
 
@@ -501,6 +595,41 @@
 
     </div><!-- end Stage Tracker Card -->
 
+    <!-- DL Delivery Status Tracker (shown at stage 5) -->
+    <div class="dl-delivery-card" id="dlDeliverySection" style="display:none;">
+      <h3>📬 DL Delivery Status</h3>
+      <div class="dl-track-steps">
+        <div class="dl-step active" id="dlStep-cleared">
+          <div class="dl-step-icon">✅</div>
+          <div class="dl-step-label">Test Cleared</div>
+        </div>
+        <div class="dl-step-line" id="dlLine-1"></div>
+        <div class="dl-step" id="dlStep-printed">
+          <div class="dl-step-icon">🖨️</div>
+          <div class="dl-step-label">DL Printed</div>
+        </div>
+        <div class="dl-step-line" id="dlLine-2"></div>
+        <div class="dl-step" id="dlStep-dispatched">
+          <div class="dl-step-icon">📦</div>
+          <div class="dl-step-label">Dispatched</div>
+        </div>
+        <div class="dl-step-line" id="dlLine-3"></div>
+        <div class="dl-step" id="dlStep-delivered">
+          <div class="dl-step-icon">🏠</div>
+          <div class="dl-step-label">Delivered</div>
+        </div>
+      </div>
+      <div class="dl-status-msg" id="dlStatusMsg">
+        📋 Your DL is being processed at the RTO. It will be dispatched by Speed Post within 7–30 days.
+      </div>
+      <div class="dl-status-btns">
+        <button class="dl-status-btn" style="background:#ff6b35;" onclick="updateDLStatus('printed')">🖨️ Mark as Printed</button>
+        <button class="dl-status-btn" style="background:#3498db;" onclick="updateDLStatus('dispatched')">📦 Mark as Dispatched</button>
+        <button class="dl-status-btn" style="background:#27ae60;" onclick="updateDLStatus('delivered')">🏠 Mark as Delivered</button>
+        <a href="https://parivahan.gov.in/rcdlstatus" target="_blank" class="dl-status-btn" style="background:#1a1a2e; text-decoration:none;">🔍 Track on Parivahan</a>
+      </div>
+    </div>
+
     <!-- Alert Card -->
     <div id="alertCardContainer"></div>
 
@@ -535,6 +664,14 @@
         <a class="action-card" href="index.html">
           <div class="action-card-icon">✏️</div>
           <div class="action-card-label">Edit My Details</div>
+        </a>
+        <a class="action-card" href="chatbot.html">
+          <div class="action-card-icon">🤖</div>
+          <div class="action-card-label">DL Assistant</div>
+        </a>
+        <a class="action-card" href="retry.html">
+          <div class="action-card-icon">🔄</div>
+          <div class="action-card-label">Retry Guide</div>
         </a>
       </div>
     </div>
@@ -828,6 +965,12 @@
           } catch(e) {}
         }
 
+        // Show DL delivery tracker at stage 5
+        if (stage >= 5) {
+          document.getElementById('dlDeliverySection').style.display = 'block';
+          renderDLStatus();
+        }
+
       } finally {
         hideLoading();
       }
@@ -908,6 +1051,110 @@
     }
 
     loadDashboard();
+
+    // ── NOTIFICATION BELL ────────────────────────────
+    function buildNotifications() {
+      const llDate  = localStorage.getItem('dl_llDate') || localStorage.getItem('ll_date');
+      const rtoDate = localStorage.getItem('rto_date');
+      const notifs  = [];
+
+      if (llDate) {
+        const ll     = new Date(llDate);
+        const expiry = new Date(ll); expiry.setDate(expiry.getDate() + 180);
+        const daysLeft    = Math.ceil((expiry - new Date()) / (1000*60*60*24));
+        const daysPassed  = Math.floor((new Date() - ll) / (1000*60*60*24));
+
+        if (daysLeft <= 0)
+          notifs.push({ icon:'🚨', text:'LL has EXPIRED! You must apply for LL again.' });
+        else if (daysLeft <= 10)
+          notifs.push({ icon:'🚨', text:`LL expires in ${daysLeft} day(s)! Apply for DL immediately.` });
+        else if (daysLeft <= 30)
+          notifs.push({ icon:'⚠️', text:`LL expires in ${daysLeft} days. Apply for DL soon.` });
+
+        if (daysPassed >= 0 && daysPassed < 30)
+          notifs.push({ icon:'⏳', text:`${30 - daysPassed} more day(s) until your 30-day waiting period ends.` });
+      }
+
+      if (rtoDate) {
+        const rto = new Date(rtoDate);
+        const daysToTest = Math.ceil((rto - new Date()) / (1000*60*60*24));
+        if (daysToTest >= 0 && daysToTest <= 3)
+          notifs.push({ icon:'📅', text:`Your RTO test is in ${daysToTest} day(s)! Prepare well.` });
+      }
+
+      if (notifs.length === 0)
+        notifs.push({ icon:'✅', text:'Everything looks good! No urgent alerts.' });
+
+      // Red dot if any urgent notif
+      const hasUrgent = notifs.some(n => ['🚨','⚠️','📅'].includes(n.icon));
+      const dot = document.getElementById('notifDot');
+      if (dot) dot.style.display = hasUrgent ? 'block' : 'none';
+
+      const list = document.getElementById('notifList');
+      if (list) {
+        list.innerHTML = notifs.map(n => `
+          <div class="notif-item">
+            <span style="font-size:1.1rem;">${n.icon}</span>
+            <span class="notif-item-text">${n.text}</span>
+          </div>`).join('');
+      }
+    }
+
+    function toggleNotifPanel() {
+      const panel = document.getElementById('notifPanel');
+      if (!panel) return;
+      panel.style.display = panel.style.display === 'block' ? 'none' : 'block';
+    }
+
+    document.addEventListener('click', e => {
+      const panel = document.getElementById('notifPanel');
+      const wrap  = document.querySelector('.notif-bell-wrap');
+      if (panel && wrap && !wrap.contains(e.target))
+        panel.style.display = 'none';
+    });
+
+    buildNotifications();
+
+    // ── DL DELIVERY STATUS ───────────────────────────
+    function updateDLStatus(newStatus) {
+      localStorage.setItem('dl_status', newStatus);
+      renderDLStatus();
+    }
+
+    function renderDLStatus() {
+      const status = localStorage.getItem('dl_status') || 'cleared';
+      const stages = ['cleared','printed','dispatched','delivered'];
+      const idx    = stages.indexOf(status);
+
+      const msgs = {
+        cleared:    '📋 Test cleared! Your DL is being processed at the RTO.',
+        printed:    '🖨️ Your DL has been printed and is ready for dispatch.',
+        dispatched: '📦 Your DL is on the way via Speed Post! Track on India Post website.',
+        delivered:  '🏠 DL Delivered! Congratulations — you are a fully licensed driver! 🎉'
+      };
+      const msgEl = document.getElementById('dlStatusMsg');
+      if (msgEl) msgEl.textContent = msgs[status] || msgs['cleared'];
+
+      stages.forEach((s, i) => {
+        const el   = document.getElementById('dlStep-' + s);
+        if (!el) return;
+        el.classList.remove('active','done');
+        if (i < idx) el.classList.add('done');
+        else if (i === idx) el.classList.add('active');
+      });
+      ['dlLine-1','dlLine-2','dlLine-3'].forEach((id, i) => {
+        const line = document.getElementById(id);
+        if (line) line.classList.toggle('done', i < idx);
+      });
+    }
+
+    // ── TEST FAILED HANDLER ──────────────────────────
+    function markTestFailed() {
+      if (!confirm('Mark driving test as FAILED?\nThis will start your 7-day retry countdown and take you to the Retry Guide.')) return;
+      localStorage.setItem('dl_fail_date', new Date().toISOString());
+      window.location.href = 'retry.html';
+    }
+
   </script>
 
 </body>

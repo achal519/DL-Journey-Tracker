@@ -367,6 +367,9 @@
       <a href="dashboard.html" class="btn btn-outline">← Back to Dashboard</a>
       <button class="btn btn-primary" onclick="window.print()">🖨️ Print This Page</button>
       <a href="rto.html" class="btn btn-outline">📍 Find Nearest RTO</a>
+      <button class="btn btn-outline" onclick="addToGoogleCalendar()" style="background:#4285f4;color:white;border-color:#4285f4;">
+        📅 Add to Google Calendar
+      </button>
     </div>
 
   </div>
@@ -444,12 +447,28 @@
           });
         } catch(e) {}
       }
-      // Hide the button after clicking
       document.getElementById('markClearedSection').innerHTML = `
         <div style="font-size:14px; color:var(--green); font-weight:700;">
           ✅ Test marked as cleared! Moving to Stage 4...
         </div>`;
       setTimeout(() => { window.location.href = 'dashboard.html'; }, 1500);
+    }
+
+    function addToGoogleCalendar() {
+      const rtoDate   = localStorage.getItem('rto_date') || '';
+      const rtoCenter = localStorage.getItem('rto_center') || 'RTO Office';
+      if (!rtoDate) { alert('No test date found. Please book your appointment first.'); return; }
+      // Format date for Google Calendar: YYYYMMDD
+      const d = new Date(rtoDate);
+      const pad = n => String(n).padStart(2,'0');
+      const dateStr = `${d.getFullYear()}${pad(d.getMonth()+1)}${pad(d.getDate())}`;
+      const startDate = dateStr + 'T073000';
+      const endDate   = dateStr + 'T120000';
+      const title   = encodeURIComponent('DL Driving Test — ' + rtoCenter);
+      const details = encodeURIComponent('Carry: LL original, 2 photocopies, Aadhaar, Form 9, 2 photos, ₹300 fee. Reach 30 mins early!');
+      const location = encodeURIComponent(rtoCenter);
+      const url = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${startDate}/${endDate}&details=${details}&location=${location}`;
+      window.open(url, '_blank');
     }
 
     loadAppointmentPage();

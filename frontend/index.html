@@ -252,11 +252,15 @@
   <script>
     document.getElementById('llDate').max = new Date().toISOString().split('T')[0];
 
-    // Only redirect if FULLY registered (citizen_id + ll_date both exist)
-    // Prevents old/partial localStorage data from skipping the LL check screen
-    const citizenId  = localStorage.getItem('citizen_id');
-    const llDateSaved = localStorage.getItem('dl_llDate');
-    if (citizenId && llDateSaved && citizenId !== 'null' && llDateSaved !== 'null') {
+    // STRICT CHECK: Only redirect if user explicitly completed registration
+    // Uses dedicated 'dl_registered' flag set ONLY after successful form submit
+    // This prevents ANY old localStorage data from bypassing the LL check screen
+    const isFullyRegistered =
+      localStorage.getItem('dl_registered') === 'true' &&
+      localStorage.getItem('citizen_id') &&
+      localStorage.getItem('citizen_id') !== 'null';
+
+    if (isFullyRegistered) {
       window.location.href = 'dashboard.html';
     }
 
@@ -331,6 +335,7 @@
         localStorage.setItem('vehicle_type', vehicleType);
         localStorage.setItem('city',         city);
         localStorage.setItem('age',          age);
+        localStorage.setItem('dl_registered', 'true'); // flag for LL check bypass
 
         saveUser({
           [KEYS.NAME]: name, [KEYS.AGE]: age, [KEYS.CITY]: city,
