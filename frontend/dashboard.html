@@ -198,84 +198,6 @@
       background: var(--orange-pale); border-radius: var(--radius);
       padding: 16px 20px; margin-top: 16px; border: 2px solid var(--orange);
     }
-
-    /* ── Notification Bell ───────────────────────── */
-    .notif-bell-wrap { position: relative; display: inline-block; }
-    .notif-bell-btn {
-      background: none; border: none; cursor: pointer;
-      font-size: 1.3rem; color: #ccc; padding: 4px 6px;
-      position: relative; transition: color 0.2s;
-    }
-    .notif-bell-btn:hover { color: #ff6b35; }
-    .notif-dot {
-      position: absolute; top: 0; right: 0;
-      width: 10px; height: 10px; background: #e74c3c;
-      border-radius: 50%; border: 2px solid #1a1a2e; display: none;
-    }
-    .notif-panel {
-      display: none; position: absolute; right: 0; top: 46px;
-      width: 300px; background: white; border-radius: 14px;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.18); z-index: 9999;
-      overflow: hidden;
-    }
-    .notif-panel-header {
-      background: #1a1a2e; color: white;
-      padding: 12px 16px; font-size: 0.85rem; font-weight: 600;
-    }
-    .notif-list { max-height: 280px; overflow-y: auto; }
-    .notif-item {
-      padding: 12px 16px; border-bottom: 1px solid #f5f5f5;
-      display: flex; gap: 10px; align-items: flex-start;
-    }
-    .notif-item:last-child { border-bottom: none; }
-    .notif-item-text { font-size: 0.78rem; color: #444; line-height: 1.5; }
-    .notif-panel-footer {
-      padding: 10px 16px; border-top: 1px solid #eee; text-align: center;
-    }
-    .notif-panel-footer a { font-size: 0.78rem; color: #ff6b35; text-decoration: none; }
-
-    /* ── DL Delivery Tracker ─────────────────────── */
-    .dl-delivery-card {
-      background: white; border-radius: 16px; padding: 24px 28px;
-      margin-top: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-    }
-    .dl-delivery-card h3 { font-size: 1rem; font-weight: 700; color: #1a1a2e; margin-bottom: 20px; }
-    .dl-track-steps {
-      display: flex; align-items: center; gap: 0;
-      overflow-x: auto; padding-bottom: 8px; margin-bottom: 20px;
-    }
-    .dl-step { display: flex; flex-direction: column; align-items: center; gap: 6px; min-width: 80px; }
-    .dl-step-icon {
-      width: 44px; height: 44px; border-radius: 50%; background: #eee;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 1.2rem; border: 3px solid #ddd; transition: all 0.3s;
-    }
-    .dl-step.active .dl-step-icon { background: #ff6b35; border-color: #ff6b35; }
-    .dl-step.done .dl-step-icon   { background: #27ae60; border-color: #27ae60; }
-    .dl-step-label { font-size: 0.7rem; color: #888; text-align: center; font-weight: 500; }
-    .dl-step.active .dl-step-label, .dl-step.done .dl-step-label { color: #1a1a2e; font-weight: 600; }
-    .dl-step-line { flex: 1; height: 3px; background: #eee; min-width: 30px; transition: background 0.3s; }
-    .dl-step-line.done { background: #27ae60; }
-    .dl-status-msg {
-      background: #f8f9ff; border-radius: 10px; padding: 14px 18px;
-      font-size: 0.85rem; color: #444; margin-bottom: 16px;
-      border-left: 4px solid #ff6b35;
-    }
-    .dl-status-btns { display: flex; gap: 10px; flex-wrap: wrap; }
-    .dl-status-btn {
-      border: none; border-radius: 8px; padding: 9px 16px;
-      font-size: 0.8rem; cursor: pointer; font-weight: 600; color: white;
-    }
-
-    /* ── Fail button ─────────────────────────────── */
-    .fail-test-btn {
-      background: white; color: #c0392b;
-      border: 2px solid #e74c3c; border-radius: 10px;
-      padding: 10px 18px; font-size: 0.85rem; font-weight: 600;
-      cursor: pointer; margin-top: 10px; display: inline-block;
-      transition: all 0.2s;
-    }
-    .fail-test-btn:hover { background: #fff5f5; }
   </style>
 </head>
 <body>
@@ -300,19 +222,6 @@
     </a>
     <div class="nav-links" style="display:flex; align-items:center; gap:12px; margin-left:auto;">
       <a class="nav-btn nav-btn-outline" href="index.html">✏️ Edit Details</a>
-
-      <!-- 🔔 Notification Bell -->
-      <div class="notif-bell-wrap">
-        <button class="notif-bell-btn" onclick="toggleNotifPanel()" title="Notifications">
-          🔔<span class="notif-dot" id="notifDot"></span>
-        </button>
-        <div class="notif-panel" id="notifPanel">
-          <div class="notif-panel-header">🔔 Notifications</div>
-          <div class="notif-list" id="notifList"></div>
-          <div class="notif-panel-footer"><a href="alert.html">View All Alerts →</a></div>
-        </div>
-      </div>
-
       <button class="logout-btn" onclick="handleLogout()">🚪 Logout</button>
     </div>
   </nav>
@@ -399,136 +308,20 @@
       <div class="action-btn-wrap" id="smartActionArea" style="display:none;">
         <hr class="divider" style="margin:16px 0 12px;" />
         <div style="font-size:13px; font-weight:600; color:var(--navy); margin-bottom:8px;">
-          <div style="margin-top:20px;">
-
-  <h3>🎮 Actions available at your current stage:</h3>
-
-  <!-- ✅ RTO TEST BUTTON -->
-  <button id="rtoTestBtn" disabled style="
-    padding:10px 18px;
-    border-radius:8px;
-    border:none;
-    background:gray;
-    color:white;
-    margin-right:10px;
-  ">
-    🏛 Ready for RTO Test
-  </button>
-
-  <!-- MESSAGE -->
-  <p id="rtoMessage" style="margin-top:10px; color:orange;"></p>
-
-</div>
-
+          🎮 Actions available at your current stage:
         </div>
         <div id="smartButtons"></div>
       </div>
 
-      <!-- STAGE 3: Full RTO Guide -->
+      <!-- STAGE 3: Book Appointment (slim - full guide on appointment.html) -->
       <div id="stage3Actions" style="display:none;">
         <hr class="divider" style="margin:20px 0 16px;" />
         <div style="font-size:16px; font-weight:700; color:var(--navy); margin-bottom:4px;">
-          🏛️ RTO Driving Test — Complete Preparation Guide
+          📅 Book Your RTO Driving Test Appointment
         </div>
         <div style="font-size:13px; color:var(--grey-mid); margin-bottom:16px;">
-          Everything you need to know before going to RTO
+          Enter your preferred test date and RTO center. A complete preparation guide will open after booking.
         </div>
-        <div class="rto-guide-section">
-          <h3>📦 What to Carry to RTO</h3>
-          <ul class="checklist-box" style="list-style:none; padding:0; margin:0;">
-            <li>✅ Original Learner License (LL)</li>
-            <li>✅ 2 Photocopies of LL</li>
-            <li>✅ Original Age Proof (Aadhaar / Birth Certificate)</li>
-            <li>✅ Original Address Proof (Aadhaar / Voter ID)</li>
-            <li>✅ Filled Form 9 (Application for DL)</li>
-            <li>✅ 2 Recent Passport-size Photographs</li>
-            <li>✅ RTO Test Fee — ₹300 approx (cash or DD)</li>
-            <li id="medicalItem" style="display:none;">✅ Medical Certificate Form 1A (age above 40)</li>
-          </ul>
-
-          <h3>⏰ Day of Test — Hour by Hour Timeline</h3>
-          <ul class="timeline-steps">
-            <li data-step="1"><strong>Reach RTO Office</strong><span class="time-badge">7:30 AM</span><br/>Arrive 30 minutes before your slot. Find the DL Test counter and submit documents to the clerk.</li>
-            <li data-step="2"><strong>Document Verification</strong><span class="time-badge">8:00 AM</span><br/>Officer checks your LL, Form 9, age/address proof and photos. You get a token number for your test slot.</li>
-            <li data-step="3"><strong>Fee Payment</strong><span class="time-badge">8:30 AM</span><br/>Pay the driving test fee at the cash counter. Keep the receipt — required for DL collection later.</li>
-            <li data-step="4"><strong>Wait for Your Token</strong><span class="time-badge">9:00 AM</span><br/>Wait in the designated area. Tests are called by token number. Average wait: 30–60 minutes.</li>
-            <li data-step="5"><strong>Driving Test Begins</strong><span class="time-badge">10:00 AM</span><br/>Inspector calls your token. Bring your vehicle to the test track. Test duration: 5–10 minutes per candidate.</li>
-            <li data-step="6"><strong>Result Announcement</strong><span class="time-badge">11:00 AM</span><br/>Inspector marks Pass/Fail. If passed, submit remaining documents. DL dispatched by post within 7–30 days.</li>
-            <li data-step="7"><strong>DL Dispatch</strong><span class="time-badge">Within 30 days</span><br/>Your Permanent DL arrives at your registered address by Speed Post. Track on parivahan.gov.in.</li>
-          </ul>
-
-          <h3>🛣️ How the Test Track Works</h3>
-          <div class="route-box">
-            <div style="font-size:12px; opacity:0.7; margin-bottom:10px;">Standard RTO test track path:</div>
-            <div class="route-step"><span class="route-icon">🚦</span><div><strong>Start Point</strong> — Inspector signals you to begin. Check mirrors, wear seatbelt/helmet.</div></div>
-            <div class="route-step"><span class="route-icon">➡️</span><div><strong>Straight Line Drive</strong> — Drive straight at 20–30 kmph. No swerving.</div></div>
-            <div class="route-step"><span class="route-icon">🔄</span><div><strong>Left Turn</strong> — Signal left, check mirror, slow down, stop completely at stop line.</div></div>
-            <div class="route-step"><span class="route-icon">⛰️</span><div><strong>H-Point / Slope Start (4W)</strong> — Stop on slope, apply handbrake. Start without rolling back more than 30cm.</div></div>
-            <div class="route-step"><span class="route-icon">🔢</span><div><strong>Figure-8 (2W)</strong> — Ride figure-8 at slow speed. Both feet on footrests throughout.</div></div>
-            <div class="route-step"><span class="route-icon">🅿️</span><div><strong>Parking (4W)</strong> — Parallel park or reverse park in marked bay within 3 attempts.</div></div>
-            <div class="route-step"><span class="route-icon">🏁</span><div><strong>End Point</strong> — Stop at marked finish line. Turn off engine. Inspector gives verdict.</div></div>
-          </div>
-
-          <h3>🎯 Key Disciplines Inspector Checks</h3>
-          <div class="discipline-grid">
-            <div class="discipline-card"><strong>🪞 Mirror Usage</strong>Check mirrors before every turn, lane change, and stop.</div>
-            <div class="discipline-card"><strong>🚦 Signal Usage</strong>Indicate left/right at least 30 metres before turning.</div>
-            <div class="discipline-card"><strong>⚖️ Speed Control</strong>Maintain 20–30 kmph. No sudden acceleration or harsh braking.</div>
-            <div class="discipline-card"><strong>🛑 Stop Lines</strong>Come to a complete stop at every stop line. Rolling stops = fail.</div>
-            <div class="discipline-card"><strong>🦺 Safety Gear</strong>Helmet (2W) / Seatbelt (4W) — must be worn before starting engine.</div>
-            <div class="discipline-card"><strong>👀 Road Awareness</strong>Look ahead, not down. Watch for inspector's signals.</div>
-            <div class="discipline-card"><strong>🔄 Gear Shifting (4W)</strong>Shift gears smoothly without stalling or grinding.</div>
-            <div class="discipline-card"><strong>📏 Lane Discipline</strong>Stay in lane. Keep safe distance from cones/markers.</div>
-          </div>
-
-          <h3>✅ Do's and ❌ Don'ts</h3>
-          <div class="do-dont-grid">
-            <div class="do-box">
-              <h4>✅ DO These</h4>
-              <ul style="padding-left:16px; margin:0;">
-                <li>Greet the inspector politely</li>
-                <li>Adjust mirrors before starting</li>
-                <li>Wear helmet / seatbelt first</li>
-                <li>Stop completely at stop lines</li>
-                <li>Signal before every turn</li>
-                <li>Drive at steady controlled speed</li>
-                <li>Stay calm — breathe normally</li>
-                <li>Ask inspector if unclear</li>
-              </ul>
-            </div>
-            <div class="dont-box">
-              <h4>❌ DON'T Do These</h4>
-              <ul style="padding-left:16px; margin:0;">
-                <li>Don't use mobile phone on track</li>
-                <li>Don't skip mirror checks</li>
-                <li>Don't roll back on slope (4W)</li>
-                <li>Don't put feet down on 2W</li>
-                <li>Don't brake suddenly / harshly</li>
-                <li>Don't argue with inspector</li>
-                <li>Don't stall the engine 3+ times</li>
-                <li>Don't cross stop lines</li>
-              </ul>
-            </div>
-          </div>
-
-          <h3>📋 Pass / Fail Criteria</h3>
-          <table class="test-criteria-table">
-            <thead><tr><th>Action</th><th>Result</th></tr></thead>
-            <tbody>
-              <tr><td>Complete all track sections smoothly</td><td class="pass">PASS ✅</td></tr>
-              <tr><td>Stop completely at all stop lines</td><td class="pass">PASS ✅</td></tr>
-              <tr><td>Signal before every turn</td><td class="pass">PASS ✅</td></tr>
-              <tr><td>Not wearing helmet / seatbelt</td><td class="fail">INSTANT FAIL ❌</td></tr>
-              <tr><td>Rolling back more than 30cm on slope</td><td class="fail">FAIL ❌</td></tr>
-              <tr><td>Putting feet down on 2W unnecessarily</td><td class="fail">FAIL ❌</td></tr>
-              <tr><td>Missing stop line</td><td class="fail">FAIL ❌</td></tr>
-              <tr><td>Stalling engine 3+ times</td><td class="fail">FAIL ❌</td></tr>
-              <tr><td>Using mobile phone during test</td><td class="fail">INSTANT FAIL ❌</td></tr>
-            </tbody>
-          </table>
-        </div>
-
-        <!-- RTO Appointment Form -->
         <div class="rto-appointment-form">
           <div style="font-size:14px; font-weight:700; color:var(--navy); margin-bottom:4px;">📅 Book Your RTO Driving Test Appointment</div>
           <div style="font-size:13px; color:var(--grey-mid); margin-bottom:12px;">
@@ -553,13 +346,10 @@
           <button class="btn btn-primary" onclick="markTestCleared()">
             📅 Book My RTO Appointment &amp; View Test Guide →
           </button>
-          <button class="fail-test-btn" onclick="markTestFailed()">
-            ❌ I Did Not Clear My Driving Test
-          </button>
         </div>
       </div>
 
-      <!-- STAGE 4: DL Entry -->
+            <!-- STAGE 4: DL Entry -->
       <div id="stage4Actions" style="display:none; margin-top:16px;">
         <hr class="divider" style="margin:12px 0;" />
         <div style="font-size:14px; font-weight:700; color:var(--navy); margin-bottom:8px;">🎉 RTO Test Booked! Waiting for your DL to arrive...</div>
@@ -591,44 +381,26 @@
         </div>
         <div id="dlError" style="display:none; color:var(--red); font-size:13px; margin-bottom:10px;">⚠️ Please enter both DL Number and Issue Date.</div>
         <button class="btn btn-success btn-sm" onclick="markDLReceived()">🎉 I Have Received My DL — Complete My Journey!</button>
+        <button class="btn btn-sm" style="background:var(--red-bg);color:var(--red);border:1.5px solid var(--red);margin-left:10px;" onclick="markTestFailed()">❌ I Failed My Test</button>
+
+        <!-- Parivahan DL Tracking -->
+        <div style="margin-top:16px;padding:14px 16px;background:#fff3e0;border-radius:10px;border:1.5px solid var(--orange);">
+          <div style="font-size:13px;font-weight:700;color:var(--navy);margin-bottom:8px;">🔗 Track DL Status on Parivahan</div>
+          <div style="font-size:12px;color:var(--grey-dark);margin-bottom:10px;">Enter your application number from the RTO receipt to check real-time status.</div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <input id="parivahanInput" type="text" placeholder="e.g. MH202612345678"
+              style="flex:1;min-width:180px;padding:8px 12px;border:1.5px solid #ddd;border-radius:8px;font-size:13px;" />
+            <a id="parivahanBtn" href="https://parivahan.gov.in/parivahan/en/content/dl-status"
+              target="_blank"
+              style="background:var(--orange);color:white;padding:8px 16px;border-radius:8px;
+              font-size:12px;font-weight:700;text-decoration:none;display:inline-flex;align-items:center;">
+              🔎 Check Status →
+            </a>
+          </div>
+        </div>
       </div>
 
     </div><!-- end Stage Tracker Card -->
-
-    <!-- DL Delivery Status Tracker (shown at stage 5) -->
-    <div class="dl-delivery-card" id="dlDeliverySection" style="display:none;">
-      <h3>📬 DL Delivery Status</h3>
-      <div class="dl-track-steps">
-        <div class="dl-step active" id="dlStep-cleared">
-          <div class="dl-step-icon">✅</div>
-          <div class="dl-step-label">Test Cleared</div>
-        </div>
-        <div class="dl-step-line" id="dlLine-1"></div>
-        <div class="dl-step" id="dlStep-printed">
-          <div class="dl-step-icon">🖨️</div>
-          <div class="dl-step-label">DL Printed</div>
-        </div>
-        <div class="dl-step-line" id="dlLine-2"></div>
-        <div class="dl-step" id="dlStep-dispatched">
-          <div class="dl-step-icon">📦</div>
-          <div class="dl-step-label">Dispatched</div>
-        </div>
-        <div class="dl-step-line" id="dlLine-3"></div>
-        <div class="dl-step" id="dlStep-delivered">
-          <div class="dl-step-icon">🏠</div>
-          <div class="dl-step-label">Delivered</div>
-        </div>
-      </div>
-      <div class="dl-status-msg" id="dlStatusMsg">
-        📋 Your DL is being processed at the RTO. It will be dispatched by Speed Post within 7–30 days.
-      </div>
-      <div class="dl-status-btns">
-        <button class="dl-status-btn" style="background:#ff6b35;" onclick="updateDLStatus('printed')">🖨️ Mark as Printed</button>
-        <button class="dl-status-btn" style="background:#3498db;" onclick="updateDLStatus('dispatched')">📦 Mark as Dispatched</button>
-        <button class="dl-status-btn" style="background:#27ae60;" onclick="updateDLStatus('delivered')">🏠 Mark as Delivered</button>
-        <a href="https://parivahan.gov.in/rcdlstatus" target="_blank" class="dl-status-btn" style="background:#1a1a2e; text-decoration:none;">🔍 Track on Parivahan</a>
-      </div>
-    </div>
 
     <!-- Alert Card -->
     <div id="alertCardContainer"></div>
@@ -665,14 +437,6 @@
           <div class="action-card-icon">✏️</div>
           <div class="action-card-label">Edit My Details</div>
         </a>
-        <a class="action-card" href="chatbot.html">
-          <div class="action-card-icon">🤖</div>
-          <div class="action-card-label">DL Assistant</div>
-        </a>
-        <a class="action-card" href="retry.html">
-          <div class="action-card-icon">🔄</div>
-          <div class="action-card-label">Retry Guide</div>
-        </a>
       </div>
     </div>
 
@@ -689,7 +453,7 @@
     // ── Logout ──────────────────────────────────────
     function handleLogout() {
       if (confirm('Are you sure you want to logout?')) {
-        localStorage.clear();
+        localStorage.clear(); // clears dl_registered too → forces LL check on next visit
         window.location.href = 'index.html';
       }
     }
@@ -965,12 +729,6 @@
           } catch(e) {}
         }
 
-        // Show DL delivery tracker at stage 5
-        if (stage >= 5) {
-          document.getElementById('dlDeliverySection').style.display = 'block';
-          renderDLStatus();
-        }
-
       } finally {
         hideLoading();
       }
@@ -1002,6 +760,28 @@
 
       // Redirect to appointment details page
       window.location.href = 'appointment.html';
+    }
+
+    function markTestFailed() {
+      if (!confirm('Sorry to hear that! Click OK to go to the retry guide with 7-day countdown and improvement tips.')) return;
+      // Save fail date and set stage back
+      localStorage.setItem('dl_fail_date', new Date().toISOString());
+      const attempts = parseInt(localStorage.getItem('dl_attempt_count') || '0') + 1;
+      localStorage.setItem('dl_attempt_count', attempts);
+      localStorage.setItem(KEYS.STAGE, '3');
+      window.location.href = 'retry.html';
+    }
+
+    // Parivahan input → update link
+    const pInput = document.getElementById('parivahanInput');
+    if (pInput) {
+      pInput.addEventListener('input', function() {
+        const appNo = this.value.trim();
+        document.getElementById('parivahanBtn').href =
+          appNo
+            ? `https://parivahan.gov.in/parivahan/en/content/dl-status?appno=${appNo}`
+            : 'https://parivahan.gov.in/parivahan/en/content/dl-status';
+      });
     }
 
     async function markDLReceived() {
@@ -1051,110 +831,6 @@
     }
 
     loadDashboard();
-
-    // ── NOTIFICATION BELL ────────────────────────────
-    function buildNotifications() {
-      const llDate  = localStorage.getItem('dl_llDate') || localStorage.getItem('ll_date');
-      const rtoDate = localStorage.getItem('rto_date');
-      const notifs  = [];
-
-      if (llDate) {
-        const ll     = new Date(llDate);
-        const expiry = new Date(ll); expiry.setDate(expiry.getDate() + 180);
-        const daysLeft    = Math.ceil((expiry - new Date()) / (1000*60*60*24));
-        const daysPassed  = Math.floor((new Date() - ll) / (1000*60*60*24));
-
-        if (daysLeft <= 0)
-          notifs.push({ icon:'🚨', text:'LL has EXPIRED! You must apply for LL again.' });
-        else if (daysLeft <= 10)
-          notifs.push({ icon:'🚨', text:`LL expires in ${daysLeft} day(s)! Apply for DL immediately.` });
-        else if (daysLeft <= 30)
-          notifs.push({ icon:'⚠️', text:`LL expires in ${daysLeft} days. Apply for DL soon.` });
-
-        if (daysPassed >= 0 && daysPassed < 30)
-          notifs.push({ icon:'⏳', text:`${30 - daysPassed} more day(s) until your 30-day waiting period ends.` });
-      }
-
-      if (rtoDate) {
-        const rto = new Date(rtoDate);
-        const daysToTest = Math.ceil((rto - new Date()) / (1000*60*60*24));
-        if (daysToTest >= 0 && daysToTest <= 3)
-          notifs.push({ icon:'📅', text:`Your RTO test is in ${daysToTest} day(s)! Prepare well.` });
-      }
-
-      if (notifs.length === 0)
-        notifs.push({ icon:'✅', text:'Everything looks good! No urgent alerts.' });
-
-      // Red dot if any urgent notif
-      const hasUrgent = notifs.some(n => ['🚨','⚠️','📅'].includes(n.icon));
-      const dot = document.getElementById('notifDot');
-      if (dot) dot.style.display = hasUrgent ? 'block' : 'none';
-
-      const list = document.getElementById('notifList');
-      if (list) {
-        list.innerHTML = notifs.map(n => `
-          <div class="notif-item">
-            <span style="font-size:1.1rem;">${n.icon}</span>
-            <span class="notif-item-text">${n.text}</span>
-          </div>`).join('');
-      }
-    }
-
-    function toggleNotifPanel() {
-      const panel = document.getElementById('notifPanel');
-      if (!panel) return;
-      panel.style.display = panel.style.display === 'block' ? 'none' : 'block';
-    }
-
-    document.addEventListener('click', e => {
-      const panel = document.getElementById('notifPanel');
-      const wrap  = document.querySelector('.notif-bell-wrap');
-      if (panel && wrap && !wrap.contains(e.target))
-        panel.style.display = 'none';
-    });
-
-    buildNotifications();
-
-    // ── DL DELIVERY STATUS ───────────────────────────
-    function updateDLStatus(newStatus) {
-      localStorage.setItem('dl_status', newStatus);
-      renderDLStatus();
-    }
-
-    function renderDLStatus() {
-      const status = localStorage.getItem('dl_status') || 'cleared';
-      const stages = ['cleared','printed','dispatched','delivered'];
-      const idx    = stages.indexOf(status);
-
-      const msgs = {
-        cleared:    '📋 Test cleared! Your DL is being processed at the RTO.',
-        printed:    '🖨️ Your DL has been printed and is ready for dispatch.',
-        dispatched: '📦 Your DL is on the way via Speed Post! Track on India Post website.',
-        delivered:  '🏠 DL Delivered! Congratulations — you are a fully licensed driver! 🎉'
-      };
-      const msgEl = document.getElementById('dlStatusMsg');
-      if (msgEl) msgEl.textContent = msgs[status] || msgs['cleared'];
-
-      stages.forEach((s, i) => {
-        const el   = document.getElementById('dlStep-' + s);
-        if (!el) return;
-        el.classList.remove('active','done');
-        if (i < idx) el.classList.add('done');
-        else if (i === idx) el.classList.add('active');
-      });
-      ['dlLine-1','dlLine-2','dlLine-3'].forEach((id, i) => {
-        const line = document.getElementById(id);
-        if (line) line.classList.toggle('done', i < idx);
-      });
-    }
-
-    // ── TEST FAILED HANDLER ──────────────────────────
-    function markTestFailed() {
-      if (!confirm('Mark driving test as FAILED?\nThis will start your 7-day retry countdown and take you to the Retry Guide.')) return;
-      localStorage.setItem('dl_fail_date', new Date().toISOString());
-      window.location.href = 'retry.html';
-    }
-
   </script>
 
 </body>

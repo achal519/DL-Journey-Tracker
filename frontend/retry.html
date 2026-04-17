@@ -406,36 +406,57 @@
 
 </div>
 
+<script src="script.js"></script>
 <script>
-  // Get fail date from localStorage or set today
+  // ── Setup fail date + attempt counter ──────────────
   let failDate = localStorage.getItem('dl_fail_date');
   if (!failDate) {
     failDate = new Date().toISOString();
     localStorage.setItem('dl_fail_date', failDate);
-    localStorage.setItem('dl_stage', 'test_failed');
   }
 
+  // Track attempt number
+  let attempts = parseInt(localStorage.getItem('dl_attempt_count') || '1');
+  localStorage.setItem('dl_attempt_count', attempts);
+
+  // Show attempt count
+  const attemptBanner = document.createElement('div');
+  attemptBanner.style = 'text-align:center;padding:8px 0 0;font-size:0.85rem;color:#ccc;';
+  attemptBanner.innerHTML = `This was your <strong style="color:#ff6b35;">Attempt #${attempts}</strong>`;
+  document.querySelector('.fail-banner p').after(attemptBanner);
+
   const failDateObj = new Date(failDate);
-  const retryDate = new Date(failDateObj);
+  const retryDate   = new Date(failDateObj);
   retryDate.setDate(retryDate.getDate() + 7);
 
   // Display retry date
   document.getElementById('retry-date-display').textContent =
     retryDate.toLocaleDateString('en-IN', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
 
-  // Countdown timer
+  // Show user name in banner if available
+  const user = getUser();
+  if (user && user.name) {
+    document.querySelector('.fail-banner h1').textContent = `Don't Give Up, ${user.name}!`;
+  }
+
+  // ── Live countdown ──────────────────────────────────
   function updateCountdown() {
-    const now = new Date();
+    const now  = new Date();
     const diff = retryDate - now;
+    const btnEl  = document.getElementById('retry-btn');
+    const noteEl = document.getElementById('retry-note');
 
     if (diff <= 0) {
       document.getElementById('cd-days').textContent = '0';
-      document.getElementById('cd-hrs').textContent = '00';
-      document.getElementById('cd-min').textContent = '00';
-      document.getElementById('cd-sec').textContent = '00';
-      document.getElementById('retry-btn').classList.remove('btn-disabled');
-      document.getElementById('retry-note').textContent = '✅ 7 days completed! You can now book your retry appointment.';
-      document.getElementById('retry-note').style.color = '#27ae60';
+      document.getElementById('cd-hrs').textContent  = '00';
+      document.getElementById('cd-min').textContent  = '00';
+      document.getElementById('cd-sec').textContent  = '00';
+      // Enable button
+      btnEl.classList.remove('btn-disabled');
+      btnEl.style.background = '#ff6b35';
+      btnEl.style.cursor = 'pointer';
+      noteEl.textContent = '✅ 7 days completed! You can now book your retry appointment.';
+      noteEl.style.color = '#27ae60';
       return;
     }
 
@@ -448,28 +469,75 @@
     document.getElementById('cd-hrs').textContent  = String(hrs).padStart(2,'0');
     document.getElementById('cd-min').textContent  = String(mins).padStart(2,'0');
     document.getElementById('cd-sec').textContent  = String(secs).padStart(2,'0');
+
+    // Disable button with remaining days shown
+    btnEl.classList.add('btn-disabled');
+    btnEl.style.cursor = 'not-allowed';
+    btnEl.style.background = '#ccc';
+    noteEl.textContent = `⏳ ${days} day(s) remaining before retry is allowed. Use this time to practice!`;
   }
 
   updateCountdown();
   setInterval(updateCountdown, 1000);
 
-  // Reason selector
+  // ── Reason selector ─────────────────────────────────
   function toggleReason(el) {
     el.classList.toggle('selected');
+    // Save selected reasons
+    const selected = [...document.querySelectorAll('.reason-item.selected')]
+      .map(r => r.textContent.trim());
+    localStorage.setItem('dl_fail_reasons', JSON.stringify(selected));
   }
 
-  // Retry booking
-  function markRetryBooked() {
+  // Restore previously selected reasons
+  const savedReasons = JSON.parse(localStorage.getItem('dl_fail_reasons') || '[]');
+  if (savedReasons.length > 0) {
+    document.querySelectorAll('.reason-item').forEach(el => {
+      if (savedReasons.includes(el.textContent.trim())) el.classList.add('selected');
+    });
+  }
+
+  // ── Retry booking ────────────────────────────────────
+  async function markRetryBooked() {
     const now = new Date();
     if (retryDate > now) {
-      alert(`⏳ You can only retry after ${retryDate.toLocaleDateString('en-IN')}. ${Math.ceil((retryDate-now)/(1000*60*60*24))} days remaining.`);
+      const daysLeft = Math.ceil((retryDate - now) / (1000*60*60*24));
+      alert(`⏳ You can only retry after ${retryDate.toLocaleDateString('en-IN')}.\n${daysLeft} day(s) remaining.`);
       return;
     }
-    localStorage.setItem('dl_retry_booked', 'true');
-    localStorage.setItem('dl_stage', 'waiting_period');
+
+    // Increment attempt counter
+    localStorage.setItem('dl_attempt_count', attempts + 1);
+
+    // Reset stage back to 3 (apply window) so they can rebook appointment
+    localStorage.setItem('KEYS_STAGE' in window ? KEYS.STAGE : 'dl_stage', '3');
+    // Also try KEYS.STAGE directly
+    if (typeof KEYS !== 'undefined') localStorage.setItem(KEYS.STAGE, '3');
+
+    // Clear old fail data
     localStorage.removeItem('dl_fail_date');
-    alert('✅ Retry appointment booked! Redirecting to appointment guide...');
-    window.location.href = 'appointment.html';
+    localStorage.removeItem('dl_fail_reasons');
+    localStorage.removeItem('rto_date');
+    localStorage.removeItem('rto_center');
+
+    // Update DB stage back to waiting_period
+    const citizenId = localStorage.getItem('citizen_id');
+    if (citizenId) {
+      try {
+        await fetch('/api/license/update-stage', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            citizen_id: parseInt(citizenId),
+            stage: 'waiting_period',
+            date: new Date().toISOString().split('T')[0]
+          })
+        });
+      } catch(e) {}
+    }
+
+    alert('✅ You can now rebook your RTO appointment!\nRedirecting to dashboard...');
+    window.location.href = 'dashboard.html';
   }
 </script>
 </body>

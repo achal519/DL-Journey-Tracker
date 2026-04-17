@@ -111,127 +111,161 @@ Government of India | Ministry of Road Transport & Highways
 
 <div class="card">
 
+<div id="vehicleTypeBadge" style="margin-bottom:14px;"></div>
+
 <h4>Documents Ready</h4>
 
 <div class="progress-bar">
-<div id="progressFill"></div>
+<div id="progressFill" style="border-radius:10px; transition:width 0.4s;"></div>
 </div>
 
 <p id="progressText">0 / 0</p>
 
+<div id="eligibilityStatus"></div>
+
 <div id="checklistContainer"></div>
 
 <!-- Buttons -->
+<div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap;">
 <button onclick="resetChecklist()">Reset</button>
-<button onclick="markAll()">Mark All</button>
-<button onclick="refreshChecklist()" style="background:#1e90ff;">
-  🔄 Refresh
-</button>
+<button onclick="markAll()">Mark All ✅</button>
+<button onclick="refreshChecklist()" style="background:#1e90ff;">🔄 Refresh</button>
+<button onclick="goDashboard()" style="background:#1e2a47;">← Dashboard</button>
+</div>
 
 </div>
 </div>
 
+<script src="script.js"></script>
 <script>
+function goDashboard() { window.location.href = "dashboard.html"; }
+function refreshChecklist() { loadChecklist(); }
 
-function goDashboard() {
-  window.location.href = "dashboard.html";
+// ── Vehicle-type aware document lists ──────────────
+const DOCS_2W = [
+  { id: 'aadhar',    text: 'Aadhaar Card (Original)',           icon: '🪪' },
+  { id: 'age_proof', text: 'Age Proof (Birth Certificate)',     icon: '📄' },
+  { id: 'photo',     text: '2 Passport-size Photographs',       icon: '📷' },
+  { id: 'form9',     text: 'Form 9 — Application for DL (2W)', icon: '📝' },
+  { id: 'address',   text: 'Address Proof (Voter ID / Aadhaar)',icon: '🏠' },
+];
+const DOCS_4W = [
+  { id: 'aadhar',    text: 'Aadhaar Card (Original)',           icon: '🪪' },
+  { id: 'age_proof', text: 'Age Proof (Birth Certificate)',     icon: '📄' },
+  { id: 'photo',     text: '2 Passport-size Photographs',       icon: '📷' },
+  { id: 'form9',     text: 'Form 9 — Application for DL (4W)', icon: '📝' },
+  { id: 'address',   text: 'Address Proof (Voter ID / Aadhaar)',icon: '🏠' },
+];
+const DOCS_BOTH = [
+  { id: 'aadhar',    text: 'Aadhaar Card (Original)',                   icon: '🪪' },
+  { id: 'age_proof', text: 'Age Proof (Birth Certificate)',             icon: '📄' },
+  { id: 'photo',     text: '2 Passport-size Photographs',               icon: '📷' },
+  { id: 'form9',     text: 'Form 9 — Application for DL (2W + 4W)',    icon: '📝' },
+  { id: 'address',   text: 'Address Proof (Voter ID / Aadhaar)',        icon: '🏠' },
+];
+
+function getDocList() {
+  const user = getUser();
+  const vt   = (user.vehicleType || '').toLowerCase();
+  if (vt.includes('4') || vt.includes('four') || vt.includes('lmv') || vt.includes('car'))
+    return { docs: DOCS_4W, label: '4-Wheeler (LMV)', badge: '🚗' };
+  if (vt.includes('both') || vt.includes('all'))
+    return { docs: DOCS_BOTH, label: '2W + 4W', badge: '🚗🏍️' };
+  return { docs: DOCS_2W, label: '2-Wheeler (MCWG)', badge: '🏍️' };
 }
 
-function refreshChecklist() {
+async function loadChecklist() {
+  const citizenId = localStorage.getItem('citizen_id');
+  if (!citizenId) { alert('Register first'); window.location.href = 'index.html'; return; }
+
+  const { docs, label, badge } = getDocList();
+
+  // Show vehicle type badge
+  document.getElementById('vehicleTypeBadge').innerHTML =
+    `<span style="background:var(--orange);color:white;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:700;">
+      ${badge} Documents for: ${label}
+    </span>`;
+
+  let saved = {};
+  try {
+    const res  = await fetch('/api/citizen/checklist/' + citizenId);
+    const data = await res.json();
+    data.forEach(i => { saved[i.document_name] = i.is_submitted == 1; });
+  } catch(e) {}
+
+  const container = document.getElementById('checklistContainer');
+  container.innerHTML = '';
+
+  docs.forEach((item, i) => {
+    const checked = saved[item.id] || false;
+    container.innerHTML += `
+      <div class="check-item" style="
+        display:flex; align-items:center; gap:12px;
+        padding:12px 16px; margin:8px 0;
+        border-radius:10px;
+        background:${checked ? '#e8f5e9' : '#fff'};
+        border:1.5px solid ${checked ? '#2e7d32' : '#e0e0e0'};
+        transition:all 0.2s; cursor:pointer;"
+        onclick="document.getElementById('chk_${item.id}').click()">
+        <input type="checkbox" id="chk_${item.id}"
+          ${checked ? 'checked' : ''}
+          onchange="toggleItem('${item.id}', this.checked)"
+          style="width:18px;height:18px;cursor:pointer;accent-color:#e65100;">
+        <span style="font-size:20px;">${item.icon}</span>
+        <span style="font-size:14px;font-weight:${checked?'700':'500'};
+          color:${checked?'#2e7d32':'#333'};text-decoration:${checked?'line-through':'none'};">
+          ${i+1}. ${item.text}
+        </span>
+        ${checked ? '<span style="margin-left:auto;color:#2e7d32;font-size:18px;">✅</span>' : ''}
+      </div>`;
+  });
+
+  updateProgress(saved, docs);
+}
+
+async function toggleItem(id, checked) {
+  const citizenId = localStorage.getItem('citizen_id');
+  await fetch('/api/citizen/checklist/update', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ citizen_id: citizenId, document_name: id, is_submitted: checked ? 1 : 0 })
+  });
   loadChecklist();
 }
 
-const defaultItems = [
-{ id:"aadhar", text:"Aadhar Card"},
-{ id:"pan", text:"PAN Card"},
-{ id:"photo", text:"Passport Photos"},
-{ id:"form9", text:"Form 9"},
-{ id:"address", text:"Address Proof"}
-];
+function updateProgress(saved, docs) {
+  let count = 0;
+  docs.forEach(i => { if (saved[i.id]) count++; });
+  const percent = (count / docs.length) * 100;
+  document.getElementById('progressText').innerText = `${count} / ${docs.length} documents ready`;
+  document.getElementById('progressFill').style.width = percent + '%';
+  document.getElementById('progressFill').style.background =
+    percent === 100 ? '#2e7d32' : '#e65100';
 
-async function loadChecklist(){
-const citizenId = localStorage.getItem('citizen_id');
-
-if(!citizenId){
-alert("Register first");
-window.location.href="index.html";
-return;
+  const statusEl = document.getElementById('eligibilityStatus');
+  if (percent === 100) {
+    statusEl.innerHTML = `<div style="padding:12px 16px;background:#e8f5e9;border-radius:8px;
+      color:#2e7d32;font-weight:700;font-size:14px;margin-top:12px;">
+      ✅ All documents ready — You are ELIGIBLE for the DL Test!</div>`;
+  } else {
+    statusEl.innerHTML = `<div style="padding:12px 16px;background:#fff3e0;border-radius:8px;
+      color:#e65100;font-size:13px;margin-top:12px;">
+      ⚠️ ${docs.length - count} document(s) still pending. Complete all before visiting RTO.</div>`;
+  }
 }
 
-let saved = {};
-
-try{
-const res = await fetch('/api/citizen/checklist/'+citizenId);
-const data = await res.json();
-
-data.forEach(i=>{
-saved[i.document_name] = i.is_submitted==1;
-});
-
-}catch(e){}
-
-const container = document.getElementById("checklistContainer");
-container.innerHTML="";
-
-defaultItems.forEach((item,i)=>{
-container.innerHTML += `
-<div class="check-item">
-<input type="checkbox"
-${saved[item.id]?"checked":""}
-onchange="toggleItem('${item.id}',this.checked)">
-${i+1}. ${item.text}
-</div>`;
-});
-
-updateProgress(saved);
+async function resetChecklist() {
+  if (!confirm('Reset all documents?')) return;
+  const { docs } = getDocList();
+  for (let item of docs) await toggleItem(item.id, false);
 }
 
-async function toggleItem(id,checked){
-const citizenId = localStorage.getItem('citizen_id');
-
-await fetch('/api/citizen/checklist/update',{
-method:'POST',
-headers:{'Content-Type':'application/json'},
-body:JSON.stringify({
-citizen_id: citizenId,
-document_name:id,
-is_submitted: checked?1:0
-})
-});
-
-loadChecklist();
-}
-
-function updateProgress(saved){
-let count=0;
-
-defaultItems.forEach(i=>{
-if(saved[i.id]) count++;
-});
-
-const percent=(count/defaultItems.length)*100;
-
-document.getElementById("progressText").innerText =
-`${count} / ${defaultItems.length}`;
-
-document.getElementById("progressFill").style.width =
-percent+"%";
-}
-
-async function resetChecklist(){
-for(let item of defaultItems){
-await toggleItem(item.id,false);
-}
-}
-
-async function markAll(){
-for(let item of defaultItems){
-await toggleItem(item.id,true);
-}
+async function markAll() {
+  const { docs } = getDocList();
+  for (let item of docs) await toggleItem(item.id, true);
 }
 
 loadChecklist();
-
 </script>
 
 </body>

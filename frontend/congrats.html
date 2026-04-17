@@ -219,6 +219,61 @@
       </ul>
     </div>
 
+    <!-- DL Renewal Countdown -->
+    <div class="card" style="background:linear-gradient(135deg,#1a237e,#283593);color:white;">
+      <div class="card-title" style="color:white;">⏰ DL Renewal Reminder</div>
+      <div style="font-size:13px;opacity:0.8;margin-bottom:16px;">
+        Your Permanent DL is valid for 20 years. Don't let it expire!
+      </div>
+      <div style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:16px;">
+        <div style="background:rgba(255,255,255,0.15);border-radius:10px;padding:14px 20px;text-align:center;min-width:100px;">
+          <div style="font-size:28px;font-weight:800;color:#ffcc80;" id="renewYearsLeft">—</div>
+          <div style="font-size:11px;opacity:0.7;">Years Left</div>
+        </div>
+        <div style="background:rgba(255,255,255,0.15);border-radius:10px;padding:14px 20px;text-align:center;min-width:100px;">
+          <div style="font-size:28px;font-weight:800;color:#a5d6a7;" id="renewExpiry">—</div>
+          <div style="font-size:11px;opacity:0.7;">Expiry Year</div>
+        </div>
+        <div style="background:rgba(255,255,255,0.15);border-radius:10px;padding:14px 20px;text-align:center;min-width:100px;">
+          <div style="font-size:28px;font-weight:800;color:#ef9a9a;" id="renewDaysLeft">—</div>
+          <div style="font-size:11px;opacity:0.7;">Days Until Expiry</div>
+        </div>
+      </div>
+      <div id="renewalMsg" style="font-size:13px;opacity:0.85;padding:10px 14px;background:rgba(255,255,255,0.1);border-radius:8px;"></div>
+      <div style="margin-top:14px;">
+        <button onclick="addRenewalToCalendar()"
+          style="background:#4285f4;color:white;border:none;padding:9px 18px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;">
+          📅 Add Renewal Reminder to Calendar
+        </button>
+      </div>
+    </div>
+
+    <!-- Attempt Summary -->
+    <div class="card" id="attemptSummaryCard" style="display:none;">
+      <div class="card-title">🔄 Your Test Journey</div>
+      <div id="attemptSummaryContent"></div>
+    </div>
+
+    <!-- Parivahan Tracking -->
+    <div class="card" style="border-left:4px solid var(--orange);">
+      <div class="card-title">🔗 Track Your DL on Parivahan</div>
+      <div style="font-size:13px;color:var(--grey-dark);margin-bottom:12px;">
+        You can track your DL application status on the official government portal using your application number.
+      </div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+        <input id="parivahanAppNo" class="form-control" type="text"
+          placeholder="Enter Application Number (from RTO receipt)"
+          style="max-width:300px;padding:8px 12px;border:1.5px solid #ddd;border-radius:8px;font-size:13px;" />
+        <a id="parivahanLink" href="https://parivahan.gov.in/parivahan/en/content/dl-status" target="_blank"
+          style="background:var(--orange);color:white;padding:9px 18px;border-radius:8px;font-size:13px;font-weight:700;text-decoration:none;">
+          🔎 Check DL Status →
+        </a>
+      </div>
+      <div style="font-size:12px;color:var(--grey-mid);margin-top:8px;">
+        📌 Your application number is printed on the receipt given at RTO counter after fee payment.
+      </div>
+    </div>
+
     <!-- Action Buttons -->
     <div style="display:flex; gap:12px; flex-wrap:wrap; justify-content:center; margin-top:8px; margin-bottom:32px;">
       <a class="btn btn-primary" href="dashboard.html">← Back to Dashboard</a>
@@ -271,6 +326,68 @@
     }
 
     loadCongratsPage();
+
+    // ── DL Renewal Countdown ──────────────────────────
+    function loadRenewalCountdown() {
+      const dlDate = localStorage.getItem(KEYS.DL_DATE) || '';
+      if (!dlDate) return;
+      const issueDate  = new Date(dlDate);
+      const expiryDate = new Date(issueDate);
+      expiryDate.setFullYear(expiryDate.getFullYear() + 20);
+      const today      = new Date();
+      const daysLeft   = Math.floor((expiryDate - today) / (1000*60*60*24));
+      const yearsLeft  = Math.floor(daysLeft / 365);
+
+      document.getElementById('renewExpiry').textContent  = expiryDate.getFullYear();
+      document.getElementById('renewYearsLeft').textContent = yearsLeft;
+      document.getElementById('renewDaysLeft').textContent = daysLeft.toLocaleString('en-IN');
+
+      let msg = '';
+      if (daysLeft > 365 * 5) msg = '✅ Your DL is valid for a long time. Drive safely!';
+      else if (daysLeft > 365) msg = '⚠️ Less than 5 years left. Plan your DL renewal soon.';
+      else msg = '🚨 Less than 1 year left! Renew your DL immediately to avoid penalties.';
+      document.getElementById('renewalMsg').textContent = msg;
+    }
+    loadRenewalCountdown();
+
+    function addRenewalToCalendar() {
+      const dlDate = localStorage.getItem(KEYS.DL_DATE) || '';
+      if (!dlDate) { alert('No DL date found.'); return; }
+      const expiry = new Date(dlDate);
+      expiry.setFullYear(expiry.getFullYear() + 20);
+      expiry.setMonth(expiry.getMonth() - 3); // Remind 3 months before
+      const pad = n => String(n).padStart(2,'0');
+      const d = `${expiry.getFullYear()}${pad(expiry.getMonth()+1)}${pad(expiry.getDate())}`;
+      const title   = encodeURIComponent('DL Renewal Due — Apply for Renewal');
+      const details = encodeURIComponent('Your Driving License is expiring in 3 months. Visit your nearest RTO or apply on parivahan.gov.in to renew.');
+      window.open(`https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${d}/${d}&details=${details}`, '_blank');
+    }
+
+    // ── Test Attempt Counter ──────────────────────────
+    function loadAttemptSummary() {
+      const attempts = parseInt(localStorage.getItem('dl_attempt_count') || '1');
+      const card = document.getElementById('attemptSummaryCard');
+      const content = document.getElementById('attemptSummaryContent');
+      if (attempts >= 1) {
+        card.style.display = 'block';
+        const msg = attempts === 1
+          ? '🏆 You cleared the DL test in your <strong>very first attempt!</strong> Excellent!'
+          : `💪 You cleared the DL test in <strong>${attempts} attempt(s)</strong>. Persistence pays off!`;
+        content.innerHTML = `
+          <div style="display:flex;align-items:center;gap:16px;padding:12px 0;">
+            <div style="font-size:48px;">${attempts === 1 ? '🥇' : '💪'}</div>
+            <div style="font-size:15px;color:var(--navy);">${msg}</div>
+          </div>`;
+      }
+    }
+    loadAttemptSummary();
+
+    // ── Parivahan link updater ────────────────────────
+    document.getElementById('parivahanAppNo').addEventListener('input', function() {
+      const appNo = this.value.trim();
+      const base = 'https://parivahan.gov.in/parivahan/en/content/dl-status';
+      document.getElementById('parivahanLink').href = appNo ? `${base}?appno=${appNo}` : base;
+    });
   </script>
 
 </body>
