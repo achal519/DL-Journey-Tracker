@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>DL Journey Tracker — Nearest RTO</title>
   <link rel="stylesheet" href="style.css" />
+  <script src="translations.js"></script>
+
   <style>
     .search-bar-wrap {
       display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;
@@ -167,13 +169,13 @@
 
     <div class="page-header">
       <div class="breadcrumb"><a href="dashboard.html">Dashboard</a> › Nearest RTO</div>
-      <h1>📍 Find Your Nearest RTO</h1>
+      <h1 data-i18n="pageTitle">📍 Find Your Nearest RTO</h1>
       <p>Locate the nearest Regional Transport Office for your driving test</p>
     </div>
 
     <!-- Selected RTO Banner -->
     <div class="selected-rto-banner" id="selectedBanner">
-      <div class="label">✅ YOUR SELECTED RTO</div>
+      <div class="label" data-i18n="selectedLabel">✅ Selected RTO for Appointment:</div>
       <div class="value" id="selectedRTOName">—</div>
       <div style="font-size:12px; color:var(--grey-dark); margin-top:4px;" id="selectedRTOAddr">—</div>
     </div>
@@ -182,7 +184,7 @@
       <!-- Search -->
       <div class="search-bar-wrap">
         <input class="form-control" type="text" id="searchInput"
-          placeholder="🔍 Search by city or RTO name..."
+          data-i18n-placeholder="searchPlaceholder" placeholder="🔍 Search by city or RTO name..."
           oninput="filterRTOs()" />
         <button class="btn btn-primary" onclick="detectLocation()">
           📍 Detect My Location
@@ -194,7 +196,7 @@
 
       <!-- Result count -->
       <div style="font-size:13px; color:var(--grey-mid); margin-bottom:12px;">
-        Showing <span id="resultCount">0</span> RTOs
+        <span data-i18n="showing">Showing</span> <span id="resultCount">0</span> <span data-i18n="rtos">RTOs</span>
       </div>
 
       <!-- RTO Grid -->
@@ -203,7 +205,7 @@
 
     <!-- ── Live Map Section ── -->
     <div class="map-section" id="mapSection">
-      <h3>🗺️ RTO Location Map — <span id="mapRTOName">Select an RTO above to see its map</span></h3>
+      <h3 data-i18n="mapTitle">🗺️ RTO Location Map</h3>
 
       <div class="map-frame-wrap">
         <iframe id="rtoMapFrame"
@@ -218,10 +220,10 @@
         <div class="map-addr">📍 <span id="mapAddrText">—</span></div>
         <div class="map-action-btns">
           <button class="map-btn map-btn-orange" onclick="detectAndGetDirections()">
-            📡 Get Directions from My Location
+            <span data-i18n="directionsBtn">📡 Get Directions from My Location</span>
           </button>
           <button class="map-btn map-btn-navy" onclick="openInGoogleMaps()">
-            🗺️ Open in Google Maps
+            <span data-i18n="mapOpenBtn">🗺️ Open in Google Maps</span>
           </button>
         </div>
       </div>
@@ -325,7 +327,7 @@
                 target="_blank">🗺️ View Map</a>
               <button class="rto-btn ${isSelected ? 'rto-btn-selected' : 'rto-btn-select'}"
                 onclick="selectRTO('${r.code}')">
-                ${isSelected ? '✅ Selected' : '📌 Select This RTO'}
+                ${isSelected ? '✅ ' + (window._t ? window._t.selectedLabel || 'Selected' : 'Selected') : '📌 ' + (window._t ? window._t.selectBtn || 'Select This RTO' : 'Select This RTO')}
               </button>
             </div>
           </div>`;
@@ -461,6 +463,12 @@
     }
 
     // Init
+    applyTranslations("rto");
+    // store for dynamic use
+    window._t = getT("rto");
+    // update search placeholder dynamically
+    const si = document.getElementById("searchInput");
+    if(si && window._t.searchPlaceholder) si.placeholder = window._t.searchPlaceholder;
     renderStateFilter();
     renderRTOs();
     updateSelectedBanner();

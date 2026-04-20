@@ -103,17 +103,17 @@ Government of India | Ministry of Road Transport & Highways
   </div>
 
   <!-- ✅ Dashboard Button -->
-  <button onclick="goDashboard()">← Dashboard</button>
+  <button onclick="goDashboard()" data-i18n="btnDashboard">← Dashboard</button>
 </div>
 
 <div class="container">
-<h2>📋 Document Checklist</h2>
+<h2 data-i18n="pageTitle">📋 Document Checklist</h2>
 
 <div class="card">
 
 <div id="vehicleTypeBadge" style="margin-bottom:14px;"></div>
 
-<h4>Documents Ready</h4>
+<h4 data-i18n="docsReady">Documents Ready</h4>
 
 <div class="progress-bar">
 <div id="progressFill" style="border-radius:10px; transition:width 0.4s;"></div>
@@ -127,15 +127,16 @@ Government of India | Ministry of Road Transport & Highways
 
 <!-- Buttons -->
 <div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap;">
-<button onclick="resetChecklist()">Reset</button>
-<button onclick="markAll()">Mark All ✅</button>
-<button onclick="refreshChecklist()" style="background:#1e90ff;">🔄 Refresh</button>
-<button onclick="goDashboard()" style="background:#1e2a47;">← Dashboard</button>
+<button onclick="resetChecklist()" data-i18n="btnReset">Reset</button>
+<button onclick="markAll()" data-i18n="btnMarkAll">Mark All ✅</button>
+<button onclick="refreshChecklist()" style="background:#1e90ff;" data-i18n="btnRefresh">🔄 Refresh</button>
+<button onclick="goDashboard()" style="background:#1e2a47;" data-i18n="btnDashboard">← Dashboard</button>
 </div>
 
 </div>
 </div>
 
+<script src="translations.js"></script>
 <script src="script.js"></script>
 <script>
 function goDashboard() { window.location.href = "dashboard.html"; }
@@ -265,6 +266,7 @@ async function markAll() {
   for (let item of docs) await toggleItem(item.id, true);
 }
 
+applyTranslations("checklist");
 loadChecklist();
 </script>
 

@@ -198,6 +198,79 @@
       background: var(--orange-pale); border-radius: var(--radius);
       padding: 16px 20px; margin-top: 16px; border: 2px solid var(--orange);
     }
+
+    /* ── Layout with Sidebar ─────────────────────── */
+    .app-layout {
+      display: flex; min-height: calc(100vh - 120px);
+    }
+
+    /* ── Left Sidebar ────────────────────────────── */
+    .sidebar {
+      width: 220px; min-width: 220px;
+      background: #1a237e;
+      padding: 20px 0; position: sticky;
+      top: 0; height: 100vh;
+      overflow-y: auto; flex-shrink: 0;
+    }
+    .sidebar-section-title {
+      font-size: 10px; font-weight: 700;
+      color: rgba(255,255,255,0.45);
+      text-transform: uppercase; letter-spacing: 1px;
+      padding: 16px 18px 6px;
+    }
+    .sidebar-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 18px; color: rgba(255,255,255,0.75);
+      font-size: 13px; font-weight: 500;
+      text-decoration: none; cursor: pointer;
+      transition: all 0.15s; border: none;
+      background: none; width: 100%;
+      text-align: left; font-family: inherit;
+      border-left: 3px solid transparent;
+    }
+    .sidebar-item:hover {
+      background: rgba(255,255,255,0.1);
+      color: white; border-left-color: #ffb300;
+    }
+    .sidebar-item.active {
+      background: rgba(255,255,255,0.15);
+      color: white; border-left-color: #e65100;
+      font-weight: 700;
+    }
+    .sidebar-item .s-icon { font-size: 17px; min-width: 22px; }
+    .sidebar-divider {
+      border: none; border-top: 1px solid rgba(255,255,255,0.1);
+      margin: 8px 18px;
+    }
+    .sidebar-stage-badge {
+      display: inline-block; padding: 2px 8px;
+      border-radius: 10px; font-size: 10px;
+      font-weight: 700; margin-left: auto;
+      background: #e65100; color: white;
+    }
+    .sidebar-stage-badge.green { background: #2e7d32; }
+
+    /* ── Main Content ────────────────────────────── */
+    .main-content {
+      flex: 1; padding: 24px;
+      overflow-x: hidden; min-width: 0;
+    }
+
+    /* ── Mobile sidebar toggle ───────────────────── */
+    .sidebar-toggle {
+      display: none; position: fixed;
+      bottom: 20px; right: 20px; z-index: 999;
+      width: 48px; height: 48px; border-radius: 50%;
+      background: #e65100; color: white;
+      border: none; font-size: 20px;
+      cursor: pointer; box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+    }
+    @media(max-width:768px){
+      .sidebar { display: none; position: fixed; z-index: 998; top: 0; left: 0; }
+      .sidebar.open { display: flex; flex-direction: column; }
+      .sidebar-toggle { display: flex; align-items: center; justify-content: center; }
+      .main-content { padding: 16px; }
+    }
   </style>
 </head>
 <body>
@@ -221,12 +294,76 @@
       </div>
     </a>
     <div class="nav-links" style="display:flex; align-items:center; gap:12px; margin-left:auto;">
-      <a class="nav-btn nav-btn-outline" href="index.html">✏️ Edit Details</a>
-      <button class="logout-btn" onclick="handleLogout()">🚪 Logout</button>
+      <button class="sidebar-toggle" style="display:none;" onclick="toggleSidebar()">☰</button>
     </div>
   </nav>
 
-  <div class="page-wrapper-wide">
+  <!-- Mobile sidebar toggle -->
+  <button class="sidebar-toggle" onclick="toggleSidebar()">☰</button>
+
+  <div class="app-layout">
+
+    <!-- ── LEFT SIDEBAR ─────────────────────────── -->
+    <aside class="sidebar" id="sidebar">
+      <div style="padding:16px 18px 12px; border-bottom:1px solid rgba(255,255,255,0.1);">
+        <div style="font-size:13px; font-weight:800; color:white;">🚗 DL Journey</div>
+        <div id="sidebarUser" style="font-size:11px; color:rgba(255,255,255,0.6); margin-top:2px;">Loading...</div>
+      </div>
+
+      <div class="sidebar-section-title">MAIN</div>
+      <a class="sidebar-item active" href="dashboard.html">
+        <span class="s-icon">🏠</span> Dashboard
+      </a>
+      <a class="sidebar-item" href="checklist.html">
+        <span class="s-icon">📋</span> Document Checklist
+        <span class="sidebar-stage-badge" id="sidebarDocBadge" style="display:none;"></span>
+      </a>
+      <a class="sidebar-item" href="alert.html">
+        <span class="s-icon">🔔</span> Deadline Alerts
+      </a>
+      <a class="sidebar-item" href="appointment.html">
+        <span class="s-icon">📅</span> My Appointment
+      </a>
+
+      <hr class="sidebar-divider" />
+      <div class="sidebar-section-title">TOOLS</div>
+      <a class="sidebar-item" href="sms.html">
+        <span class="s-icon">📩</span> Notifications
+      </a>
+      <a class="sidebar-item" href="rto.html">
+        <span class="s-icon">📍</span> Nearest RTO
+      </a>
+      <a class="sidebar-item" href="testsim.html">
+        <span class="s-icon">🏎️</span> Test Simulation
+      </a>
+      <a class="sidebar-item" href="testguide.html">
+        <span class="s-icon">🏛️</span> RTO Test Guide
+      </a>
+      <a class="sidebar-item" href="ll-guide.html">
+        <span class="s-icon">📖</span> LL Guide
+      </a>
+
+      <hr class="sidebar-divider" />
+      <div class="sidebar-section-title">ACCOUNT</div>
+      <a class="sidebar-item" href="index.html">
+        <span class="s-icon">✏️</span> Edit Details
+      </a>
+      <button class="sidebar-item" onclick="handleLogout()" style="color:rgba(255,180,180,0.9);">
+        <span class="s-icon">🚪</span> Logout
+      </button>
+
+      <!-- Stage indicator at bottom -->
+      <div style="margin-top:auto; padding:16px 18px; border-top:1px solid rgba(255,255,255,0.1);">
+        <div style="font-size:10px; color:rgba(255,255,255,0.45); text-transform:uppercase; letter-spacing:1px; margin-bottom:6px;">Current Stage</div>
+        <div id="sidebarStage" style="font-size:13px; color:white; font-weight:700;">—</div>
+        <div style="margin-top:8px; height:4px; background:rgba(255,255,255,0.15); border-radius:4px;">
+          <div id="sidebarProgress" style="height:100%; border-radius:4px; background:#e65100; transition:width 0.6s ease; width:0%;"></div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ── MAIN CONTENT ───────────────────────────── -->
+    <div class="main-content">
 
     <!-- Welcome Banner -->
     <div class="welcome-banner">
@@ -381,23 +518,6 @@
         </div>
         <div id="dlError" style="display:none; color:var(--red); font-size:13px; margin-bottom:10px;">⚠️ Please enter both DL Number and Issue Date.</div>
         <button class="btn btn-success btn-sm" onclick="markDLReceived()">🎉 I Have Received My DL — Complete My Journey!</button>
-        <button class="btn btn-sm" style="background:var(--red-bg);color:var(--red);border:1.5px solid var(--red);margin-left:10px;" onclick="markTestFailed()">❌ I Failed My Test</button>
-
-        <!-- Parivahan DL Tracking -->
-        <div style="margin-top:16px;padding:14px 16px;background:#fff3e0;border-radius:10px;border:1.5px solid var(--orange);">
-          <div style="font-size:13px;font-weight:700;color:var(--navy);margin-bottom:8px;">🔗 Track DL Status on Parivahan</div>
-          <div style="font-size:12px;color:var(--grey-dark);margin-bottom:10px;">Enter your application number from the RTO receipt to check real-time status.</div>
-          <div style="display:flex;gap:8px;flex-wrap:wrap;">
-            <input id="parivahanInput" type="text" placeholder="e.g. MH202612345678"
-              style="flex:1;min-width:180px;padding:8px 12px;border:1.5px solid #ddd;border-radius:8px;font-size:13px;" />
-            <a id="parivahanBtn" href="https://parivahan.gov.in/parivahan/en/content/dl-status"
-              target="_blank"
-              style="background:var(--orange);color:white;padding:8px 16px;border-radius:8px;
-              font-size:12px;font-weight:700;text-decoration:none;display:inline-flex;align-items:center;">
-              🔎 Check Status →
-            </a>
-          </div>
-        </div>
       </div>
 
     </div><!-- end Stage Tracker Card -->
@@ -405,42 +525,8 @@
     <!-- Alert Card -->
     <div id="alertCardContainer"></div>
 
-    <!-- Quick Actions -->
-    <div class="card">
-      <div class="card-title">⚡ Quick Actions</div>
-      <div class="action-grid">
-        <a class="action-card" href="checklist.html">
-          <div class="action-card-icon">📋</div>
-          <div class="action-card-label">Document Checklist</div>
-        </a>
-        <a class="action-card" href="alert.html">
-          <div class="action-card-icon">🔔</div>
-          <div class="action-card-label">Deadline Alerts</div>
-        </a>
-        <a class="action-card" href="sms.html">
-          <div class="action-card-icon">📩</div>
-          <div class="action-card-label">Notifications</div>
-        </a>
-        <a class="action-card" href="rto.html">
-          <div class="action-card-icon">📍</div>
-          <div class="action-card-label">Nearest RTO</div>
-        </a>
-        <a class="action-card" href="testsim.html">
-          <div class="action-card-icon">🏎️</div>
-          <div class="action-card-label">Test Simulation</div>
-        </a>
-        <a class="action-card" href="testguide.html">
-          <div class="action-card-icon">🏛️</div>
-          <div class="action-card-label">RTO Test Guide</div>
-        </a>
-        <a class="action-card" href="index.html">
-          <div class="action-card-icon">✏️</div>
-          <div class="action-card-label">Edit My Details</div>
-        </a>
-      </div>
-    </div>
-
-  </div><!-- end page-wrapper-wide -->
+    </div><!-- end main-content -->
+  </div><!-- end app-layout -->
 
   <footer class="footer">
     DL Journey Tracker &nbsp;|&nbsp; OOP Mini Project &nbsp;|&nbsp; Built with <span>♥</span> in C++ &amp; Web
@@ -452,7 +538,8 @@
 
     // ── Logout ──────────────────────────────────────
     function handleLogout() {
-      if (confirm('Are you sure you want to logout?')) {
+      const msg = window._logoutConfirm || 'Are you sure you want to logout?';
+      if (confirm(msg)) {
         localStorage.clear(); // clears dl_registered too → forces LL check on next visit
         window.location.href = 'index.html';
       }
@@ -762,28 +849,6 @@
       window.location.href = 'appointment.html';
     }
 
-    function markTestFailed() {
-      if (!confirm('Sorry to hear that! Click OK to go to the retry guide with 7-day countdown and improvement tips.')) return;
-      // Save fail date and set stage back
-      localStorage.setItem('dl_fail_date', new Date().toISOString());
-      const attempts = parseInt(localStorage.getItem('dl_attempt_count') || '0') + 1;
-      localStorage.setItem('dl_attempt_count', attempts);
-      localStorage.setItem(KEYS.STAGE, '3');
-      window.location.href = 'retry.html';
-    }
-
-    // Parivahan input → update link
-    const pInput = document.getElementById('parivahanInput');
-    if (pInput) {
-      pInput.addEventListener('input', function() {
-        const appNo = this.value.trim();
-        document.getElementById('parivahanBtn').href =
-          appNo
-            ? `https://parivahan.gov.in/parivahan/en/content/dl-status?appno=${appNo}`
-            : 'https://parivahan.gov.in/parivahan/en/content/dl-status';
-      });
-    }
-
     async function markDLReceived() {
       const dlNumber = document.getElementById('dlNumberInput').value.trim();
       const dlDate   = document.getElementById('dlIssueDateInput').value;
@@ -830,6 +895,159 @@
         </div>`;
     }
 
+    // ── Sidebar helpers ─────────────────────────────
+    function toggleSidebar() {
+      document.getElementById('sidebar').classList.toggle('open');
+    }
+
+    function updateSidebar(stage, user, docsCompleted) {
+      // User info
+      const sidebarUser = document.getElementById('sidebarUser');
+      if (sidebarUser) sidebarUser.textContent = user.name || 'Citizen';
+
+      // Stage label
+      const stageLabels = window._stageLabels || ['', 'LL Obtained', 'Waiting Period', 'Apply for DL', 'Test Cleared', 'DL Issued'];
+      const stageEl = document.getElementById('sidebarStage');
+      if (stageEl) stageEl.textContent = `Stage ${stage} — ${stageLabels[stage] || ''}`;
+
+      // Progress bar
+      const pct = ((stage - 1) / 4) * 100;
+      const progEl = document.getElementById('sidebarProgress');
+      if (progEl) progEl.style.width = pct + '%';
+
+      // Doc badge
+      const badgeEl = document.getElementById('sidebarDocBadge');
+      if (badgeEl) {
+        if (docsCompleted < 5) {
+          badgeEl.style.display = 'inline-block';
+          badgeEl.textContent = `${5 - docsCompleted}`;
+          badgeEl.className = 'sidebar-stage-badge';
+        } else {
+          badgeEl.style.display = 'none';
+        }
+      }
+    }
+
+    // ── Dashboard Translation System ──────────────────
+    const DASH_TRANSLATIONS = {
+      en: {
+        topBar: 'Government of India &nbsp;|&nbsp; Ministry of Road Transport &amp; Highways &nbsp;|&nbsp; Citizen Services',
+        brandTitle: 'DL Journey Tracker', brandSub: 'LL to Permanent License',
+        pageTitle: 'My DL Journey Dashboard',
+        sideMain: 'MAIN', sideDashboard: '🏠 Dashboard', sideChecklist: '📋 Document Checklist',
+        sideAlerts: '🔔 Alerts', sideAppointment: '📅 Appointment', sideTools: 'TOOLS',
+        sideSMS: '📩 Notifications', sideRTO: '📍 Find RTO', sideTestSim: '🏎️ Test Simulation',
+        sideTestGuide: '🏛️ Test Guide', sideChatbot: '🤖 AI Assistant', sideRetry: '🔄 Test Failed?',
+        sideAccount: 'ACCOUNT', sideEdit: '✏️ Edit Details', sideLogout: '🚪 Logout',
+        tileStage: 'Current Stage', tileDays: 'Days Passed', tileRemaining: 'Days Remaining',
+        tileLL: 'LL Issue Date', tileExpiry: 'LL Expiry', tileLLNo: 'LL Number', tileCity: 'City',
+        docStatus: 'Documents Ready', quickActions: '⚡ Quick Actions',
+        footer: 'DL Journey Tracker &nbsp;|&nbsp; OOP Mini Project &nbsp;|&nbsp; Built with ♥ in C++ &amp; Web',
+        stageLabels: ['', 'LL Obtained', 'Waiting Period', 'Apply for DL', 'Test Cleared', 'DL Issued'],
+        logoutConfirm: 'Are you sure you want to logout?',
+      },
+      hi: {
+        topBar: 'भारत सरकार &nbsp;|&nbsp; सड़क परिवहन एवं राजमार्ग मंत्रालय &nbsp;|&nbsp; नागरिक सेवाएं',
+        brandTitle: 'DL यात्रा ट्रैकर', brandSub: 'LL से स्थायी लाइसेंस',
+        pageTitle: 'मेरी DL यात्रा डैशबोर्ड',
+        sideMain: 'मुख्य', sideDashboard: '🏠 डैशबोर्ड', sideChecklist: '📋 दस्तावेज़ चेकलिस्ट',
+        sideAlerts: '🔔 अलर्ट', sideAppointment: '📅 अपॉइंटमेंट', sideTools: 'टूल्स',
+        sideSMS: '📩 सूचनाएं', sideRTO: '📍 RTO खोजें', sideTestSim: '🏎️ परीक्षण सिमुलेशन',
+        sideTestGuide: '🏛️ परीक्षण गाइड', sideChatbot: '🤖 AI सहायक', sideRetry: '🔄 परीक्षण विफल?',
+        sideAccount: 'खाता', sideEdit: '✏️ विवरण संपादित करें', sideLogout: '🚪 लॉगआउट',
+        tileStage: 'वर्तमान चरण', tileDays: 'बीते दिन', tileRemaining: 'शेष दिन',
+        tileLL: 'LL जारी तिथि', tileExpiry: 'LL समाप्ति', tileLLNo: 'LL नंबर', tileCity: 'शहर',
+        docStatus: 'दस्तावेज़ तैयार', quickActions: '⚡ त्वरित कार्य',
+        footer: 'DL यात्रा ट्रैकर &nbsp;|&nbsp; OOP मिनी प्रोजेक्ट &nbsp;|&nbsp; C++ और Web में बनाया ♥',
+        stageLabels: ['', 'LL प्राप्त हुई', 'प्रतीक्षा अवधि', 'DL के लिए आवेदन', 'परीक्षण पास', 'DL जारी'],
+        logoutConfirm: 'क्या आप वाकई लॉगआउट करना चाहते हैं?',
+      },
+      mr: {
+        topBar: 'भारत सरकार &nbsp;|&nbsp; रस्ते वाहतूक आणि महामार्ग मंत्रालय &nbsp;|&nbsp; नागरिक सेवा',
+        brandTitle: 'DL प्रवास ट्रॅकर', brandSub: 'LL ते कायमस्वरूपी परवाना',
+        pageTitle: 'माझा DL प्रवास डॅशबोर्ड',
+        sideMain: 'मुख्य', sideDashboard: '🏠 डॅशबोर्ड', sideChecklist: '📋 कागदपत्र यादी',
+        sideAlerts: '🔔 सूचना', sideAppointment: '📅 अपॉइंटमेंट', sideTools: 'साधने',
+        sideSMS: '📩 अधिसूचना', sideRTO: '📍 RTO शोधा', sideTestSim: '🏎️ परीक्षण सिम्युलेशन',
+        sideTestGuide: '🏛️ परीक्षण मार्गदर्शक', sideChatbot: '🤖 AI सहाय्यक', sideRetry: '🔄 परीक्षण अयशस्वी?',
+        sideAccount: 'खाते', sideEdit: '✏️ तपशील संपादित करा', sideLogout: '🚪 लॉगआउट',
+        tileStage: 'सध्याचा टप्पा', tileDays: 'उलटलेले दिवस', tileRemaining: 'उरलेले दिवस',
+        tileLL: 'LL जारी तारीख', tileExpiry: 'LL समाप्ती', tileLLNo: 'LL क्रमांक', tileCity: 'शहर',
+        docStatus: 'कागदपत्रे तयार', quickActions: '⚡ जलद कृती',
+        footer: 'DL प्रवास ट्रॅकर &nbsp;|&nbsp; OOP मिनी प्रोजेक्ट &nbsp;|&nbsp; C++ आणि Web मध्ये ♥',
+        stageLabels: ['', 'LL मिळाली', 'प्रतीक्षा कालावधी', 'DL साठी अर्ज', 'परीक्षण पास', 'DL जारी'],
+        logoutConfirm: 'तुम्हाला खरोखर लॉगआउट करायचे आहे का?',
+      },
+      gu: {
+        topBar: 'ભારત સરકાર &nbsp;|&nbsp; રોડ ટ્રાન્સપોર્ટ અને હાઇવે મંત્રાલય &nbsp;|&nbsp; નાગરિક સેવાઓ',
+        brandTitle: 'DL યાત્રા ટ્રેકર', brandSub: 'LL થી કાયમી લાઇસન્સ',
+        pageTitle: 'મારી DL યાત્રા ડેશબોર્ડ',
+        sideMain: 'મુખ્ય', sideDashboard: '🏠 ડેશબોર્ડ', sideChecklist: '📋 દસ્તાવેજ ચેકલિસ્ટ',
+        sideAlerts: '🔔 એલર્ટ', sideAppointment: '📅 એપોઇન્ટમેન્ટ', sideTools: 'સાધનો',
+        sideSMS: '📩 સૂચનાઓ', sideRTO: '📍 RTO શોધો', sideTestSim: '🏎️ ટેસ્ટ સિમ્યુલેશન',
+        sideTestGuide: '🏛️ ટેસ્ટ ગાઇડ', sideChatbot: '🤖 AI સહાયક', sideRetry: '🔄 ટેસ્ટ નિષ્ફળ?',
+        sideAccount: 'એકાઉન્ટ', sideEdit: '✏️ વિગતો સંપાદિત કરો', sideLogout: '🚪 લૉગઆઉટ',
+        tileStage: 'વર્તમાન તબક્કો', tileDays: 'વીતેલ દિવસો', tileRemaining: 'બાકી દિવસો',
+        tileLL: 'LL જારી તારીખ', tileExpiry: 'LL સમાપ્તિ', tileLLNo: 'LL નંબર', tileCity: 'શહેર',
+        docStatus: 'દસ્તાવેજ તૈયાર', quickActions: '⚡ ઝડપી ક્રિયાઓ',
+        footer: 'DL યાત્રા ટ્રેકર &nbsp;|&nbsp; OOP મિની પ્રોજેક્ટ &nbsp;|&nbsp; C++ અને Web માં ♥',
+        stageLabels: ['', 'LL મળ્યું', 'રાહ અવધિ', 'DL માટે અરજી', 'ટેસ્ટ પાસ', 'DL જારી'],
+        logoutConfirm: 'શું તમે ખરેખર લૉગઆઉટ કરવા માંગો છો?',
+      },
+    };
+
+    function applyDashTranslation() {
+      const lang = localStorage.getItem('dl_lang') || 'en';
+      const t = DASH_TRANSLATIONS[lang] || DASH_TRANSLATIONS['en'];
+
+      // Top bar + navbar
+      const tb = document.querySelector('.top-bar');
+      if (tb) tb.innerHTML = t.topBar;
+      const bt = document.querySelector('.brand-title');
+      const bs = document.querySelector('.brand-sub');
+      if (bt) bt.textContent = t.brandTitle;
+      if (bs) bs.textContent = t.brandSub;
+
+      // Page title
+      const h1 = document.querySelector('.page-title, h1.page-title');
+      if (h1) h1.textContent = t.pageTitle;
+      document.title = t.pageTitle;
+
+      // Sidebar links — map by href
+      const sideMap = {
+        'dashboard.html': t.sideDashboard, 'checklist.html': t.sideChecklist,
+        'alert.html': t.sideAlerts, 'appointment.html': t.sideAppointment,
+        'sms.html': t.sideSMS, 'rto.html': t.sideRTO,
+        'testsim.html': t.sideTestSim, 'testguide.html': t.sideTestGuide,
+        'chatbot.html': t.sideChatbot, 'retry.html': t.sideRetry,
+        'index.html': t.sideEdit,
+      };
+      document.querySelectorAll('.sidebar-link').forEach(el => {
+        const href = el.getAttribute('href');
+        if (href && sideMap[href]) el.innerHTML = sideMap[href];
+      });
+
+      // Sidebar section labels
+      document.querySelectorAll('.sidebar-section-label').forEach((el, i) => {
+        const labels = [t.sideMain, t.sideTools, t.sideAccount];
+        if (labels[i]) el.textContent = labels[i];
+      });
+
+      // Info tile labels
+      const tileLabels = document.querySelectorAll('.info-tile-label');
+      const tileMap = [t.tileStage, t.tileDays, t.tileRemaining, t.tileLL, t.tileExpiry, t.tileLLNo, t.tileCity];
+      tileLabels.forEach((el, i) => { if (tileMap[i]) el.textContent = tileMap[i]; });
+
+      // Footer
+      const footer = document.querySelector('.footer');
+      if (footer) footer.innerHTML = t.footer;
+
+      // Store stageLabels for use in loadDashboard
+      window._stageLabels = t.stageLabels;
+      window._logoutConfirm = t.logoutConfirm;
+    }
+
+    applyDashTranslation();
     loadDashboard();
   </script>
 

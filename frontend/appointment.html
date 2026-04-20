@@ -5,6 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>DL Journey Tracker — Appointment Confirmed</title>
   <link rel="stylesheet" href="style.css" />
+  <script src="translations.js"></script>
+
+  <script src="translations.js"></script>
   <style>
     /* ── Confirmation Banner ─────────────────────── */
     .confirm-banner {
@@ -128,64 +131,64 @@
 <body>
 
   <div class="top-bar">
-    Government of India &nbsp;|&nbsp; Ministry of Road Transport &amp; Highways &nbsp;|&nbsp; Citizen Services
+    <span data-i18n="govBar">Government of India &nbsp;|&nbsp; Ministry of Road Transport &amp; Highways &nbsp;|&nbsp; Citizen Services</span>
   </div>
 
   <nav class="navbar">
     <a class="navbar-brand" href="index.html">
       <div class="brand-icon">🚗</div>
       <div class="brand-text">
-        <span class="brand-title">DL Journey Tracker</span>
-        <span class="brand-sub">LL to Permanent License</span>
+        <span class="brand-title" data-i18n="brandTitle">DL Journey Tracker</span>
+        <span class="brand-sub" data-i18n="brandSub">LL to Permanent License</span>
       </div>
     </a>
     <div class="nav-links" style="margin-left:auto;">
-      <a class="nav-btn nav-btn-outline" href="dashboard.html">← Dashboard</a>
+      <a class="nav-btn nav-btn-outline" href="dashboard.html" data-i18n="backDashboard">← Dashboard</a>
     </div>
   </nav>
 
   <div class="page-wrapper-wide" style="max-width:820px;">
 
     <div class="page-header">
-      <div class="breadcrumb"><a href="dashboard.html">Dashboard</a> › RTO Appointment</div>
+      <div class="breadcrumb"><a href="dashboard.html" data-i18n="backDashboard">← Dashboard</a> &nbsp;›&nbsp; <span data-i18n="pageTitle">RTO Appointment</span></div>
     </div>
 
     <!-- ── Confirmation Banner ──────────────────── -->
     <div class="confirm-banner">
       <div class="conf-left">
-        <h2>✅ Appointment Confirmed!</h2>
-        <p>Your RTO driving test appointment has been successfully recorded. You are now at <strong>Stage 4</strong>.</p>
+        <h2 data-i18n="bannerTitle">✅ Appointment Confirmed!</h2>
+        <p data-i18n="bannerSub">Your RTO driving test appointment has been successfully recorded. You are now at <strong>Stage 4</strong>.</p>
       </div>
       <div class="confirm-icon">🏛️</div>
     </div>
 
     <!-- ── Appointment Summary Card ─────────────── -->
     <div class="appt-card">
-      <div class="card-title" style="margin:0 0 4px;">📋 Your Appointment Details</div>
-      <div style="font-size:12px; color:var(--grey-mid); margin-bottom:4px;">Keep this information handy on your test day</div>
+      <div class="card-title" style="margin:0 0 4px;" data-i18n="apptDetailsTitle">📋 Your Appointment Details</div>
+      <div style="font-size:12px; color:var(--grey-mid); margin-bottom:4px;" data-i18n="apptDetailsSub">Keep this information handy on your test day</div>
       <div class="appt-grid">
         <div class="appt-item">
-          <div class="lbl">📅 Test Date</div>
+          <div class="lbl" data-i18n="lblDate">📅 Test Date</div>
           <div class="val" id="apptDate">—</div>
         </div>
         <div class="appt-item">
-          <div class="lbl">🏛️ RTO Center</div>
+          <div class="lbl" data-i18n="lblCenter">🏛️ RTO Center</div>
           <div class="val" id="apptCenter">—</div>
         </div>
         <div class="appt-item">
-          <div class="lbl">👤 Applicant Name</div>
+          <div class="lbl" data-i18n="lblName">👤 Applicant Name</div>
           <div class="val" id="apptName">—</div>
         </div>
         <div class="appt-item">
-          <div class="lbl">🚗 Vehicle Type</div>
+          <div class="lbl" data-i18n="lblVehicle">🚗 Vehicle Type</div>
           <div class="val" id="apptVehicle">—</div>
         </div>
         <div class="appt-item">
-          <div class="lbl">🪪 LL Number</div>
+          <div class="lbl" data-i18n="lblLL">🪪 LL Number</div>
           <div class="val" id="apptLL">—</div>
         </div>
         <div class="appt-item">
-          <div class="lbl">📍 City</div>
+          <div class="lbl" data-i18n="lblCity">📍 City</div>
           <div class="val" id="apptCity">—</div>
         </div>
       </div>
@@ -193,14 +196,14 @@
 
     <!-- ── Countdown ─────────────────────────────── -->
     <div class="countdown-wrap">
-      <div class="countdown-label">⏳ Days until your RTO test</div>
+      <div class="countdown-label" data-i18n="countdownLabel">⏳ Days until your RTO test</div>
       <div class="countdown-value" id="daysToTest">—</div>
       <div class="countdown-sub" id="countdownSub">—</div>
     </div>
 
     <!-- ── What to Carry ─────────────────────────── -->
     <div class="card">
-      <div class="card-title">📦 What to Carry on Test Day</div>
+      <div class="card-title" data-i18n="carryTitle">📦 What to Carry on Test Day</div>
       <ul class="carry-list" style="list-style:none; padding:0; margin:0;" id="carryList">
         <li>✅ Original Learner License (LL)</li>
         <li>✅ 2 Photocopies of LL</li>
@@ -219,7 +222,7 @@
 
     <!-- ── Day Timeline ───────────────────────────── -->
     <div class="card">
-      <div class="card-title">⏰ Test Day — Hour by Hour Plan</div>
+      <div class="card-title" data-i18n="timelineTitle">⏰ Test Day — Hour by Hour Plan</div>
       <ul class="timeline-steps">
         <li data-step="1"><strong>Reach RTO Office</strong><span class="time-badge">7:30 AM</span><br/>Arrive 30 minutes before your slot. Find the DL Test counter and submit your documents to the clerk.</li>
         <li data-step="2"><strong>Document Verification</strong><span class="time-badge">8:00 AM</span><br/>Officer checks your LL, Form 9, age/address proof and photographs. You receive a token number for your test slot.</li>
@@ -233,7 +236,7 @@
 
     <!-- ── Test Track Path ───────────────────────── -->
     <div class="card">
-      <div class="card-title">🛣️ How the Test Track Works</div>
+      <div class="card-title" data-i18n="trackTitle">🛣️ How the Test Track Works</div>
       <div class="route-box">
         <div style="font-size:12px; opacity:0.7; margin-bottom:10px;">Standard RTO test track path (may vary slightly by RTO):</div>
         <div class="route-step"><span class="route-icon">🚦</span><div><strong>Start Point</strong> — Inspector signals you to begin. Check mirrors, wear seatbelt/helmet BEFORE starting engine.</div></div>
@@ -248,7 +251,7 @@
 
     <!-- ── Key Disciplines ───────────────────────── -->
     <div class="card">
-      <div class="card-title">🎯 Key Disciplines Inspector Will Check</div>
+      <div class="card-title" data-i18n="disciplineTitle">🎯 Key Disciplines Inspector Will Check</div>
       <div class="discipline-grid">
         <div class="discipline-card"><strong>🪞 Mirror Usage</strong>Check rear and side mirrors before every turn, lane change, and stop. Inspector watches your eye movement.</div>
         <div class="discipline-card"><strong>🚦 Signal Usage</strong>Indicate left/right at least 30 metres before turning. Never turn without signalling first.</div>
@@ -263,7 +266,7 @@
 
     <!-- ── Do's and Don'ts ───────────────────────── -->
     <div class="card">
-      <div class="card-title">✅ Do's and ❌ Don'ts</div>
+      <div class="card-title" data-i18n="dosTitle">✅ Do's and ❌ Don'ts</div>
       <div class="do-dont-grid">
         <div class="do-box">
           <h4>✅ DO These</h4>
@@ -296,7 +299,7 @@
 
     <!-- ── Pass / Fail Criteria ──────────────────── -->
     <div class="card">
-      <div class="card-title">📋 Pass / Fail Criteria</div>
+      <div class="card-title" data-i18n="passFailTitle">📋 Pass / Fail Criteria</div>
       <table class="pf-table">
         <thead><tr><th>Action</th><th>Result</th></tr></thead>
         <tbody>
@@ -319,7 +322,7 @@
 
     <!-- ── What After Test ────────────────────────── -->
     <div class="card" style="border-left:4px solid var(--green);">
-      <div class="card-title">🎯 After Passing the Test — What Next?</div>
+      <div class="card-title" data-i18n="afterTitle">🎯 After Passing the Test — What Next?</div>
       <ul style="list-style:none; padding:0; margin:0;">
         <li style="padding:8px 0; border-bottom:1px solid var(--grey-light); font-size:13px; display:flex; gap:10px;">
           <span>1️⃣</span>
@@ -342,8 +345,8 @@
 
     <!-- ── Practice Button ───────────────────────── -->
     <div class="card" style="text-align:center; background: linear-gradient(135deg, #1a237e, #283593); color:white;">
-      <div style="font-size:20px; font-weight:800; margin-bottom:8px;">🏎️ Want to Practice Before the Real Test?</div>
-      <div style="font-size:13px; opacity:0.85; margin-bottom:16px;">Take our interactive driving test simulation to build confidence!</div>
+      <div style="font-size:20px; font-weight:800; margin-bottom:8px;" data-i18n="practiceTitle">🏎️ Want to Practice Before the Real Test?</div>
+      <div style="font-size:13px; opacity:0.85; margin-bottom:16px;" data-i18n="practiceSubtitle">Take our interactive driving test simulation to build confidence!</div>
       <a href="testsim.html" class="btn btn-primary" style="display:inline-block; padding:12px 28px; font-size:14px; background:var(--orange); border-color:var(--orange);">
         🏎️ Start Test Simulation →
       </a>
@@ -351,22 +354,16 @@
 
     <!-- ── Mark Test Cleared from here ─────────────── -->
     <div class="card" style="border-left:4px solid var(--green); background:var(--green-bg);" id="markClearedSection">
-      <div style="font-size:15px; font-weight:700; color:var(--navy); margin-bottom:6px;">
-        ✅ Went to RTO and cleared your driving test?
-      </div>
-      <div style="font-size:13px; color:var(--grey-dark); margin-bottom:14px;">
-        Mark your test as cleared to move to Stage 4. Your DL will arrive by post in 7–30 days.
-      </div>
-      <button class="btn btn-primary" style="background:var(--green); border-color:var(--green);" onclick="markTestClearedFromAppt()">
-        ✅ Yes, I Cleared My Driving Test — Move to Stage 4
-      </button>
+      <div style="font-size:15px; font-weight:700; color:var(--navy); margin-bottom:6px;" data-i18n="markClearedTitle">✅ Went to RTO and cleared your driving test?</div>
+      <div style="font-size:13px; color:var(--grey-dark); margin-bottom:14px;" data-i18n="markClearedSub">Mark your test as cleared to move to Stage 4. Your DL will arrive by post in 7–30 days.</div>
+      <button class="btn btn-primary" style="background:var(--green); border-color:var(--green);" onclick="markTestClearedFromAppt()" data-i18n="markClearedBtn">✅ Yes, I Cleared My Driving Test — Move to Stage 4</button>
     </div>
 
     <!-- ── Bottom Actions ────────────────────────── -->
     <div class="bottom-actions">
-      <a href="dashboard.html" class="btn btn-outline">← Back to Dashboard</a>
+      <a href="dashboard.html" class="btn btn-outline" data-i18n="btnDashboard">← Back to Dashboard</a>
       <button class="btn btn-primary" onclick="window.print()">🖨️ Print This Page</button>
-      <a href="rto.html" class="btn btn-outline">📍 Find Nearest RTO</a>
+      <a href="rto.html" class="btn btn-outline" data-i18n="btnFindRTO">📍 Find Nearest RTO</a>
       <button class="btn btn-outline" onclick="addToGoogleCalendar()" style="background:#4285f4;color:white;border-color:#4285f4;">
         📅 Add to Google Calendar
       </button>
@@ -375,7 +372,7 @@
   </div>
 
   <footer class="footer">
-    DL Journey Tracker &nbsp;|&nbsp; OOP Mini Project &nbsp;|&nbsp; Built with <span>♥</span> in C++ &amp; Web
+    <span data-i18n="footer">DL Journey Tracker &nbsp;|&nbsp; OOP Mini Project &nbsp;|&nbsp; Built with ♥ in C++ &amp; Web</span>
   </footer>
 
   <script src="script.js"></script>
@@ -471,6 +468,7 @@
       window.open(url, '_blank');
     }
 
+    applyTranslations("appointment");
     loadAppointmentPage();
   </script>
 

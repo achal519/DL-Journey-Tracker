@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>DL Journey Tracker — Congratulations!</title>
   <link rel="stylesheet" href="style.css" />
+  <script src="translations.js"></script>
+
   <style>
     .confetti-banner {
       text-align: center;
@@ -115,15 +117,15 @@
 <body>
 
   <div class="top-bar">
-    Government of India &nbsp;|&nbsp; Ministry of Road Transport &amp; Highways &nbsp;|&nbsp; Citizen Services
+    <span data-i18n="govBar">Government of India &nbsp;|&nbsp; Ministry of Road Transport &amp; Highways &nbsp;|&nbsp; Citizen Services</span>
   </div>
 
   <nav class="navbar">
     <a class="navbar-brand" href="index.html">
       <div class="brand-icon">🚗</div>
       <div class="brand-text">
-        <span class="brand-title">DL Journey Tracker</span>
-        <span class="brand-sub">LL to Permanent License</span>
+        <span class="brand-title" data-i18n="brandTitle">DL Journey Tracker</span>
+        <span class="brand-sub" data-i18n="brandSub">LL to Permanent License</span>
       </div>
     </a>
   </nav>
@@ -134,30 +136,30 @@
     <div class="confetti-banner">
       <span class="big-emoji">🎉</span>
       <div class="congrats-title">Congratulations, <span id="congrats-name"></span>!</div>
-      <div class="congrats-sub">You have successfully completed your DL Journey. Your Permanent Driving License has been issued!</div>
+      <div class="congrats-sub" data-i18n="congratsSub">You have successfully completed your DL Journey. Your Permanent Driving License has been issued!</div>
     </div>
 
     <!-- DL Card -->
     <div class="card">
-      <div class="card-title">🪪 Your Permanent Driving License</div>
+      <div class="card-title" data-i18n="dlCardTitle">🪪 Your Permanent Driving License</div>
       <div class="dl-card">
-        <div class="dl-card-label">Driving License Number</div>
+        <div class="dl-card-label" data-i18n="lblDLNo">Driving License Number</div>
         <div class="dl-card-value" id="dl-number">—</div>
         <div class="dl-card-row">
           <div class="dl-card-field">
-            <div class="dl-card-label">Holder Name</div>
+            <div class="dl-card-label" data-i18n="lblHolder">Holder Name</div>
             <div style="font-size:15px; font-weight:600;" id="dl-name">—</div>
           </div>
           <div class="dl-card-field">
-            <div class="dl-card-label">Issue Date</div>
+            <div class="dl-card-label" data-i18n="lblIssue">Issue Date</div>
             <div style="font-size:15px; font-weight:600;" id="dl-issue-date">—</div>
           </div>
           <div class="dl-card-field">
-            <div class="dl-card-label">Valid Till</div>
+            <div class="dl-card-label" data-i18n="lblValid">Valid Till</div>
             <div style="font-size:15px; font-weight:600;" id="dl-valid-till">—</div>
           </div>
           <div class="dl-card-field">
-            <div class="dl-card-label">Vehicle Type</div>
+            <div class="dl-card-label" data-i18n="lblVehicle">Vehicle Type</div>
             <div style="font-size:15px; font-weight:600;" id="dl-vehicle">—</div>
           </div>
         </div>
@@ -166,30 +168,30 @@
 
     <!-- Journey Summary -->
     <div class="card">
-      <div class="card-title">📊 Your Journey Summary</div>
+      <div class="card-title" data-i18n="summaryTitle">📊 Your Journey Summary</div>
       <div class="journey-summary-grid">
         <div class="summary-item">
-          <div class="summary-item-label">Total Days Taken</div>
+          <div class="summary-item-label" data-i18n="lblDays">Total Days Taken</div>
           <div class="summary-item-value" id="total-days">—</div>
         </div>
         <div class="summary-item">
-          <div class="summary-item-label">LL Issue Date</div>
+          <div class="summary-item-label" data-i18n="lblLLDate">LL Issue Date</div>
           <div class="summary-item-value" id="summary-ll-date">—</div>
         </div>
         <div class="summary-item">
-          <div class="summary-item-label">RTO Test Center</div>
+          <div class="summary-item-label" data-i18n="lblRTOCenter">RTO Test Center</div>
           <div class="summary-item-value" id="summary-rto-center">—</div>
         </div>
         <div class="summary-item">
-          <div class="summary-item-label">RTO Test Date</div>
+          <div class="summary-item-label" data-i18n="lblRTODate">RTO Test Date</div>
           <div class="summary-item-value" id="summary-rto-date">—</div>
         </div>
         <div class="summary-item">
-          <div class="summary-item-label">City / District</div>
+          <div class="summary-item-label" data-i18n="lblCity">City / District</div>
           <div class="summary-item-value" id="summary-city">—</div>
         </div>
         <div class="summary-item">
-          <div class="summary-item-label">LL Number</div>
+          <div class="summary-item-label" data-i18n="lblLLNo">LL Number</div>
           <div class="summary-item-value" id="summary-ll-number">—</div>
         </div>
       </div>
@@ -197,7 +199,7 @@
 
     <!-- Stage Completion List -->
     <div class="card">
-      <div class="card-title">✅ All Stages Completed</div>
+      <div class="card-title" data-i18n="stagesTitle">✅ All Stages Completed</div>
       <ul class="stage-complete-list">
         <li>📄 <strong>Stage 1</strong> — Learner License Obtained</li>
         <li>⏳ <strong>Stage 2</strong> — 30-Day Waiting Period Completed</li>
@@ -209,7 +211,7 @@
 
     <!-- Important Reminders -->
     <div class="card">
-      <div class="card-title">📌 Important Reminders</div>
+      <div class="card-title" data-i18n="remindersTitle">📌 Important Reminders</div>
       <ul style="padding-left:20px; font-size:14px; line-height:2.2; color:var(--grey-dark);">
         <li>Your DL is valid for <strong>20 years</strong> from issue date</li>
         <li>Always carry your DL while driving — it is mandatory by law</li>
@@ -221,69 +223,60 @@
 
     <!-- DL Renewal Countdown -->
     <div class="card" style="background:linear-gradient(135deg,#1a237e,#283593);color:white;">
-      <div class="card-title" style="color:white;">⏰ DL Renewal Reminder</div>
-      <div style="font-size:13px;opacity:0.8;margin-bottom:16px;">
-        Your Permanent DL is valid for 20 years. Don't let it expire!
-      </div>
+      <div class="card-title" style="color:white;" data-i18n="renewalTitle">⏰ DL Renewal Reminder</div>
+      <div style="font-size:13px;opacity:0.8;margin-bottom:16px;" data-i18n="renewalSub">Your Permanent DL is valid for 20 years. Don't let it expire!</div>
       <div style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:16px;">
         <div style="background:rgba(255,255,255,0.15);border-radius:10px;padding:14px 20px;text-align:center;min-width:100px;">
           <div style="font-size:28px;font-weight:800;color:#ffcc80;" id="renewYearsLeft">—</div>
-          <div style="font-size:11px;opacity:0.7;">Years Left</div>
+          <div style="font-size:11px;opacity:0.7;" data-i18n="yearsLeft">Years Left</div>
         </div>
         <div style="background:rgba(255,255,255,0.15);border-radius:10px;padding:14px 20px;text-align:center;min-width:100px;">
           <div style="font-size:28px;font-weight:800;color:#a5d6a7;" id="renewExpiry">—</div>
-          <div style="font-size:11px;opacity:0.7;">Expiry Year</div>
+          <div style="font-size:11px;opacity:0.7;" data-i18n="expiryYear">Expiry Year</div>
         </div>
         <div style="background:rgba(255,255,255,0.15);border-radius:10px;padding:14px 20px;text-align:center;min-width:100px;">
           <div style="font-size:28px;font-weight:800;color:#ef9a9a;" id="renewDaysLeft">—</div>
-          <div style="font-size:11px;opacity:0.7;">Days Until Expiry</div>
+          <div style="font-size:11px;opacity:0.7;" data-i18n="daysExpiry">Days Until Expiry</div>
         </div>
       </div>
       <div id="renewalMsg" style="font-size:13px;opacity:0.85;padding:10px 14px;background:rgba(255,255,255,0.1);border-radius:8px;"></div>
       <div style="margin-top:14px;">
-        <button onclick="addRenewalToCalendar()"
-          style="background:#4285f4;color:white;border:none;padding:9px 18px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;">
-          📅 Add Renewal Reminder to Calendar
-        </button>
+        <button onclick="addRenewalToCalendar()" data-i18n="renewCalBtn" style="background:#4285f4;color:white;border:none;padding:9px 18px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;">📅 Add Renewal Reminder to Calendar</button>
       </div>
     </div>
 
     <!-- Attempt Summary -->
     <div class="card" id="attemptSummaryCard" style="display:none;">
-      <div class="card-title">🔄 Your Test Journey</div>
+      <div class="card-title" data-i18n="attemptTitle">🔄 Your Test Journey</div>
       <div id="attemptSummaryContent"></div>
     </div>
 
     <!-- Parivahan Tracking -->
     <div class="card" style="border-left:4px solid var(--orange);">
-      <div class="card-title">🔗 Track Your DL on Parivahan</div>
-      <div style="font-size:13px;color:var(--grey-dark);margin-bottom:12px;">
-        You can track your DL application status on the official government portal using your application number.
-      </div>
+      <div class="card-title" data-i18n="parivahanTitle">🔗 Track Your DL on Parivahan</div>
+      <div style="font-size:13px;color:var(--grey-dark);margin-bottom:12px;" data-i18n="parivahanSub">You can track your DL application status on the official government portal using your application number.</div>
       <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
         <input id="parivahanAppNo" class="form-control" type="text"
-          placeholder="Enter Application Number (from RTO receipt)"
+          data-i18n="parivahanPlaceholder" placeholder="Enter Application Number (from RTO receipt)"
           style="max-width:300px;padding:8px 12px;border:1.5px solid #ddd;border-radius:8px;font-size:13px;" />
         <a id="parivahanLink" href="https://parivahan.gov.in/parivahan/en/content/dl-status" target="_blank"
           style="background:var(--orange);color:white;padding:9px 18px;border-radius:8px;font-size:13px;font-weight:700;text-decoration:none;">
           🔎 Check DL Status →
         </a>
       </div>
-      <div style="font-size:12px;color:var(--grey-mid);margin-top:8px;">
-        📌 Your application number is printed on the receipt given at RTO counter after fee payment.
-      </div>
+      <div style="font-size:12px;color:var(--grey-mid);margin-top:8px;" data-i18n="parivahanNote">📌 Your application number is printed on the receipt given at RTO counter after fee payment.</div>
     </div>
 
     <!-- Action Buttons -->
     <div style="display:flex; gap:12px; flex-wrap:wrap; justify-content:center; margin-top:8px; margin-bottom:32px;">
-      <a class="btn btn-primary" href="dashboard.html">← Back to Dashboard</a>
-      <button class="btn btn-outline" onclick="window.print()">🖨️ Print Summary</button>
+      <a class="btn btn-primary" href="dashboard.html" data-i18n="btnDashboard">← Back to Dashboard</a>
+      <button class="btn btn-outline" onclick="window.print()" data-i18n="btnPrint">🖨️ Print Summary</button>
     </div>
 
   </div>
 
   <footer class="footer">
-    DL Journey Tracker &nbsp;|&nbsp; OOP Mini Project &nbsp;|&nbsp; Built with <span>♥</span> in C++ &amp; Web
+    <span data-i18n="footer">DL Journey Tracker &nbsp;|&nbsp; OOP Mini Project &nbsp;|&nbsp; Built with ♥ in C++ &amp; Web</span>
   </footer>
 
   <script src="script.js"></script>
@@ -325,6 +318,7 @@
       document.getElementById('summary-ll-number').textContent = user.llNumber;
     }
 
+    applyTranslations("congrats");
     loadCongratsPage();
 
     // ── DL Renewal Countdown ──────────────────────────

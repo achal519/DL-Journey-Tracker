@@ -357,7 +357,217 @@
         btn.disabled = false;
       }
     }
-  </script>
+    // ── Translation System ────────────────────────────
+    const TRANSLATIONS = {
+      en: {
+        topBar: 'Government of India &nbsp;|&nbsp; Ministry of Road Transport &amp; Highways &nbsp;|&nbsp; Citizen Services',
+        brandTitle: 'DL Journey Tracker',
+        brandSub: 'LL to Permanent License',
+        llCheckTitle: 'Welcome to DL Journey Tracker',
+        llCheckSub: 'This system guides you from your very first step all the way to receiving your Permanent Driving License.<br/>First, let us know where you are in your journey.',
+        yesLabel: 'Yes, I have LL',
+        yesDesc: 'I already have my Learner License and want to track my DL journey',
+        noLabel: "No, I don't have LL",
+        noDesc: 'I need help applying for a Learner License first',
+        notSure: 'Not sure? A Learner License (LL) is the first step before getting a Permanent Driving License.',
+        regTitle: 'Citizen Registration',
+        regSub: 'Enter your Learner License details to begin tracking your DL journey',
+        cardTitle: '📋 Personal & License Details',
+        labelName: 'Full Name', labelAge: 'Age', labelCity: 'City / District',
+        labelVehicle: 'Vehicle Type', labelLLNo: 'Learner License Number',
+        labelLLDate: 'LL Issue Date',
+        hintLLNo: 'Enter exactly as printed on your LL card',
+        hintLLDate: 'The date printed on your Learner License (not the test date)',
+        submitBtn: 'Start Tracking My DL Journey →',
+        goBack: '← Go back',
+        step1: 'LL Check', step2: 'Register', step3: 'Dashboard', step4: 'DL Test', step5: 'DL Issued',
+        tile1label: 'Waiting Period', tile1sub: 'days minimum',
+        tile2label: 'Apply Window', tile2sub: 'days total',
+        tile3label: 'DL Valid For', tile3sub: 'years',
+        v2w: '2 Wheeler (Motorcycle / Scooter)', v4w: '4 Wheeler (Car / Jeep)',
+        vboth: 'Both (2W + 4W)', vcomm: 'Commercial Vehicle',
+        vplaceholder: '— Select vehicle category —',
+        footer: 'DL Journey Tracker &nbsp;|&nbsp; OOP Mini Project &nbsp;|&nbsp; Built with ♥ in C++ &amp; Web',
+      },
+      hi: {
+        topBar: 'भारत सरकार &nbsp;|&nbsp; सड़क परिवहन एवं राजमार्ग मंत्रालय &nbsp;|&nbsp; नागरिक सेवाएं',
+        brandTitle: 'DL यात्रा ट्रैकर',
+        brandSub: 'LL से स्थायी लाइसेंस तक',
+        llCheckTitle: 'DL यात्रा ट्रैकर में आपका स्वागत है',
+        llCheckSub: 'यह प्रणाली आपको पहले कदम से लेकर स्थायी ड्राइविंग लाइसेंस प्राप्त करने तक मार्गदर्शन करती है।<br/>पहले बताएं, आप अपनी यात्रा में कहाँ हैं।',
+        yesLabel: 'हाँ, मेरे पास LL है',
+        yesDesc: 'मेरे पास पहले से लर्नर लाइसेंस है और मैं DL यात्रा ट्रैक करना चाहता हूं',
+        noLabel: 'नहीं, मेरे पास LL नहीं है',
+        noDesc: 'मुझे पहले लर्नर लाइसेंस के लिए आवेदन में सहायता चाहिए',
+        notSure: 'निश्चित नहीं? लर्नर लाइसेंस (LL) स्थायी ड्राइविंग लाइसेंस से पहले पहला कदम है।',
+        regTitle: 'नागरिक पंजीकरण',
+        regSub: 'अपनी DL यात्रा शुरू करने के लिए अपने लर्नर लाइसेंस का विवरण दर्ज करें',
+        cardTitle: '📋 व्यक्तिगत और लाइसेंस विवरण',
+        labelName: 'पूरा नाम', labelAge: 'आयु', labelCity: 'शहर / जिला',
+        labelVehicle: 'वाहन प्रकार', labelLLNo: 'लर्नर लाइसेंस नंबर',
+        labelLLDate: 'LL जारी होने की तारीख',
+        hintLLNo: 'अपने LL कार्ड पर लिखे अनुसार दर्ज करें',
+        hintLLDate: 'आपके लर्नर लाइसेंस पर छपी तारीख (परीक्षा की तारीख नहीं)',
+        submitBtn: 'मेरी DL यात्रा शुरू करें →',
+        goBack: '← वापस जाएं',
+        step1: 'LL जांच', step2: 'पंजीकरण', step3: 'डैशबोर्ड', step4: 'DL परीक्षण', step5: 'DL जारी',
+        tile1label: 'प्रतीक्षा अवधि', tile1sub: 'दिन न्यूनतम',
+        tile2label: 'आवेदन विंडो', tile2sub: 'दिन कुल',
+        tile3label: 'DL वैधता', tile3sub: 'वर्ष',
+        v2w: '2 पहिया (मोटरसाइकिल / स्कूटर)', v4w: '4 पहिया (कार / जीप)',
+        vboth: 'दोनों (2W + 4W)', vcomm: 'वाणिज्यिक वाहन',
+        vplaceholder: '— वाहन श्रेणी चुनें —',
+        footer: 'DL यात्रा ट्रैकर &nbsp;|&nbsp; OOP मिनी प्रोजेक्ट &nbsp;|&nbsp; C++ और Web में बनाया गया ♥',
+      },
+      mr: {
+        topBar: 'भारत सरकार &nbsp;|&nbsp; रस्ते वाहतूक आणि महामार्ग मंत्रालय &nbsp;|&nbsp; नागरिक सेवा',
+        brandTitle: 'DL प्रवास ट्रॅकर',
+        brandSub: 'LL ते कायमस्वरूपी परवाना',
+        llCheckTitle: 'DL प्रवास ट्रॅकरमध्ये आपले स्वागत आहे',
+        llCheckSub: 'ही प्रणाली तुम्हाला पहिल्या पावलापासून ते कायमस्वरूपी ड्रायव्हिंग परवाना मिळेपर्यंत मार्गदर्शन करते.<br/>प्रथम सांगा, तुम्ही तुमच्या प्रवासात कुठे आहात.',
+        yesLabel: 'होय, माझ्याकडे LL आहे',
+        yesDesc: 'माझ्याकडे आधीच लर्नर परवाना आहे आणि मला DL प्रवास ट्रॅक करायचा आहे',
+        noLabel: 'नाही, माझ्याकडे LL नाही',
+        noDesc: 'मला प्रथम लर्नर परवान्यासाठी अर्ज करण्यात मदत हवी आहे',
+        notSure: 'खात्री नाही? लर्नर परवाना (LL) हे कायमस्वरूपी ड्रायव्हिंग परवान्यापूर्वीचे पहिले पाऊल आहे.',
+        regTitle: 'नागरिक नोंदणी',
+        regSub: 'तुमचा DL प्रवास सुरू करण्यासाठी तुमच्या लर्नर परवान्याचे तपशील प्रविष्ट करा',
+        cardTitle: '📋 वैयक्तिक आणि परवाना तपशील',
+        labelName: 'पूर्ण नाव', labelAge: 'वय', labelCity: 'शहर / जिल्हा',
+        labelVehicle: 'वाहन प्रकार', labelLLNo: 'लर्नर परवाना क्रमांक',
+        labelLLDate: 'LL जारी तारीख',
+        hintLLNo: 'तुमच्या LL कार्डवर छापल्याप्रमाणे प्रविष्ट करा',
+        hintLLDate: 'तुमच्या लर्नर परवान्यावर छापलेली तारीख',
+        submitBtn: 'माझा DL प्रवास सुरू करा →',
+        goBack: '← मागे जा',
+        step1: 'LL तपासणी', step2: 'नोंदणी', step3: 'डॅशबोर्ड', step4: 'DL परीक्षा', step5: 'DL जारी',
+        tile1label: 'प्रतीक्षा कालावधी', tile1sub: 'दिवस किमान',
+        tile2label: 'अर्ज विंडो', tile2sub: 'दिवस एकूण',
+        tile3label: 'DL वैधता', tile3sub: 'वर्षे',
+        v2w: '2 चाकी (मोटरसायकल / स्कूटर)', v4w: '4 चाकी (कार / जीप)',
+        vboth: 'दोन्ही (2W + 4W)', vcomm: 'व्यावसायिक वाहन',
+        vplaceholder: '— वाहन श्रेणी निवडा —',
+        footer: 'DL प्रवास ट्रॅकर &nbsp;|&nbsp; OOP मिनी प्रोजेक्ट &nbsp;|&nbsp; C++ आणि Web मध्ये बनवले ♥',
+      },
+      gu: {
+        topBar: 'ભારત સરકાર &nbsp;|&nbsp; રોડ ટ્રાન્સપોર્ટ અને હાઇવે મંત્રાલય &nbsp;|&nbsp; નાગરિક સેવાઓ',
+        brandTitle: 'DL યાત્રા ટ્રેકર',
+        brandSub: 'LL થી કાયમી લાઇસન્સ',
+        llCheckTitle: 'DL યાત્રા ટ્રેકરમાં આપનું સ્વાગત છે',
+        llCheckSub: 'આ સિસ્ટમ તમને પ્રથમ પગલાથી કાયમી ડ્રાઇવિંગ લાઇસન્સ મેળવવા સુધી માર્ગદર્શન આપે છે.<br/>પ્રથમ, અમને જણાવો કે તમે તમારી યાત્રામાં ક્યાં છો.',
+        yesLabel: 'હા, મારી પાસે LL છે',
+        yesDesc: 'મારી પાસે પહેલેથી જ લર્નર લાઇસન્સ છે અને હું DL યાત્રા ટ્રેક કરવા માંગુ છું',
+        noLabel: 'ના, મારી પાસે LL નથી',
+        noDesc: 'મને પ્રથમ લર્નર લાઇસન્સ માટે અરજી કરવામાં મદદ જોઈએ છે',
+        notSure: 'ખાતરી નથી? લર્નર લાઇસન્સ (LL) એ કાયમી ડ્રાઇવિંગ લાઇસન્સ પહેલાનું પ્રથમ પગલું છે.',
+        regTitle: 'નાગરિક નોંધણી',
+        regSub: 'તમારી DL યાત્રા શરૂ કરવા માટે તમારા લર્નર લાઇસન્સ વિગતો દાખલ કરો',
+        cardTitle: '📋 વ્યક્તિગત અને લાઇસન્સ વિગતો',
+        labelName: 'પૂરું નામ', labelAge: 'ઉંમર', labelCity: 'શહેર / જિલ્લો',
+        labelVehicle: 'વાહન પ્રકાર', labelLLNo: 'લર્નર લાઇસન્સ નંબર',
+        labelLLDate: 'LL જારી તારીખ',
+        hintLLNo: 'તમારા LL કાર્ડ પર છાપ્યા પ્રમાણે દાખલ કરો',
+        hintLLDate: 'તમારા લર્નર લાઇસન્સ પર છાપેલ તારીખ',
+        submitBtn: 'મારી DL યાત્રા શરૂ કરો →',
+        goBack: '← પાછળ જાઓ',
+        step1: 'LL તપાસ', step2: 'નોંધણી', step3: 'ડેશબોર્ડ', step4: 'DL ટેસ્ટ', step5: 'DL જારી',
+        tile1label: 'રાહ અવધિ', tile1sub: 'દિવસ ન્યૂનતમ',
+        tile2label: 'અરજી વિન્ડો', tile2sub: 'દિવસ કુલ',
+        tile3label: 'DL માન્યતા', tile3sub: 'વર્ષ',
+        v2w: '2 વ્હીલર (મોટરસાઇકલ / સ્કૂટર)', v4w: '4 વ્હીલર (કાર / જીપ)',
+        vboth: 'બંને (2W + 4W)', vcomm: 'વ્યાવસાયિક વાહન',
+        vplaceholder: '— વાહન શ્રેણી પસંદ કરો —',
+        footer: 'DL યાત્રા ટ્રેકર &nbsp;|&nbsp; OOP મિની પ્રોજેક્ટ &nbsp;|&nbsp; C++ અને Web માં બનાવ્યું ♥',
+      },
+    };
 
-</body>
-</html>
+    function applyTranslation() {
+      const lang = localStorage.getItem('dl_lang') || 'en';
+      const t = TRANSLATIONS[lang] || TRANSLATIONS['en'];
+
+      // Top bar
+      const tb = document.querySelector('.top-bar');
+      if (tb) tb.innerHTML = t.topBar;
+
+      // Navbar
+      const bt = document.querySelector('.brand-title');
+      const bs = document.querySelector('.brand-sub');
+      if (bt) bt.textContent = t.brandTitle;
+      if (bs) bs.textContent = t.brandSub;
+
+      // LL Check Screen
+      document.querySelector('.ll-check-title').textContent = t.llCheckTitle;
+      document.querySelector('.ll-check-sub').innerHTML = t.llCheckSub;
+      document.querySelectorAll('.ll-choice-label')[0].textContent = t.yesLabel;
+      document.querySelectorAll('.ll-choice-desc')[0].textContent  = t.yesDesc;
+      document.querySelectorAll('.ll-choice-label')[1].textContent = t.noLabel;
+      document.querySelectorAll('.ll-choice-desc')[1].textContent  = t.noDesc;
+      document.querySelector('#llCheckScreen p').textContent = t.notSure;
+
+      // Registration Screen
+      document.querySelector('.page-header h1').textContent = t.regTitle;
+      document.querySelector('.page-header p').textContent  = t.regSub;
+      document.querySelector('.card-title').textContent     = t.cardTitle;
+
+      // Labels
+      const labels = document.querySelectorAll('.form-label');
+      const labelMap = [t.labelName, t.labelAge, t.labelCity, t.labelVehicle, t.labelLLNo, t.labelLLDate];
+      labels.forEach((l, i) => {
+        if (labelMap[i]) {
+          const star = l.querySelector('span');
+          l.textContent = labelMap[i] + ' ';
+          if (star) l.appendChild(star);
+        }
+      });
+
+      // Hints
+      const hints = document.querySelectorAll('.form-hint');
+      if (hints[0]) hints[0].textContent = t.hintLLNo;
+      if (hints[1]) hints[1].textContent = t.hintLLDate;
+
+      // Submit button
+      document.getElementById('submitBtn').textContent = t.submitBtn;
+
+      // Go back link
+      const goBack = document.querySelector('#registrationScreen a[onclick]');
+      if (goBack) goBack.textContent = t.goBack;
+
+      // Steps
+      const stepLabels = document.querySelectorAll('.reg-step-label');
+      const steps = [t.step1, t.step2, t.step3, t.step4, t.step5];
+      stepLabels.forEach((s, i) => { if (steps[i]) s.textContent = steps[i]; });
+
+      // Info tiles
+      const tileLabels = document.querySelectorAll('.info-tile-label');
+      const tileSubs   = document.querySelectorAll('.info-tile-sub');
+      if (tileLabels[0]) tileLabels[0].textContent = t.tile1label;
+      if (tileLabels[1]) tileLabels[1].textContent = t.tile2label;
+      if (tileLabels[2]) tileLabels[2].textContent = t.tile3label;
+      if (tileSubs[0]) tileSubs[0].textContent = t.tile1sub;
+      if (tileSubs[1]) tileSubs[1].textContent = t.tile2sub;
+      if (tileSubs[2]) tileSubs[2].textContent = t.tile3sub;
+
+      // Vehicle dropdown
+      const vsel = document.getElementById('vehicleType');
+      if (vsel) {
+        vsel.options[0].text = t.vplaceholder;
+        vsel.options[1].text = t.v2w;
+        vsel.options[2].text = t.v4w;
+        vsel.options[3].text = t.vboth;
+        vsel.options[4].text = t.vcomm;
+      }
+
+      // Footer
+      const footer = document.querySelector('.footer');
+      if (footer) footer.innerHTML = t.footer;
+
+      // Page title
+      document.title = lang === 'hi' ? 'DL यात्रा ट्रैकर — शुरू करें' :
+                       lang === 'mr' ? 'DL प्रवास ट्रॅकर — सुरू करा' :
+                       lang === 'gu' ? 'DL યાત્રા ટ્રેકર — શરૂ કરો' :
+                       'DL Journey Tracker — Start';
+    }
+
+    // Apply on load
+    applyTranslation();
+  </script>

@@ -229,40 +229,40 @@
 <body>
 
 <nav class="navbar">
-  <span class="brand">🚗 DL Journey Tracker</span>
-  <a href="dashboard.html">← Back to Dashboard</a>
+  <span class="brand" data-i18n="navBrand">🚗 DL Journey Tracker</span>
+  <a href="dashboard.html" data-i18n="navBack">← Back to Dashboard</a>
 </nav>
 
 <!-- FAIL BANNER -->
 <div class="fail-banner">
   <div class="fail-icon">❌</div>
-  <h1>Test Not Cleared — Don't Give Up!</h1>
-  <p>Many people fail on their first attempt. You can retry after 7 days. Use this time to prepare better!</p>
+  <h1 data-i18n="failTitle">Test Not Cleared — Don't Give Up!</h1>
+  <p data-i18n="failSub">Many people fail on their first attempt. You can retry after 7 days. Use this time to prepare better!</p>
 </div>
 
 <div class="container">
 
   <!-- COUNTDOWN TO RETRY -->
   <div class="countdown-card">
-    <h2>⏳ Retry Available In</h2>
+    <h2 data-i18n="countdownTitle">⏳ Retry Available In</h2>
     <div class="countdown-boxes">
-      <div class="cd-box"><div class="cd-num" id="cd-days">7</div><div class="cd-label">DAYS</div></div>
-      <div class="cd-box"><div class="cd-num" id="cd-hrs">00</div><div class="cd-label">HOURS</div></div>
-      <div class="cd-box"><div class="cd-num" id="cd-min">00</div><div class="cd-label">MINUTES</div></div>
-      <div class="cd-box"><div class="cd-num" id="cd-sec">00</div><div class="cd-label">SECONDS</div></div>
+      <div class="cd-box"><div class="cd-num" id="cd-days">7</div><div class="cd-label" data-i18n="lblDays">DAYS</div></div>
+      <div class="cd-box"><div class="cd-num" id="cd-hrs">00</div><div class="cd-label" data-i18n="lblHrs">HOURS</div></div>
+      <div class="cd-box"><div class="cd-num" id="cd-min">00</div><div class="cd-label" data-i18n="lblMin">MINUTES</div></div>
+      <div class="cd-box"><div class="cd-num" id="cd-sec">00</div><div class="cd-label" data-i18n="lblSec">SECONDS</div></div>
     </div>
-    <div class="retry-date-info">Your retry date: <span id="retry-date-display">—</span></div>
+    <div class="retry-date-info"><span data-i18n="retryDateLabel">Your retry date:</span> <span id="retry-date-display">—</span></div>
   </div>
 
   <!-- MOTIVATIONAL QUOTE -->
   <div class="quote-card">
-    <div class="quote-text">"Success is not final, failure is not fatal — it is the courage to continue that counts."</div>
-    <div class="quote-author">— Winston Churchill</div>
+    <div class="quote-text"><span data-i18n="quoteText">"Success is not final, failure is not fatal — it is the courage to continue that counts."</span></div>
+    <div class="quote-author" data-i18n="quoteAuthor">— Winston Churchill</div>
   </div>
 
   <!-- WHY DID YOU FAIL -->
   <div class="section-card">
-    <h3><span class="icon">🔍</span> What Went Wrong? (Select all that apply)</h3>
+    <h3><span class="icon">🔍</span> <span data-i18n="whatWentWrong">What Went Wrong? (Select all that apply)</span></h3>
     <div class="reason-grid">
       <div class="reason-item" onclick="toggleReason(this)">
         <div class="reason-icon">😰</div>
@@ -301,7 +301,7 @@
 
   <!-- IMPROVEMENT TIPS -->
   <div class="section-card">
-    <h3><span class="icon">💡</span> Improvement Tips for Next Attempt</h3>
+    <h3><span class="icon">💡</span> <span data-i18n="tipsTitle">Improvement Tips for Next Attempt</span></h3>
     <div class="tips-grid">
       <div class="tip-card">
         <div class="tip-title">🪞 Mirror Check Habit</div>
@@ -332,7 +332,7 @@
 
   <!-- 7 DAY PRACTICE PLAN -->
   <div class="section-card">
-    <h3><span class="icon">📅</span> Your 7-Day Practice Plan</h3>
+    <h3><span class="icon">📅</span> <span data-i18n="planTitle">Your 7-Day Practice Plan</span></h3>
     <div class="plan-timeline">
       <div class="plan-day">
         <div class="day-badge">Day 1</div>
@@ -367,10 +367,10 @@
 
   <!-- DO'S AND DON'TS -->
   <div class="section-card">
-    <h3><span class="icon">✅</span> Do's & Don'ts on Retry Day</h3>
+    <h3><span class="icon">✅</span> <span data-i18n="dosTitle">Do's & Don'ts on Retry Day</span></h3>
     <div class="dodont-grid">
       <div class="do-col">
-        <h4>✅ Do This</h4>
+        <h4 data-i18n="doTitle">✅ Do This</h4>
         <div class="dodont-item">✔ Arrive 30 minutes early</div>
         <div class="dodont-item">✔ Wear helmet / seatbelt from start</div>
         <div class="dodont-item">✔ Check mirrors at every turn</div>
@@ -379,7 +379,7 @@
         <div class="dodont-item">✔ Stay calm and breathe deeply</div>
       </div>
       <div class="dont-col">
-        <h4>❌ Don't Do This</h4>
+        <h4 data-i18n="dontTitle">❌ Don't Do This</h4>
         <div class="dodont-item">✘ Rush through the track</div>
         <div class="dodont-item">✘ Forget mirror checks</div>
         <div class="dodont-item">✘ Jump stop lines</div>
@@ -392,22 +392,24 @@
 
   <!-- ACTION BUTTONS -->
   <div class="section-card">
-    <h3><span class="icon">🚀</span> What To Do Next</h3>
+    <h3><span class="icon">🚀</span> <span data-i18n="nextTitle">What To Do Next</span></h3>
     <div class="action-buttons">
-      <button class="btn-primary" id="retry-btn" onclick="markRetryBooked()">📅 Book Retry Appointment</button>
-      <a href="testsim.html" class="btn-outline">🏎️ Practice Test Simulation</a>
-      <a href="appointment.html" class="btn-outline">📋 View Test Guide Again</a>
-      <a href="dashboard.html" class="btn-outline">🏠 Back to Dashboard</a>
+      <button class="btn-primary" id="retry-btn" onclick="markRetryBooked()" data-i18n="btnBook">📅 Book Retry Appointment</button>
+      <a href="testsim.html" class="btn-outline" data-i18n="btnPractice">🏎️ Practice Test Simulation</a>
+      <a href="appointment.html" class="btn-outline" data-i18n="btnGuide">📋 View Test Guide Again</a>
+      <a href="dashboard.html" class="btn-outline" data-i18n="btnDashboard">🏠 Back to Dashboard</a>
     </div>
     <p style="margin-top:14px;font-size:0.8rem;color:#999;" id="retry-note">
-      ⏳ Retry button will activate after 7 days from your failed test date.
+      <span data-i18n="retryNote">⏳ Retry button will activate after 7 days from your failed test date.</span>
     </p>
   </div>
 
 </div>
 
+<script src="translations.js"></script>
 <script src="script.js"></script>
 <script>
+  applyTranslations("retry");
   // ── Setup fail date + attempt counter ──────────────
   let failDate = localStorage.getItem('dl_fail_date');
   if (!failDate) {

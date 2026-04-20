@@ -15,23 +15,33 @@ app.use(session({
   saveUninitialized: false
 }));
 
-// Serve your existing frontend HTML files
+// ── IMPORTANT: landing.html as default page ──────────
+// This MUST be before express.static so localhost:3000 opens landing page
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, '../../frontend/landing.html'));
+});
+
+// Serve all frontend files statically
 app.use(express.static(path.join(__dirname, '../../frontend')));
 
-// Routes
+// ── API Routes ────────────────────────────────────────
 const citizenRoutes = require('./routes/citizen');
 const licenseRoutes = require('./routes/license');
-const alertRoutes  = require('./routes/alerts');
-const cppRoutes    = require('./routes/cpp');
+const alertRoutes   = require('./routes/alerts');
+const cppRoutes     = require('./routes/cpp');
 
 app.use('/api/citizen', citizenRoutes);
 app.use('/api/license', licenseRoutes);
 app.use('/api/alerts',  alertRoutes);
 app.use('/api/cpp',     cppRoutes);
 
-// Start server
+// ── Start Server ──────────────────────────────────────
 const PORT = 3000;
 app.listen(PORT, () => {
-  console.log(`Server running at http://localhost:${PORT}`);
-  console.log(`Open your app at http://localhost:${PORT}/index.html`);
+  console.log(`\n✅ Server running at http://localhost:${PORT}`);
+  console.log(`🚀 Open your app at http://localhost:${PORT}`);
+  console.log(`📄 Landing page: http://localhost:${PORT}/landing.html\n`);
 });
+
+// DB connection log (triggered from db.js on connect)
+const db = require('./db/db');
